@@ -2660,7 +2660,7 @@ void irtkRView::Initialize()
       case Viewer_YZ:
         attr._dx = 1.0 / _resolution;
         attr._dy = 1.0 / _resolution;
-        attr._dz = _targetImage->GetZSize();
+        attr._dz = _targetImage->GetXSize();
         attr._xaxis[0] = _yaxis[0];
         attr._xaxis[1] = _yaxis[1];
         attr._xaxis[2] = _yaxis[2];
