@@ -1872,10 +1872,8 @@ void irtkRView::ReadTransformation(char *name)
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
-      //_sourceTransformFilter[i]->CacheOn(_targetImageOutput[i]->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
-      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
     _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
     _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
@@ -2347,10 +2345,8 @@ void irtkRView::Configure(irtkRViewConfig config[])
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
-      //_sourceTransformFilter[i]->CacheOn(_targetImage->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
-      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
     _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
     _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
@@ -2855,10 +2851,8 @@ void irtkRView::SetSourceTransformApply(bool value)
   for (i = 0; i < _NoOfViewers; i++) {
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
-      //_sourceTransformFilter[i]->CacheOn(_targetImage->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
-      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
   }
   _sourceUpdate = true;
