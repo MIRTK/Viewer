@@ -188,12 +188,11 @@ irtkViewer::~irtkViewer()
 {
 }
 
-bool irtkViewer::Update1(irtkGreyImage *image,
-		irtkTransformation *transformation)
+bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformation)
 {
 	irtkFreeFormTransformation *affd = NULL;
 	irtkMultiLevelFreeFormTransformation *mffd = NULL;
-	double x1, y1, z1, x2, y2, z2, t;
+	double x1, y1, z1, x2, y2, z2, t1, t2;
 	int i, j, k, i1, j1, k1, i2, j2, k2, index, m, n;
 
 	// Check transformation
@@ -214,14 +213,14 @@ bool irtkViewer::Update1(irtkGreyImage *image,
 		affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
 	}
 
-	if ((affd->GetX() >= MaxNumberOfCP) || (affd->GetY() >= MaxNumberOfCP)
-			|| (affd->GetZ() >= MaxNumberOfCP)) {
+	if ((affd->GetX() >= MaxNumberOfCP) || (affd->GetY() >= MaxNumberOfCP) || (affd->GetZ() >= MaxNumberOfCP)) {
 		cerr << "Too many control points" << endl;
 		exit(1);
 	}
 
 	// Find out time
-	t = image->ImageToTime(0);
+	t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
+	t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
 
 	// Find out first corner of ROI
 	x1 = 0;
@@ -345,13 +344,20 @@ bool irtkViewer::Update1(irtkGreyImage *image,
 				if (ik >= image->GetZ())
 					ik = image->GetZ() - 1;
 				if (mffd != NULL) {
-					mffd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t);
-					mffd->irtkAffineTransformation::Inverse(_AfterX[m][n], _AfterY[m][n],
-							_AfterZ[m][n]);
-				}
-				else {
-					affd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t);
-				}
+          if (_rview->GetSourceTransformInvert()) {
+            mffd->Inverse(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            mffd->irtkAffineTransformation::Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
+          } else {
+            mffd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            mffd->irtkAffineTransformation::Inverse(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
+          }
+        } else {
+          if (_rview->GetSourceTransformInvert()) {
+            affd->Inverse(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+          } else {
+            affd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+          }
+        }
 				image->WorldToImage(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
 				if (affd->GetStatus(index) == _Active) {
 					_CPStatus[m][n] = _Active;
@@ -380,7 +386,7 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image,
 		irtkFreeFormTransformation *affd = NULL;
 		irtkMultiLevelFreeFormTransformation *mffd = NULL;
 		irtkPoint p1, p2;
-		double dx1, dy1, dx2, dy2, dz, t, x, y;
+		double dx1, dy1, dx2, dy2, dz, t1, t2, x, y;
 		int i, k, k1, k2, m, n;
 		for (i = 0; i < landmark.Size(); i++) {
 			image->WorldToImage(landmark(i));
@@ -397,7 +403,8 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image,
 		}
 
 		// Find out time
-		t = image->ImageToTime(0);
+		t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
+		t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
 
 		// Find out first corner of ROI
 		landmark.BoundingBox(p1, p2);
@@ -425,25 +432,20 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image,
 					_BeforeGridX[m][n] = x;
 					_BeforeGridY[m][n] = y;
 					_BeforeGridZ[m][n] = k;
-					image->ImageToWorld(_BeforeGridX[m][n], _BeforeGridY[m][n],
-							_BeforeGridZ[m][n]);
+					image->ImageToWorld(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
 					_AfterGridX[m][n] = _BeforeGridX[m][n];
 					_AfterGridY[m][n] = _BeforeGridY[m][n];
 					_AfterGridZ[m][n] = _BeforeGridZ[m][n];
-					if (mffd != NULL && _rview->GetSourceTransformApply() == true) {
-						mffd->Transform(_AfterGridX[m][n], _AfterGridY[m][n],
-								_AfterGridZ[m][n], t);
-						mffd->irtkAffineTransformation::Inverse(_AfterGridX[m][n],
-								_AfterGridY[m][n], _AfterGridZ[m][n]);
+					if (_rview->GetSourceTransformApply()) {
+					  if (mffd != NULL) {
+              mffd->Transform(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1, t2);
+              mffd->irtkAffineTransformation::Inverse(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n]);
+            } else if (affd != NULL) {
+              affd->Transform(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1, t2);
+            }
 					}
-					else if (affd != NULL && _rview->GetSourceTransformApply() == true) {
-						affd->Transform(_AfterGridX[m][n], _AfterGridY[m][n],
-								_AfterGridZ[m][n], t);
-					}
-					image->WorldToImage(_BeforeGridX[m][n], _BeforeGridY[m][n],
-							_BeforeGridZ[m][n]);
-					image->WorldToImage(_AfterGridX[m][n], _AfterGridY[m][n],
-							_AfterGridZ[m][n]);
+					image->WorldToImage(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
+					image->WorldToImage(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n]);
 				}
 			}
 		}
@@ -456,7 +458,7 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image,
 bool irtkViewer::Update2(irtkGreyImage *image,
 		irtkTransformation *transformation)
 {
-	double dx, dy, t;
+	double dx, dy, t1, t2;
 	int i, j, imax, jmax;
 	irtkFreeFormTransformation *affd = NULL;
 	irtkMultiLevelFreeFormTransformation *mffd = NULL;
@@ -474,8 +476,7 @@ bool irtkViewer::Update2(irtkGreyImage *image,
 			_NumberOfY = 0;
 			return false;
 		}
-	}
-	else {
+	} else {
 		affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
 	}
 
@@ -489,7 +490,8 @@ bool irtkViewer::Update2(irtkGreyImage *image,
 	dy = (this->GetHeight() - 40) / (double) _NumberOfY;
 
 	// Find out time
-	t = image->ImageToTime(0);
+	t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
+	t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
 
 	for (j = 0; j < jmax; j++) {
 		for (i = 0; i < imax; i++) {
@@ -515,23 +517,18 @@ bool irtkViewer::Update2(irtkGreyImage *image,
 
 			image->ImageToWorld(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j]);
 			if (mffd != NULL) {
-				if (_rview->_sourceTransformInvert == true) {
-					mffd->Inverse(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t);
-					mffd->irtkAffineTransformation::Transform(_AfterX[i][j],
-							_AfterY[i][j], _AfterZ[i][j], t);
+				if (_rview->GetSourceTransformInvert()) {
+					mffd->Inverse(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+					mffd->irtkAffineTransformation::Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j]);
+				} else {
+					mffd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+					mffd->irtkAffineTransformation::Inverse(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j]);
 				}
-				else {
-					mffd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t);
-					mffd->irtkAffineTransformation::Inverse(_AfterX[i][j], _AfterY[i][j],
-							_AfterZ[i][j], t);
-				}
-			}
-			else {
-				if (_rview->_sourceTransformInvert == true) {
-					affd->Inverse(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t);
-				}
-				else {
-					affd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t);
+			} else {
+				if (_rview->GetSourceTransformInvert()) {
+					affd->Inverse(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+				} else {
+					affd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
 				}
 			}
 
@@ -547,8 +544,7 @@ bool irtkViewer::Update(irtkGreyImage *image,
 {
 	if (_rview->_DisplayDeformationGridResolution == 0) {
 		return this->Update1(image, transformation);
-	}
-	else {
+	} else {
 		return this->Update2(image, transformation);
 	}
 }

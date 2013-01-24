@@ -232,12 +232,10 @@ void irtkRView::Update()
       _sourceTransformFilter[l]->PutSourcePaddingValue(-1);
       _sourceTransformFilter[l]->Run();
     }
-    if ((_segmentationUpdate == true)
-        && (_segmentationImage->IsEmpty() != true)) {
+    if ((_segmentationUpdate == true) && (_segmentationImage->IsEmpty() != true)) {
       _segmentationTransformFilter[l]->Run();
     }
-    if ((_selectionUpdate == true)
-        && (_voxelContour._raster->IsEmpty() != true)) {
+    if ((_selectionUpdate == true) && (_voxelContour._raster->IsEmpty() != true)) {
       _selectionTransformFilter[l]->Run();
     }
   }
@@ -502,7 +500,7 @@ void irtkRView::Draw()
     // Draw tag grid if needed
     if (_ViewTAG == true) {
       // Update grid information based on landmarks
-      if(_viewer[k]->UpdateTagGrid(_sourceImageOutput[k], _sourceTransform,_targetLandmarks) == true)
+      if(_viewer[k]->UpdateTagGrid(_sourceImageOutput[k], _sourceTransform, _targetLandmarks) == true)
         // If there are 4 landmarks
         _viewer[k]->DrawTagGrid();
     }
@@ -1874,8 +1872,10 @@ void irtkRView::ReadTransformation(char *name)
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      //_sourceTransformFilter[i]->CacheOn(_targetImageOutput[i]->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
     _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
     _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
@@ -2347,8 +2347,10 @@ void irtkRView::Configure(irtkRViewConfig config[])
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      //_sourceTransformFilter[i]->CacheOn(_targetImage->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
     _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
     _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
@@ -2548,89 +2550,65 @@ void irtkRView::GetTransformationText(list<char *> &text)
 {
   int i;
   char *ptr, buffer[256];
+  const char *name;
   double dx, dy, dz, dt;
 
-  ptr = NULL;
-  if (strcmp(_sourceTransform->NameOfClass(), "irtkRigidTransformation") == 0) {
+  ptr  = NULL;
+  name = _sourceTransform->NameOfClass();
+  if (strcmp(name, "irtkRigidTransformation") == 0) {
     ptr = strdup("Rigid transformation (6 DOF)");
+  } else if (strcmp(name, "irtkAffineTransformation") == 0) {
+    ptr = strdup("Affine transformation (12 DOF)");
+  } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation") == 0) {
+    ptr = strdup("Affine transformation (12 DOF)");
+  } else if (strcmp(name, "irtkFluidFreeFormTransformation") == 0) {
+    ptr = strdup("Affine transformation (12 DOF)");
+  } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation4D") == 0) {
+    ptr = strdup("Affine transformation (12 DOF)");
+  } else if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
+    irtkBSplineFreeFormTransformation4D *ffd = dynamic_cast<irtkBSplineFreeFormTransformation4D *> (_sourceTransform);
+    ffd->GetSpacing(dx, dy, dz, dt);
+    sprintf(buffer, "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+    ptr = strdup(buffer);
+  } else if (strcmp(name, "irtkBSplineFreeFormTransformationTD") == 0) {
+    irtkBSplineFreeFormTransformationTD *ffd = dynamic_cast<irtkBSplineFreeFormTransformationTD *> (_sourceTransform);
+    ffd->GetSpacing(dx, dy, dz, dt);
+    sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+    ptr = strdup(buffer);
   } else {
-    if (strcmp(_sourceTransform->NameOfClass(), "irtkAffineTransformation") == 0) {
-      ptr = strdup("Affine transformation (12 DOF)");
-    } else {
-      if (strcmp(_sourceTransform->NameOfClass(),
-                 "irtkMultiLevelFreeFormTransformation") == 0) {
-        ptr = strdup("Affine transformation (12 DOF)");
-      } else {
-        if (strcmp(_sourceTransform->NameOfClass(),
-                   "irtkFluidFreeFormTransformation") == 0) {
-          ptr = strdup("Affine transformation (12 DOF)");
-        } else {
-          if (strcmp(_sourceTransform->NameOfClass(),
-                     "irtkMultiLevelFreeFormTransformation4D") == 0) {
-            ptr = strdup("Affine transformation (12 DOF)");
-          } else {
-            ptr = strdup("Unknown transformation type");
-          }
-        }
-      }
-    }
+    sprintf(buffer, "Unknown transformation type (%s)", _sourceTransform->NameOfClass());
+    ptr = strdup(buffer);
   }
   text.push_back(ptr);
 
   // Convert transformation
-  irtkMultiLevelFreeFormTransformation *mffd =
-    dynamic_cast<irtkMultiLevelFreeFormTransformation *> (_sourceTransform);
+  irtkMultiLevelFreeFormTransformation *mffd = dynamic_cast<irtkMultiLevelFreeFormTransformation *> (_sourceTransform);
 
   if (mffd != NULL) {
     for (i = 0; i < mffd->NumberOfLevels(); i++) {
-      if (strcmp(mffd->GetLocalTransformation(i)->NameOfClass(),
-                 "irtkBSplineFreeFormTransformation4D") == 0) {
-        irtkBSplineFreeFormTransformation4D
-        *ffd =
-          dynamic_cast<irtkBSplineFreeFormTransformation4D *> (mffd->GetLocalTransformation(
-                i));
+      name = mffd->GetLocalTransformation(i)->NameOfClass();
+      if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
+        irtkBSplineFreeFormTransformation4D *ffd = dynamic_cast<irtkBSplineFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz, dt);
-        sprintf(buffer,
-                "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)",
-                ffd->NumberOfDOFs(), dx, dy, dz, dt);
+        sprintf(buffer, "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+      } else if (strcmp(name, "irtkBSplineFreeFormTransformationTD") == 0) {
+        irtkBSplineFreeFormTransformationTD *ffd = dynamic_cast<irtkBSplineFreeFormTransformationTD *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz, dt);
+        sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+      } else if (strcmp(name, "irtkBSplineFreeFormTransformation3D") == 0) {
+        irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+      } else if (strcmp(name, "irtkLinearFreeFormTransformation") == 0) {
+        irtkLinearFreeFormTransformation *ffd = dynamic_cast<irtkLinearFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
+        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
       } else {
-        if (strcmp(mffd->GetLocalTransformation(i)->NameOfClass(),
-                   "irtkBSplineFreeFormTransformation3D") == 0) {
-          irtkBSplineFreeFormTransformation
-          *ffd =
-            dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(
-                  i));
-          ffd->GetSpacing(dx, dy, dz);
-          sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)",
-                  ffd->NumberOfDOFs(), dx, dy, dz);
-        } else {
-          if (strcmp(mffd->GetLocalTransformation(i)->NameOfClass(),
-                     "irtkLinearFreeFormTransformation") == 0) {
-            irtkLinearFreeFormTransformation
-            *ffd =
-              dynamic_cast<irtkLinearFreeFormTransformation *> (mffd->GetLocalTransformation(
-                    i));
-            ffd->GetSpacing(dx, dy, dz);
-            sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)",
-                    ffd->NumberOfDOFs(), dx, dy, dz);
-          } else {
-            if (strcmp(mffd->GetLocalTransformation(i)->NameOfClass(),
-                       "irtkEigenFreeFormTransformation") == 0) {
-              irtkEigenFreeFormTransformation
-              *ffd =
-                dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(
-                      i));
-              ffd->GetSpacing(dx, dy, dz);
-              sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)",
-                      ffd->NumberOfDOFs(), dx, dy, dz);
-            } else {
-              cerr
-              << "irtkRView::GetTransformationText: Unknown transformation type"
-              << endl;
-              exit(1);
-            }
-          }
-        }
+        sprintf(buffer, "Unknown transformation type (%s)", name);
       }
       ptr = strdup(buffer);
       text.push_back(ptr);
@@ -2700,15 +2678,15 @@ void irtkRView::Initialize()
     }
     _targetTransformFilter[i]->SetInput(_targetImage);
     _targetTransformFilter[i]->SetOutput(_targetImageOutput[i]);
-    _targetTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_targetMax
-        - _targetMin), -_targetMin * 10000.0 / (_targetMax - _targetMin));
+    _targetTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_targetMax - _targetMin),
+                                                       -_targetMin * 10000.0 / (_targetMax - _targetMin));
     _sourceTransformFilter[i]->SetInput(_sourceImage);
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
-    _sourceTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_sourceMax
-        - _sourceMin), -_sourceMin * 10000.0 / (_sourceMax - _sourceMin));
-    attr._torigin = _targetFrame;
+    _sourceTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_sourceMax - _sourceMin),
+                                                       -_sourceMin * 10000.0 / (_sourceMax - _sourceMin));
+    _sourceTransformFilter[i]->PutInputTimeOffset(_targetImage->ImageToTime(_sourceFrame));
+    attr._torigin = _targetImage->ImageToTime(_targetFrame);
     _targetImageOutput[i]->Initialize(attr);
-    attr._torigin = _sourceFrame;
     _sourceImageOutput[i]->Initialize(attr);
     _segmentationImageOutput[i]->Initialize(attr);
     attr._torigin = 0;
@@ -2735,10 +2713,12 @@ void irtkRView::SetTargetFrame(int t)
   for (i = 0; i < _NoOfViewers; i++) {
     _targetImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
     _targetImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
+    _sourceImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
   }
 
   // Update of target is required
   _targetUpdate = true;
+  if (_sourceTransformApply) _sourceUpdate = true;
 }
 
 int irtkRView::GetTargetFrame()
@@ -2758,11 +2738,10 @@ void irtkRView::SetSourceFrame(int t)
   // Update source frame
   _sourceFrame = t;
 
-  // Update source origin
+  // Update source output offset
   torigin = _targetImage->ImageToTime(t);
   for (i = 0; i < _NoOfViewers; i++) {
-    _sourceImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
-    _sourceImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
+    _sourceTransformFilter[i]->PutInputTimeOffset(torigin);
   }
 
   // Update of source is required
@@ -2876,8 +2855,10 @@ void irtkRView::SetSourceTransformApply(bool value)
   for (i = 0; i < _NoOfViewers; i++) {
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      //_sourceTransformFilter[i]->CacheOn(_targetImage->GetImageAttributes()); // FIXME
     } else {
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      //_sourceTransformFilter[i]->CacheOff(); // FIXME
     }
   }
   _sourceUpdate = true;
