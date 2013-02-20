@@ -2687,12 +2687,13 @@ void irtkRView::Initialize()
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
     _sourceTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_sourceMax - _sourceMin),
                                                        -_sourceMin * 10000.0 / (_sourceMax - _sourceMin));
-    _sourceTransformFilter[i]->PutInputTimeOffset(_targetImage->ImageToTime(_sourceFrame));
+    _sourceTransformFilter[i]->PutOutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - _sourceImage->ImageToTime(_sourceFrame));
     attr._torigin = _targetImage->ImageToTime(_targetFrame);
     _targetImageOutput[i]->Initialize(attr);
+    attr._torigin = _sourceImage->ImageToTime(_sourceFrame);
     _sourceImageOutput[i]->Initialize(attr);
+    attr._torigin = 0; // TODO
     _segmentationImageOutput[i]->Initialize(attr);
-    attr._torigin = 0;
     _selectionImageOutput[i]->Initialize(attr);
   }
 
@@ -2716,7 +2717,7 @@ void irtkRView::SetTargetFrame(int t)
   for (i = 0; i < _NoOfViewers; i++) {
     _targetImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
     _targetImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
-    _sourceImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
+    _sourceTransformFilter[i]->PutOutputTimeOffset(torigin - _sourceImage->ImageToTime(_sourceFrame));
   }
 
   // Update of target is required
@@ -2734,17 +2735,17 @@ void irtkRView::SetSourceFrame(int t)
   int i;
   double xorigin, yorigin, zorigin, torigin;
 
-  if(t >= _sourceImage->GetT()){
-      t = _sourceImage->GetT() - 1;
-  }
+  if (t >= _sourceImage->GetT()) t = _sourceImage->GetT() - 1;
 
   // Update source frame
   _sourceFrame = t;
 
-  // Update source output offset
-  torigin = _targetImage->ImageToTime(t);
+  // Update source input offset
+  torigin = _sourceImage->ImageToTime(t);
   for (i = 0; i < _NoOfViewers; i++) {
-    _sourceTransformFilter[i]->PutInputTimeOffset(torigin);
+    _sourceImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
+    _sourceImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
+    _sourceTransformFilter[i]->PutOutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - torigin);
   }
 
   // Update of source is required
