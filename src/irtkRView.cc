@@ -583,8 +583,6 @@ void irtkRView::SetOrigin(int i, int j)
         && (_origin_y < y2)) {
       _origin_x = (_origin_x - x1) / (x2 - x1) * _viewer[k]->GetWidth();
       _origin_y = (_origin_y - y1) / (y2 - y1) * _viewer[k]->GetHeight();
-      _origin_x = _origin_x;
-      _origin_y = _origin_y;
       _origin_z = 0;
       _targetImageOutput[k]->ImageToWorld(_origin_x, _origin_y, _origin_z);
     }
