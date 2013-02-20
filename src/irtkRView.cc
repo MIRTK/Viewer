@@ -2562,6 +2562,11 @@ void irtkRView::GetTransformationText(list<char *> &text)
   } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation4D") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
+    irtkBSplineFreeFormTransformationSV *ffd = dynamic_cast<irtkBSplineFreeFormTransformationSV *> (_sourceTransform);
+    ffd->GetSpacing(dx, dy, dz);
+    sprintf(buffer, "SV B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+    ptr = strdup(buffer);
+  } else if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
     irtkBSplineFreeFormTransformation4D *ffd = dynamic_cast<irtkBSplineFreeFormTransformation4D *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz, dt);
     sprintf(buffer, "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
@@ -2591,6 +2596,10 @@ void irtkRView::GetTransformationText(list<char *> &text)
         irtkBSplineFreeFormTransformationTD *ffd = dynamic_cast<irtkBSplineFreeFormTransformationTD *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz, dt);
         sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+      } else if (strcmp(name, "irtkBSplineFreeFormTransformationSV") == 0) {
+        irtkBSplineFreeFormTransformationSV *ffd = dynamic_cast<irtkBSplineFreeFormTransformationSV *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "SV B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
       } else if (strcmp(name, "irtkBSplineFreeFormTransformation3D") == 0) {
         irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
