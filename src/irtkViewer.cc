@@ -188,6 +188,93 @@ irtkViewer::~irtkViewer()
 {
 }
 
+bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transformation, irtkPointSet landmark)
+{
+  if (landmark.Size() != 3) return false;
+
+  irtkFreeFormTransformation   *affd = NULL;
+  irtkMultiLevelTransformation *mffd = NULL;
+  irtkPoint p1, p2;
+  double dx1, dy1, dx2, dy2, dz, x, y, t1, t2;
+  int i, k, k1, k2, m, n;
+
+  // Convert landmarks to image coordinates
+  for (i = 0; i < landmark.Size(); i++) image->WorldToImage(landmark(i));
+
+  // Check transformation
+  mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
+
+  if (mffd == NULL) {
+    // Not an multi-level FFD, so let's try a single-level FFD
+    affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
+  } else {
+    affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
+  }
+
+  // Find out time
+  if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
+    t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
+  } else {
+    t1 = affd->LatticeToTime(0);
+  }
+  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
+    t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
+  } else {
+    t2 = affd->LatticeToTime(affd->GetT() - 1);
+  }
+
+  cout << "irtkViewer::UpdateTagGrid: t1 = " << t1 << ", t2 = " << t2 << endl;
+
+  if      (mffd != NULL) mffd->SetSourceTime(t2);
+  else if (affd != NULL) affd->SetSourceTime(t2);
+
+  // Find out first corner of ROI
+  landmark.BoundingBox(p1, p2);
+  k1 = round(p1._z);
+  k2 = round(p2._z);
+
+  _NumberOfGridX = 13;
+  _NumberOfGridY = 13;
+
+  dx1 = (landmark(1)._x - landmark(0)._x) / 12.0;
+  dy1 = (landmark(1)._y - landmark(0)._y) / 12.0;
+  dx2 = (landmark(2)._x - landmark(1)._x) / 12.0;
+  dy2 = (landmark(2)._y - landmark(1)._y) / 12.0;
+  dz  = (k2 - k1) / 12;
+
+  if (dz < 1) dz = 1;
+
+  for (k = k1; k <= k2; k = k + dz) {
+    for (m = 0; m < 13; m++) {
+      for (n = 0; n < 13; n++) {
+        x = landmark(0)._x + dx1 * n + dx2 * m;
+        y = landmark(0)._y + dy1 * n + dy2 * m;
+
+        _BeforeGridX[m][n] = x;
+        _BeforeGridY[m][n] = y;
+        _BeforeGridZ[m][n] = k;
+        image->ImageToWorld(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
+
+        _AfterGridX[m][n] = _BeforeGridX[m][n];
+        _AfterGridY[m][n] = _BeforeGridY[m][n];
+        _AfterGridZ[m][n] = _BeforeGridZ[m][n];
+        if (_rview->GetSourceTransformApply()) {
+          if (mffd != NULL) {
+            mffd->LocalTransform(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
+          } else if (affd != NULL) {
+            affd->Transform     (_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
+          }
+        }
+
+        image->WorldToImage(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
+        image->WorldToImage(_AfterGridX [m][n], _AfterGridY [m][n], _AfterGridZ [m][n]);
+      }
+    }
+  }
+
+  return true;
+}
+
 bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformation)
 {
 	irtkFreeFormTransformation   *affd = NULL;
@@ -357,93 +444,6 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformatio
 		}
 	}
 	return true;
-}
-
-bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transformation, irtkPointSet landmark)
-{
-	if (landmark.Size() != 3) return false;
-
-  irtkFreeFormTransformation   *affd = NULL;
-  irtkMultiLevelTransformation *mffd = NULL;
-  irtkPoint p1, p2;
-  double dx1, dy1, dx2, dy2, dz, x, y, t1, t2;
-  int i, k, k1, k2, m, n;
-
-  // Convert landmarks to image coordinates
-  for (i = 0; i < landmark.Size(); i++) image->WorldToImage(landmark(i));
-
-  // Check transformation
-  mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
-
-  if (mffd == NULL) {
-    // Not an multi-level FFD, so let's try a single-level FFD
-    affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
-  } else {
-    affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
-  }
-
-  // Find out time
-  if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
-    t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
-  } else {
-    t1 = affd->LatticeToTime(0);
-  }
-  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
-    t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
-  } else {
-    t2 = affd->LatticeToTime(affd->GetT() - 1);
-  }
-
-  cout << "irtkViewer::UpdateTagGrid: t1 = " << t1 << ", t2 = " << t2 << endl;
-
-  if      (mffd != NULL) mffd->SetSourceTime(t2);
-  else if (affd != NULL) affd->SetSourceTime(t2);
-
-  // Find out first corner of ROI
-  landmark.BoundingBox(p1, p2);
-  k1 = round(p1._z);
-  k2 = round(p2._z);
-
-  _NumberOfGridX = 13;
-  _NumberOfGridY = 13;
-
-  dx1 = (landmark(1)._x - landmark(0)._x) / 12.0;
-  dy1 = (landmark(1)._y - landmark(0)._y) / 12.0;
-  dx2 = (landmark(2)._x - landmark(1)._x) / 12.0;
-  dy2 = (landmark(2)._y - landmark(1)._y) / 12.0;
-  dz  = (k2 - k1) / 12;
-
-  if (dz < 1) dz = 1;
-
-  for (k = k1; k <= k2; k = k + dz) {
-    for (m = 0; m < 13; m++) {
-      for (n = 0; n < 13; n++) {
-        x = landmark(0)._x + dx1 * n + dx2 * m;
-        y = landmark(0)._y + dy1 * n + dy2 * m;
-
-        _BeforeGridX[m][n] = x;
-        _BeforeGridY[m][n] = y;
-        _BeforeGridZ[m][n] = k;
-        image->ImageToWorld(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
-
-        _AfterGridX[m][n] = _BeforeGridX[m][n];
-        _AfterGridY[m][n] = _BeforeGridY[m][n];
-        _AfterGridZ[m][n] = _BeforeGridZ[m][n];
-        if (_rview->GetSourceTransformApply()) {
-          if (mffd != NULL) {
-            mffd->LocalTransform(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
-          } else if (affd != NULL) {
-            affd->Transform     (_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
-          }
-        }
-
-        image->WorldToImage(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
-        image->WorldToImage(_AfterGridX [m][n], _AfterGridY [m][n], _AfterGridZ [m][n]);
-      }
-    }
-  }
-
-  return true;
 }
 
 bool irtkViewer::Update2(irtkGreyImage *image, irtkTransformation *transformation)
