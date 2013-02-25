@@ -32,24 +32,27 @@
 // Define some global variables. These variables should NOT be used by
 // any other classes. Perhaps they should be static members.
 
-int _NumberOfX;
-int _NumberOfY;
-double _AfterX[MaxNumberOfCP][MaxNumberOfCP];
-double _AfterY[MaxNumberOfCP][MaxNumberOfCP];
-double _AfterZ[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeX[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeY[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeZ[MaxNumberOfCP][MaxNumberOfCP];
-_Status _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
+static int _NumberOfX;
+static int _NumberOfY;
+static double _BeforeX[MaxNumberOfCP][MaxNumberOfCP];
+static double _BeforeY[MaxNumberOfCP][MaxNumberOfCP];
+static double _BeforeZ[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterX[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterY[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterZ[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterGridX[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterGridY[MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterGridZ[MaxNumberOfCP][MaxNumberOfCP];
+static _Status _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
 
-int _NumberOfGridX;
-int _NumberOfGridY;
-double _AfterGridX[MaxNumberOfCP][MaxNumberOfCP];
-double _AfterGridY[MaxNumberOfCP][MaxNumberOfCP];
-double _AfterGridZ[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeGridX[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeGridY[MaxNumberOfCP][MaxNumberOfCP];
-double _BeforeGridZ[MaxNumberOfCP][MaxNumberOfCP];
+static int _NumberOfTagGridX;
+static int _NumberOfTagGridY;
+static double _AfterTagGridX [MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterTagGridY [MaxNumberOfCP][MaxNumberOfCP];
+static double _AfterTagGridZ [MaxNumberOfCP][MaxNumberOfCP];
+static double _BeforeTagGridX[MaxNumberOfCP][MaxNumberOfCP];
+static double _BeforeTagGridY[MaxNumberOfCP][MaxNumberOfCP];
+static double _BeforeTagGridZ[MaxNumberOfCP][MaxNumberOfCP];
 
 // Define the default color scheme
 #define COLOR_GRID             glColor3f(1, 1, 0)
@@ -233,8 +236,8 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   k1 = round(p1._z);
   k2 = round(p2._z);
 
-  _NumberOfGridX = 13;
-  _NumberOfGridY = 13;
+  _NumberOfTagGridX = 13;
+  _NumberOfTagGridY = 13;
 
   dx1 = (landmark(1)._x - landmark(0)._x) / 12.0;
   dy1 = (landmark(1)._y - landmark(0)._y) / 12.0;
@@ -250,24 +253,24 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
         x = landmark(0)._x + dx1 * n + dx2 * m;
         y = landmark(0)._y + dy1 * n + dy2 * m;
 
-        _BeforeGridX[m][n] = x;
-        _BeforeGridY[m][n] = y;
-        _BeforeGridZ[m][n] = k;
-        image->ImageToWorld(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
+        _BeforeTagGridX[m][n] = x;
+        _BeforeTagGridY[m][n] = y;
+        _BeforeTagGridZ[m][n] = k;
+        image->ImageToWorld(_BeforeTagGridX[m][n], _BeforeTagGridY[m][n], _BeforeTagGridZ[m][n]);
 
-        _AfterGridX[m][n] = _BeforeGridX[m][n];
-        _AfterGridY[m][n] = _BeforeGridY[m][n];
-        _AfterGridZ[m][n] = _BeforeGridZ[m][n];
+        _AfterTagGridX[m][n] = _BeforeTagGridX[m][n];
+        _AfterTagGridY[m][n] = _BeforeTagGridY[m][n];
+        _AfterTagGridZ[m][n] = _BeforeTagGridZ[m][n];
         if (_rview->GetSourceTransformApply()) {
           if (mffd != NULL) {
-            mffd->LocalTransform(_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
+            mffd->LocalTransform(_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1);
           } else if (affd != NULL) {
-            affd->Transform     (_AfterGridX[m][n], _AfterGridY[m][n], _AfterGridZ[m][n], t1);
+            affd->Transform     (_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1);
           }
         }
 
-        image->WorldToImage(_BeforeGridX[m][n], _BeforeGridY[m][n], _BeforeGridZ[m][n]);
-        image->WorldToImage(_AfterGridX [m][n], _AfterGridY [m][n], _AfterGridZ [m][n]);
+        image->WorldToImage(_BeforeTagGridX[m][n], _BeforeTagGridY[m][n], _BeforeTagGridZ[m][n]);
+        image->WorldToImage(_AfterTagGridX [m][n], _AfterTagGridY [m][n], _AfterTagGridZ [m][n]);
       }
     }
   }
@@ -275,59 +278,24 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   return true;
 }
 
-bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformation)
+bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mffd, irtkFreeFormTransformation *affd, double t1, double t2)
 {
-	irtkFreeFormTransformation   *affd = NULL;
-	irtkMultiLevelTransformation *mffd = NULL;
-	double x1, y1, z1, t1, x2, y2, z2, t2;
-	int    i1, j1, k1,     i2, j2, k2;
+	double x1, y1, z1, x2, y2, z2;
+	int    i1, j1, k1, i2, j2, k2;
 	int    index, i, j, k, m, n;
 
-	// Check transformation
-	mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
-
-	if (mffd == NULL) {
-		// Not a multi-level FFD, so let's try a single-level FFD
-		affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
-
-		if (affd == NULL) {
-			// Not a single-level FFD either, so let's give up
-			_NumberOfX = 0;
-			_NumberOfY = 0;
-			return false;
-		}
-	} else {
-		affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
-	}
-
-	if ((affd->GetX() >= MaxNumberOfCP) || (affd->GetY() >= MaxNumberOfCP) || (affd->GetZ() >= MaxNumberOfCP)) {
-		cerr << "Too many control points" << endl;
-		exit(1);
-	}
-
-	// Find out time
-	if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
-	  t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
-	} else {
-	  t1 = affd->LatticeToTime(0);
-	}
-	if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
-	  t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
-	} else {
-	  t2 = affd->LatticeToTime(affd->GetT() - 1);
-	}
-
-	cout << "irtkViewer::Update1: t1 = " << t1 << ", t2 = " << t2 << endl;
-
-	if (mffd != NULL) mffd->SetSourceTime(t2);
-	else              affd->SetSourceTime(t2);
+  // Check number of control points
+  if ((affd->GetX() >= MaxNumberOfCP) || (affd->GetY() >= MaxNumberOfCP) || (affd->GetZ() >= MaxNumberOfCP)) {
+    cerr << "Transformation has too many control points" << endl;
+    exit(1);
+  }
 
 	// Find out first corner of ROI
 	x1 = 0;
 	y1 = 0;
 	z1 = 0;
-	image->ImageToWorld(x1, y1, z1);
-	affd->WorldToLattice(x1, y1, z1);
+	image->ImageToWorld  (x1, y1, z1);
+	affd ->WorldToLattice(x1, y1, z1);
 	i1 = round(x1);
 	j1 = round(y1);
 	k1 = round(z1);
@@ -343,8 +311,8 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformatio
 	x2 = image->GetX() - 1;
 	y2 = image->GetY() - 1;
 	z2 = 0;
-	image->ImageToWorld(x2, y2, z2);
-	affd->WorldToLattice(x2, y2, z2);
+	image->ImageToWorld  (x2, y2, z2);
+	affd ->WorldToLattice(x2, y2, z2);
 	i2 = round(x2);
 	j2 = round(y2);
 	k2 = round(z2);
@@ -446,58 +414,20 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkTransformation *transformatio
 	return true;
 }
 
-bool irtkViewer::Update2(irtkGreyImage *image, irtkTransformation *transformation)
+bool irtkViewer::Update2(irtkGreyImage *image, irtkMultiLevelTransformation *mffd, irtkFreeFormTransformation *affd, double t1, double t2)
 {
-	irtkFreeFormTransformation   *affd = NULL;
-	irtkMultiLevelTransformation *mffd = NULL;
-	int    i, j, imax, jmax;
-	double dx, dy, t1, t2;
-
-	// Check transformation
-	mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
-
-	if (mffd == NULL) {
-		// Not an multi-level FFD, so let's try a single-level FFD
-		affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
-
-		if (affd == NULL) {
-			// Not a single-level FFD either, so let's give up
-			_NumberOfX = 0;
-			_NumberOfY = 0;
-			return false;
-		}
-	} else {
-		affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
-	}
+	double dx, dy;
+	int    i, j;
 
 	dx = _rview->_DisplayDeformationGridResolution;
 	dy = _rview->_DisplayDeformationGridResolution;
-	_NumberOfX = round((this->GetWidth() - 40) / (double) dx);
-	_NumberOfY = round((this->GetHeight() - 40) / (double) dy);
-	imax = _NumberOfX;
-	jmax = _NumberOfY;
-	dx = (this->GetWidth() - 40) / (double) _NumberOfX;
-	dy = (this->GetHeight() - 40) / (double) _NumberOfY;
+	_NumberOfX = round(static_cast<double>(this->GetWidth()  - 40) / dx);
+	_NumberOfY = round(static_cast<double>(this->GetHeight() - 40) / dy);
+	dx = (this->GetWidth()  - 40) / static_cast<double>(_NumberOfX);
+	dy = (this->GetHeight() - 40) / static_cast<double>(_NumberOfY);
 
-	// Find out time
-	if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
-    t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
-  } else {
-    t1 = affd->LatticeToTime(0);
-  }
-  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
-    t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
-  } else {
-    t2 = affd->LatticeToTime(affd->GetT() - 1);
-  }
-
-  cout << "irtkViewer::Update2: t1 = " << t1 << ", t2 = " << t2 << endl;
-
-  if (mffd != NULL) mffd->SetSourceTime(t2);
-  else              affd->SetSourceTime(t2);
-
-	for (j = 0; j < jmax; j++) {
-		for (i = 0; i < imax; i++) {
+	for (j = 0; j < _NumberOfY; j++) {
+		for (i = 0; i < _NumberOfX; i++) {
 			_BeforeX[i][j] = i * dx + 20 + dx / 2.0;
 			_BeforeY[i][j] = j * dy + 20 + dy / 2.0;
 			_BeforeZ[i][j] = 0;
@@ -530,14 +460,93 @@ bool irtkViewer::Update2(irtkGreyImage *image, irtkTransformation *transformatio
 	return true;
 }
 
-bool irtkViewer::Update(irtkGreyImage *image,
-		irtkTransformation *transformation)
+bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation)
 {
-	if (_rview->_DisplayDeformationGridResolution == 0) {
-		return this->Update1(image, transformation);
-	} else {
-		return this->Update2(image, transformation);
-	}
+  // Cast input transformation to single-/multi-level FFD
+  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
+  irtkFreeFormTransformation   *affd = dynamic_cast<irtkFreeFormTransformation *>  (transformation);
+
+  // Give up if no FFD given as input
+  if (mffd == NULL && affd == NULL) {
+    _NumberOfX = 0;
+    _NumberOfY = 0;
+    return false;
+  }
+
+  // If multi-level FFD, set affd to FFD of final level
+  if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
+
+  // Determine time parameters for transformation
+  if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
+    t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
+  } else {
+    t1 = affd->LatticeToTime(0);
+  }
+  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
+    t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
+  } else {
+    t2 = affd->LatticeToTime(affd->GetT() - 1);
+  }
+
+  if (mffd != NULL) mffd->SetSourceTime(t2);
+  else              affd->SetSourceTime(t2);
+
+  cout << "irtkViewer::Update: t1 = " << t1 << ", t2 = " << t2 << endl; cout.flush();
+
+  // Compute (control) points before and after transformation
+  // (application of irtkTransformation::Transform or irtkTransformation::Inverse)
+  if (_rview->_DisplayDeformationGridResolution == 0) {
+    this->Update1(image, mffd, affd, t1, t2);
+  } else {
+    this->Update2(image, mffd, affd, t1, t2);
+  }
+
+  // Compute after points for visualization of (un-)deformed grid
+  for (int j = 0; j < _NumberOfY; j++) {
+    for (int i = 0; i < _NumberOfX; i++) {
+      _AfterGridX[i][j] = _BeforeX[i][j];
+      _AfterGridY[i][j] = _BeforeY[i][j];
+      _AfterGridZ[i][j] = _BeforeZ[i][j];
+    }
+  }
+  if (_rview->GetDisplayDeformationGrid()) {
+    // If source image is being viewed ...
+    if (_rview->GetViewMode() == View_B) {
+      // ... if transformation is applied, show inverse deformed grid
+      if (_rview->GetSourceTransformApply()) {
+        for (int j = 0; j < _NumberOfY; j++) {
+          for (int i = 0; i < _NumberOfX; i++) {
+            image->ImageToWorld(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j]);
+            if (mffd != NULL) {
+              if (_rview->GetSourceTransformInvert()) {
+                mffd->LocalTransform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+              } else {
+                mffd->LocalInverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+              }
+            } else {
+              if (_rview->GetSourceTransformInvert()) {
+                affd->Transform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+              } else {
+                affd->Inverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+              }
+            }
+            image->WorldToImage(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j]);
+          }
+        }
+      }
+    // By default, just copy after points for visualization of deformed grid
+    } else {
+      for (int j = 0; j < _NumberOfY; j++) {
+        for (int i = 0; i < _NumberOfX; i++) {
+          _AfterGridX[i][j] = _AfterX[i][j];
+          _AfterGridY[i][j] = _AfterY[i][j];
+          _AfterGridZ[i][j] = _AfterZ[i][j];
+        }
+      }
+    }
+  }
+
+  return true;
 }
 
 void irtkViewer::DrawCursor(irtkCursorMode mode)
@@ -668,6 +677,31 @@ void irtkViewer::DrawSegmentationContour(irtkGreyImage *image)
 	glLineWidth(1);
 }
 
+void irtkViewer::DrawTagGrid()
+{
+  int i, j;
+
+  // Set color
+  COLOR_GRID;
+  glLineWidth(_rview->GetLineThickness());
+
+  glBegin (GL_LINES);
+  for (j = 0; j < _NumberOfTagGridY; j++) {
+    for (i = 0; i < _NumberOfTagGridX - 1; i++) {
+      glVertex2f(_screenX1 + _AfterTagGridX[i    ][j], _screenY1 + _AfterTagGridY[i    ][j]);
+      glVertex2f(_screenX1 + _AfterTagGridX[i + 1][j], _screenY1 + _AfterTagGridY[i + 1][j]);
+    }
+  }
+  for (j = 0; j < _NumberOfTagGridY - 1; j++) {
+    for (i = 0; i < _NumberOfTagGridX; i++) {
+      glVertex2f(_screenX1 + _AfterTagGridX[i][j    ], _screenY1 + _AfterTagGridY[i][j    ]);
+      glVertex2f(_screenX1 + _AfterTagGridX[i][j + 1], _screenY1 + _AfterTagGridY[i][j + 1]);
+    }
+  }
+  glEnd();
+  glLineWidth(1);
+}
+
 void irtkViewer::DrawGrid()
 {
 	int i, j;
@@ -680,45 +714,18 @@ void irtkViewer::DrawGrid()
 	glBegin (GL_LINES);
 	for (j = 0; j < _NumberOfY; j++) {
 		for (i = 0; i < _NumberOfX - 1; i++) {
-			glVertex2f(_screenX1 + _AfterX[i][j], _screenY1 + _AfterY[i][j]);
-			glVertex2f(_screenX1 + _AfterX[i + 1][j], _screenY1 + _AfterY[i + 1][j]);
+			glVertex2f(_screenX1 + _AfterGridX[i    ][j], _screenY1 + _AfterGridY[i    ][j]);
+			glVertex2f(_screenX1 + _AfterGridX[i + 1][j], _screenY1 + _AfterGridY[i + 1][j]);
 		}
 	}
 	for (j = 0; j < _NumberOfY - 1; j++) {
 		for (i = 0; i < _NumberOfX; i++) {
-			glVertex2f(_screenX1 + _AfterX[i][j], _screenY1 + _AfterY[i][j]);
-			glVertex2f(_screenX1 + _AfterX[i][j + 1], _screenY1 + _AfterY[i][j + 1]);
+			glVertex2f(_screenX1 + _AfterGridX[i][j    ], _screenY1 + _AfterGridY[i][j    ]);
+			glVertex2f(_screenX1 + _AfterGridX[i][j + 1], _screenY1 + _AfterGridY[i][j + 1]);
 		}
 	}
 	glEnd();
 
-	glLineWidth(1);
-}
-
-void irtkViewer::DrawTagGrid()
-{
-	int i, j;
-
-	// Set color
-	COLOR_GRID;
-	glLineWidth(_rview->GetLineThickness());
-
-	glBegin (GL_LINES);
-	for (j = 0; j < _NumberOfGridY; j++) {
-		for (i = 0; i < _NumberOfGridX - 1; i++) {
-			glVertex2f(_screenX1 + _AfterGridX[i][j], _screenY1 + _AfterGridY[i][j]);
-			glVertex2f(_screenX1 + _AfterGridX[i + 1][j],
-					_screenY1 + _AfterGridY[i + 1][j]);
-		}
-	}
-	for (j = 0; j < _NumberOfGridY - 1; j++) {
-		for (i = 0; i < _NumberOfGridX; i++) {
-			glVertex2f(_screenX1 + _AfterGridX[i][j], _screenY1 + _AfterGridY[i][j]);
-			glVertex2f(_screenX1 + _AfterGridX[i][j + 1],
-					_screenY1 + _AfterGridY[i][j + 1]);
-		}
-	}
-	glEnd();
 	glLineWidth(1);
 }
 

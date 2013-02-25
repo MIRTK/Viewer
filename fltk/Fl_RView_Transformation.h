@@ -69,6 +69,7 @@ static void cb_editTransformation(Fl_Button*, void*);
 static void cb_editTransformationApply(Fl_Button*, void*);
 static void cb_editTransformationUpdate(Fl_Valuator*, void*);
 static void cb_editTransformationReset(Fl_Button*, void*);
+static void cb_deformationBlending(Fl_Slider*, void*);
 static void cb_viewDeformationGridResolution(Fl_Slider*, void*);
 static void cb_viewDeformationGrid(Fl_Button*, void*);
 static void cb_viewDeformationPoints(Fl_Button*, void*);

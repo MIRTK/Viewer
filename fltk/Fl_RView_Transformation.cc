@@ -335,6 +335,13 @@ void Fl_RViewUI::cb_viewDeformationGridResolution(Fl_Slider* o, void*)
   viewer->redraw();
 }
 
+void Fl_RViewUI::cb_deformationBlending(Fl_Slider* o, void*)
+{
+  rview->SetDisplayDeformationBlending(o->value());
+  rview->Update();
+  viewer->redraw();
+}
+
 void Fl_RViewUI::cb_viewDeformationGrid(Fl_Button* o, void*)
 {
   if (o->value() == 0) rview->DisplayDeformationGridOff();
@@ -383,6 +390,7 @@ void Fl_RViewUI::UpdateTransformationControlWindow()
   rviewUI->viewDeformationPoints->value(rview->GetDisplayDeformationPoints());
   rviewUI->viewDeformationArrows->value(rview->GetDisplayDeformationArrows());
   rviewUI->viewDeformationGridResolution->value(rview->GetDisplayDeformationGridResolution());
+  rviewUI->deformationBlending->value(rview->GetDisplayDeformationBlending());
 
   // Get transformation
   irtkTransformation *transform = rview->GetTransformation();
@@ -458,15 +466,15 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
       o->callback((Fl_Callback*)cb_viewDeformationArrows);
     }
     {
-      Fl_Check_Button *o  = viewDeformationGrid = new Fl_Check_Button(210, 510, 60, 20, "Deformation grid");
+      Fl_Check_Button *o  = viewDeformationGrid = new Fl_Check_Button(20, 540, 120, 20, "Deformation grid");
       o->callback((Fl_Callback*)cb_viewDeformationGrid);
     }
     {
-      Fl_Check_Button *o  = viewDeformationPoints = new Fl_Check_Button(20, 550, 120, 20, "Control points");
+      Fl_Check_Button *o  = viewDeformationPoints = new Fl_Check_Button(210, 510, 60, 20, "Control points");
       o->callback((Fl_Callback*)cb_viewDeformationPoints);
     }
     {
-      Fl_Value_Slider* o = viewDeformationGridResolution = new Fl_Value_Slider(10, 610, 380, 20, "Deformation field resolution");
+      Fl_Value_Slider* o = viewDeformationGridResolution = new Fl_Value_Slider(10, 590, 380, 20, "Deformation field resolution");
       o->step(1);
       o->minimum(0);
       o->maximum(40);
@@ -474,6 +482,17 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
       o->box(FL_EMBOSSED_BOX);
       o->align(FL_ALIGN_TOP_LEFT);
       o->callback((Fl_Callback*)cb_viewDeformationGridResolution);
+    }
+    {
+      Fl_Value_Slider* o = deformationBlending = new Fl_Value_Slider(10, 630, 380, 20, "Deformation fraction");
+      o->step(0.01);
+      o->minimum(0);
+      o->maximum(1);
+      o->value(1);
+      o->type(5);
+      o->box(FL_EMBOSSED_BOX);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->callback((Fl_Callback*)cb_deformationBlending);
     }
     o->end(); // End of deformation display controls
   }

@@ -104,7 +104,7 @@ irtkRView::irtkRView(int x, int y)
 
   // Default: Deformation properties
   _DeformationProperty = NoneDef;
-  _DeformationBlending = 0.5;
+  _DeformationBlending = 1.0;
 
   // Default: Axis labels
   _DisplayAxisLabels = true;
@@ -1799,30 +1799,23 @@ void irtkRView::ReadSegmentation(char *name)
 
 void irtkRView::WriteTarget(char *name)
 {
-  // Write target image
   _targetImage->Write(name);
 }
 
 void irtkRView::WriteSource(char *name)
 {
-  // Write transformed source image
   if (_sourceImage != NULL) {
     if ((_sourceTransformApply == true) && (_sourceTransform != NULL)) {
-      // Allocate the new transformed source and transformation filter
-      irtkGreyImage *transformedSource = new irtkGreyImage;
-      transformedSource->Initialize(_targetImage->GetImageAttributes());
-      irtkImageTransformation *imageTransformation =
-        new irtkImageTransformation;
+      // Allocate transformed source image
+      irtkGreyImage transformedSource(_targetImage->GetImageAttributes());
       // Transform source image
-      imageTransformation->SetInput(_sourceImage, _sourceTransform);
-      imageTransformation->SetOutput(transformedSource);
-      imageTransformation->PutInterpolator(_sourceInterpolator);
-      imageTransformation->Run();
-      // Write transformed image
-      transformedSource->Write(name);
-      // Be good
-      delete transformedSource;
-      delete imageTransformation;
+      irtkImageTransformation transformFilter;
+      transformFilter.SetInput(_sourceImage, _sourceTransform);
+      transformFilter.SetOutput(&transformedSource);
+      transformFilter.PutInterpolator(_sourceInterpolator);
+      transformFilter.Run();
+      // Write transformed source image
+      transformedSource.Write(name);
     } else {
       _sourceImage->Write(name);
     }
@@ -1831,7 +1824,6 @@ void irtkRView::WriteSource(char *name)
 
 void irtkRView::WriteSegmentation(char *name)
 {
-  // Write target image
   _segmentationImage->Write(name);
 }
 
@@ -1840,8 +1832,7 @@ void irtkRView::ReadTransformation(char *name)
   int i;
 
   // Delete the old transformation
-  if (_sourceTransform != NULL)
-    delete _sourceTransform;
+  if (_sourceTransform != NULL) delete _sourceTransform;
 
   // Allocate and read the new transformation
   _sourceTransform = irtkTransformation::New(name);

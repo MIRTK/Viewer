@@ -16,6 +16,8 @@
 
 class irtkRView;
 class irtkVoxelContour;
+class irtkMultiLevelTransformation;
+class irtkFreeFormTransformation;
 
 class irtkViewer
 {
@@ -55,14 +57,14 @@ public:
   /// Draw control points
   virtual void DrawPoints();
 
-  /// Draw control points as deformation arrows
-  virtual void DrawArrows ();
+  /// Draw tag grid derived from target landmarks
+  virtual void DrawTagGrid();
 
   /// Draw control points as deformation grid
   virtual void DrawGrid();
 
-  /// Draw tag grid derived from target landmarks
-  virtual void DrawTagGrid();
+  /// Draw control points as deformation arrows
+  virtual void DrawArrows();
 
   /// Draw landmarks
   void DrawLandmarks(irtkPointSet &, irtkGreyImage *, int = true);
@@ -82,17 +84,17 @@ public:
   /// Draw information about L/R, A/P, S/I on the viewer
   void DrawInfo(irtkDisplayMode);
 
+  /// Update Grid Pattern
+  bool UpdateTagGrid(irtkGreyImage *, irtkTransformation *, irtkPointSet);
+
   /// Update using control points
-  bool Update1(irtkGreyImage *, irtkTransformation *);
+  void Update1(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
 
   /// Update using display resolution
-  bool Update2(irtkGreyImage *, irtkTransformation *);
+  void Update2(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
 
   /// Update
   bool Update(irtkGreyImage *, irtkTransformation *);
-
-  /// Update Grid Pattern
-  bool UpdateTagGrid(irtkGreyImage *, irtkTransformation *, irtkPointSet);
 
   /// Get width of viewer
   int GetWidth();
