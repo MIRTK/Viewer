@@ -88,10 +88,10 @@ public:
   bool UpdateTagGrid(irtkGreyImage *, irtkTransformation *, irtkPointSet);
 
   /// Update using control points
-  void Update1(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
+  bool Update1(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
 
   /// Update using display resolution
-  void Update2(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
+  bool Update2(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
 
   /// Update
   bool Update(irtkGreyImage *, irtkTransformation *);

@@ -226,11 +226,6 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
     t2 = affd->LatticeToTime(affd->GetT() - 1);
   }
 
-  cout << "irtkViewer::UpdateTagGrid: t1 = " << t1 << ", t2 = " << t2 << endl;
-
-  if      (mffd != NULL) mffd->SetSourceTime(t2);
-  else if (affd != NULL) affd->SetSourceTime(t2);
-
   // Find out first corner of ROI
   landmark.BoundingBox(p1, p2);
   k1 = round(p1._z);
@@ -263,9 +258,9 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
         _AfterTagGridZ[m][n] = _BeforeTagGridZ[m][n];
         if (_rview->GetSourceTransformApply()) {
           if (mffd != NULL) {
-            mffd->LocalTransform(_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1);
+            mffd->LocalTransform(_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1, t2);
           } else if (affd != NULL) {
-            affd->Transform     (_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1);
+            affd->Transform     (_AfterTagGridX[m][n], _AfterTagGridY[m][n], _AfterTagGridZ[m][n], t1, t2);
           }
         }
 
@@ -381,15 +376,15 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				_AfterZ[m][n] = _BeforeZ[m][n];
 				if (mffd != NULL) {
           if (_rview->GetSourceTransformInvert()) {
-            mffd->LocalInverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1);
+            mffd->LocalInverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
           } else {
-            mffd->LocalTransform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1);
+            mffd->LocalTransform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
           }
         } else {
           if (_rview->GetSourceTransformInvert()) {
-            affd->Inverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1);
+            affd->Inverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
           } else {
-            affd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1);
+            affd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
           }
         }
 
@@ -411,6 +406,7 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 			}
 		}
 	}
+
 	return true;
 }
 
@@ -439,15 +435,15 @@ bool irtkViewer::Update2(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 
 			if (mffd != NULL) {
 				if (_rview->GetSourceTransformInvert()) {
-					mffd->LocalInverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1);
+					mffd->LocalInverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
 				} else {
-					mffd->LocalTransform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1);
+					mffd->LocalTransform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
 				}
 			} else {
 				if (_rview->GetSourceTransformInvert()) {
-					affd->Inverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1);
+					affd->Inverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
 				} else {
-					affd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1);
+					affd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
 				}
 			}
 
@@ -477,6 +473,7 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
   if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
 
   // Determine time parameters for transformation
+  double t1, t2;
   if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
     t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
   } else {
@@ -488,54 +485,54 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
     t2 = affd->LatticeToTime(affd->GetT() - 1);
   }
 
-  if (mffd != NULL) mffd->SetSourceTime(t2);
-  else              affd->SetSourceTime(t2);
-
-  cout << "irtkViewer::Update: t1 = " << t1 << ", t2 = " << t2 << endl; cout.flush();
+//  cout << "irtkViewer::Update: t1 = " << t1 << ", t2 = " << t2 << endl; cout.flush();
 
   // Compute (control) points before and after transformation
   // (application of irtkTransformation::Transform or irtkTransformation::Inverse)
+  bool ok = false;
   if (_rview->_DisplayDeformationGridResolution == 0) {
-    this->Update1(image, mffd, affd, t1, t2);
+    ok = this->Update1(image, mffd, affd, t1, t2);
   } else {
-    this->Update2(image, mffd, affd, t1, t2);
+    ok = this->Update2(image, mffd, affd, t1, t2);
   }
+  if (!ok) return false;
 
-  // Compute after points for visualization of (un-)deformed grid
-  for (int j = 0; j < _NumberOfY; j++) {
-    for (int i = 0; i < _NumberOfX; i++) {
-      _AfterGridX[i][j] = _BeforeX[i][j];
-      _AfterGridY[i][j] = _BeforeY[i][j];
-      _AfterGridZ[i][j] = _BeforeZ[i][j];
-    }
-  }
+  // Deformation grid visualization
   if (_rview->GetDisplayDeformationGrid()) {
-    // If source image is being viewed ...
+    // Copy points before transformation (space of target image)
+    for (int j = 0; j < _NumberOfY; j++) {
+      for (int i = 0; i < _NumberOfX; i++) {
+        _AfterGridX[i][j] = _BeforeX[i][j];
+        _AfterGridY[i][j] = _BeforeY[i][j];
+        _AfterGridZ[i][j] = _BeforeZ[i][j];
+      }
+    }
+    // If source image is being viewed, however, ...
     if (_rview->GetViewMode() == View_B) {
-      // ... if transformation is applied, show inverse deformed grid
+      // ... and if transformation is being applied, show inverse deformed grid
       if (_rview->GetSourceTransformApply()) {
         for (int j = 0; j < _NumberOfY; j++) {
           for (int i = 0; i < _NumberOfX; i++) {
             image->ImageToWorld(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j]);
             if (mffd != NULL) {
               if (_rview->GetSourceTransformInvert()) {
-                mffd->LocalTransform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+                mffd->LocalTransform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
               } else {
-                mffd->LocalInverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+                mffd->LocalInverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
               }
             } else {
               if (_rview->GetSourceTransformInvert()) {
-                affd->Transform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+                affd->Transform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
               } else {
-                affd->Inverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1);
+                affd->Inverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
               }
             }
             image->WorldToImage(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j]);
           }
         }
       }
-    // By default, just copy after points for visualization of deformed grid
     } else {
+      // By default, just copy points after transformation (space of source image)
       for (int j = 0; j < _NumberOfY; j++) {
         for (int i = 0; i < _NumberOfX; i++) {
           _AfterGridX[i][j] = _AfterX[i][j];

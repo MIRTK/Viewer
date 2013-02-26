@@ -484,7 +484,7 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
       o->callback((Fl_Callback*)cb_viewDeformationGridResolution);
     }
     {
-      Fl_Value_Slider* o = deformationBlending = new Fl_Value_Slider(10, 630, 380, 20, "Deformation fraction");
+      Fl_Value_Slider* o = deformationBlending = new Fl_Value_Slider(10, 630, 380, 20, "Deformation blending");
       o->step(0.01);
       o->minimum(0);
       o->maximum(1);

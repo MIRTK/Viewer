@@ -484,32 +484,30 @@ void irtkRView::Draw()
     _viewer[k]->Clip();
 
     // Draw iso-contours in target image if needed
-    if (_DisplayTargetContour == true) {
+    if (_DisplayTargetContour) {
       _viewer[k]->DrawIsolines(_targetImageOutput[k],
                                _targetLookupTable->GetMinDisplayIntensity());
     }
     // Draw iso-contours in source image if needed
-    if (_DisplaySourceContour == true) {
+    if (_DisplaySourceContour) {
       _viewer[k]->DrawIsolines(_sourceImageOutput[k],
                                _sourceLookupTable->GetMinDisplayIntensity());
     }
     // Draw segmentation if needed
-    if (_DisplaySegmentationContours == true) {
+    if (_DisplaySegmentationContours) {
       _viewer[k]->DrawSegmentationContour(_segmentationImageOutput[k]);
     }
     // Draw tag grid if needed
-    if (_ViewTAG == true) {
+    if (_ViewTAG) {
       // Update grid information based on landmarks
-      if(_viewer[k]->UpdateTagGrid(_sourceImageOutput[k], _sourceTransform, _targetLandmarks) == true)
+      if(_viewer[k]->UpdateTagGrid(_sourceImageOutput[k], _sourceTransform, _targetLandmarks))
         // If there are 4 landmarks
         _viewer[k]->DrawTagGrid();
     }
 
     // Update image viewer if necessary
-    if ((_DisplayDeformationGrid == true)
-        || (_DisplayDeformationPoints == true) || (_DisplayDeformationArrows
-            == true)) {
-      if (_viewer[k]->Update(_sourceImageOutput[k], _sourceTransform) == true) {
+    if (_DisplayDeformationGrid || _DisplayDeformationPoints || _DisplayDeformationArrows) {
+      if (_viewer[k]->Update(_sourceImageOutput[k], _sourceTransform)) {
 
         // Draw deformation grid if needed
         if (_DisplayDeformationGrid == true) {
@@ -527,28 +525,28 @@ void irtkRView::Draw()
     }
 
     // Draw landmarks if needed (true: red, false: green)
-    if (_DisplayLandmarks == true) {
+    if (_DisplayLandmarks) {
       _viewer[k]->DrawLandmarks(_targetLandmarks, _targetImageOutput[k], true);
       _viewer[k]->DrawLandmarks(_sourceLandmarks, _targetImageOutput[k], false);
     }
 
     // Draw ROI if needed
-    if (_DisplayROI == true) {
+    if (_DisplayROI) {
       _viewer[k]->DrawROI(_targetImageOutput[k], _x1, _y1, _z1, _x2, _y2, _z2);
     }
 
 #ifdef HAS_VTK
     // Draw  object if needed
-    if (_DisplayObject == true) {
-        if(_ObjectMovie == true){
+    if (_DisplayObject) {
+        if(_ObjectMovie) {
             int _objectFrame = 0;
-            if(_targetFrame > _NoOfObjects - 1){
+            if (_targetFrame > _NoOfObjects - 1){
                 _objectFrame = _NoOfObjects - 1;
-            }else{
+            } else{
                 _objectFrame = _targetFrame;
             }
             _viewer[k]->DrawObject(_Object[_objectFrame], _targetImageOutput[k]);
-        }else{
+        } else{
           _viewer[k]->DrawObject(_Object, _targetImageOutput[k],
                              _DisplayObjectWarp, _DisplayObjectGrid, _sourceTransform);
         }
@@ -556,12 +554,12 @@ void irtkRView::Draw()
 #endif
 
     // Draw cross hairs if needed
-    if (_DisplayCursor == true) {
+    if (_DisplayCursor) {
       _viewer[k]->DrawCursor(_CursorMode);
     }
 
     // Draw axis labels if needed
-    if (_DisplayAxisLabels == true) {
+    if (_DisplayAxisLabels) {
       _viewer[k]->DrawInfo(_DisplayMode);
     }
 
@@ -2593,14 +2591,14 @@ void irtkRView::GetTransformationText(list<char *> &text)
         irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else if (strcmp(name, "irtkLinearFreeFormTransformation") == 0) {
-        irtkLinearFreeFormTransformation *ffd = dynamic_cast<irtkLinearFreeFormTransformation *> (mffd->GetLocalTransformation(i));
-        ffd->GetSpacing(dx, dy, dz);
-        sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
-        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
-        ffd->GetSpacing(dx, dy, dz);
-        sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+//      } else if (strcmp(name, "irtkLinearFreeFormTransformation") == 0) {
+//        irtkLinearFreeFormTransformation *ffd = dynamic_cast<irtkLinearFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+//        ffd->GetSpacing(dx, dy, dz);
+//        sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+//      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
+//        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+//        ffd->GetSpacing(dx, dy, dz);
+//        sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
       } else {
         sprintf(buffer, "Unknown transformation type (%s)", name);
       }

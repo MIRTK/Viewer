@@ -329,7 +329,7 @@ protected:
   irtkDeformationProperty _DeformationProperty;
 
   /// Deformation blending
-  //double _DeformationBlending;
+  double _DeformationBlending;
 
   /// Flag for display orientation
   irtkDisplayMode _DisplayMode;
@@ -1248,15 +1248,15 @@ inline int irtkRView::GetDisplayDeformationGridResolution()
 
 inline void irtkRView::SetDisplayDeformationBlending(double a)
 {
-  if      (a < 0.0) a = 0.0;
-  else if (a > 1.0) a = 1.0;
-  _sourceTransform->SetBlending(a);
-  if (_sourceTransformApply) _sourceUpdate = true;
+  if      (a < 0.0) _DeformationBlending = 0.0;
+  else if (a > 1.0) _DeformationBlending = 1.0;
+  else              _DeformationBlending = a;
+  //if (_sourceTransformApply) _sourceUpdate = true;
 }
 
 inline double irtkRView::GetDisplayDeformationBlending()
 {
-  return _sourceTransform->GetBlending();
+  return _DeformationBlending;
 }
 
 inline void irtkRView::SetDisplayDeformationGridResolution(int res)
