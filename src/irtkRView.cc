@@ -65,10 +65,10 @@ irtkRView::irtkRView(int x, int y)
   _viewMix = 0.5;
 
   // Default: Interpolation is nearest neighbor
-  _targetInterpolator = new irtkNearestNeighborInterpolateImageFunction;
-  _sourceInterpolator = new irtkNearestNeighborInterpolateImageFunction;
-  _segmentationInterpolator = new irtkNearestNeighborInterpolateImageFunction;
-  _selectionInterpolator = new irtkNearestNeighborInterpolateImageFunction;
+  _targetInterpolator       = irtkInterpolateImageFunction::New(Interpolation_NN, Extrapolation_NN);
+  _sourceInterpolator       = irtkInterpolateImageFunction::New(Interpolation_NN, Extrapolation_NN);
+  _segmentationInterpolator = irtkInterpolateImageFunction::New(Interpolation_NN, Extrapolation_NN);
+  _selectionInterpolator    = irtkInterpolateImageFunction::New(Interpolation_NN, Extrapolation_NN);
 
   // Default time frame
   _targetFrame = 0;
@@ -1016,8 +1016,7 @@ void irtkRView::Read(char *name)
       }
     }
     // Create new interpolator
-    _targetInterpolator = irtkInterpolateImageFunction::New(interpolation,
-                          _targetImage);
+    _targetInterpolator = irtkInterpolateImageFunction::New(interpolation, Extrapolation_NN, _targetImage);
 
     // Delete old interpolator
     delete _sourceInterpolator;
@@ -1044,8 +1043,7 @@ void irtkRView::Read(char *name)
       }
     }
     // Create new interpolator
-    _sourceInterpolator = irtkInterpolateImageFunction::New(interpolation,
-                          _sourceImage);
+    _sourceInterpolator = irtkInterpolateImageFunction::New(interpolation, Extrapolation_NN, _sourceImage);
 
     // Flag for rview mode
     if (strstr(buffer1, "viewMode") != NULL) {
@@ -2751,7 +2749,7 @@ void irtkRView::SetTargetInterpolationMode(irtkInterpolationMode value)
   int i;
 
   delete _targetInterpolator;
-  _targetInterpolator = irtkInterpolateImageFunction::New(value, _targetImage);
+  _targetInterpolator = irtkInterpolateImageFunction::New(value, Extrapolation_NN, _targetImage);
   for (i = 0; i < _NoOfViewers; i++) {
     _targetTransformFilter[i]->PutInterpolator(_targetInterpolator);
   }
@@ -2788,7 +2786,7 @@ void irtkRView::SetSourceInterpolationMode(irtkInterpolationMode value)
   int i;
 
   delete _sourceInterpolator;
-  _sourceInterpolator = irtkInterpolateImageFunction::New(value, _sourceImage);
+  _sourceInterpolator = irtkInterpolateImageFunction::New(value, Extrapolation_NN, _sourceImage);
   for (i = 0; i < _NoOfViewers; i++) {
     _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
   }
