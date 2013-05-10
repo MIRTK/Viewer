@@ -709,6 +709,12 @@ public:
   /// Sets maximum display intensity of deformation
   void SetDisplayMaxDeformation(double);
 
+  /// Sets fraction of deformation to display
+  void SetDisplayDeformationBlending(double);
+
+  /// Return fraction of deformation to display
+  double GetDisplayDeformationBlending();
+
   /// Turn cross hair on
   void DisplayCursorOn();
 
@@ -859,25 +865,25 @@ public:
   void SetConfigMode(irtkConfigViewerMode );
 
   /// Set interpolation mode for target image
-  void   SetTargetInterpolationMode(irtkInterpolationMode);
+  void SetTargetInterpolationMode(irtkInterpolationMode);
 
   /// Get interpolation mode for target image
   irtkInterpolationMode GetTargetInterpolationMode();
 
   /// Set interpolation mode for source image
-  void   SetSourceInterpolationMode(irtkInterpolationMode);
+  void SetSourceInterpolationMode(irtkInterpolationMode);
 
   /// Get interpolation model fo target image
   irtkInterpolationMode GetSourceInterpolationMode();
 
   /// Set transformation apply flag for source image
-  void   SetSourceTransformApply(bool);
+  void SetSourceTransformApply(bool);
 
   /// Get transformation apply flag for source image
   bool GetSourceTransformApply();
 
   /// Set transformation invert flag for source image
-  void   SetSourceTransformInvert(bool);
+  void SetSourceTransformInvert(bool);
 
   /// Get transformation invert flag for source image
   bool GetSourceTransformInvert();
@@ -913,7 +919,7 @@ public:
   irtkSegmentTable *GetSegmentTable();
 
   /// Set interpolation mode for segmentation image
-  void   SetSegmentationInterpolationMode(irtkInterpolationMode);
+  void SetSegmentationInterpolationMode(irtkInterpolationMode);
 
   /// Get interpolation mode for segmentation image
   irtkInterpolationMode GetSegmentationInterpolationMode();
@@ -1238,6 +1244,19 @@ inline int irtkRView::GetDisplayDeformationGrid()
 inline int irtkRView::GetDisplayDeformationGridResolution()
 {
   return _DisplayDeformationGridResolution;
+}
+
+inline void irtkRView::SetDisplayDeformationBlending(double a)
+{
+  if      (a < 0.0) _DeformationBlending = 0.0;
+  else if (a > 1.0) _DeformationBlending = 1.0;
+  else              _DeformationBlending = a;
+  //if (_sourceTransformApply) _sourceUpdate = true;
+}
+
+inline double irtkRView::GetDisplayDeformationBlending()
+{
+  return _DeformationBlending;
 }
 
 inline void irtkRView::SetDisplayDeformationGridResolution(int res)
