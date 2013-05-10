@@ -1232,6 +1232,9 @@ void irtkRView::Read(char *name)
     if (ok != true) {
       cerr << "irtkRView::Read() : Ignoring line " << buffer1 << endl;
     }
+    // Avoid "set but not used" warning
+#else
+    do { ; } while(ok == !ok);
 #endif
 
   }
