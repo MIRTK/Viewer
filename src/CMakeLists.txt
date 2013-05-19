@@ -24,6 +24,6 @@ irtkSegment.cc
 irtkSegmentTable.cc
 irtkVoxelContour.cc)
 
-ADD_LIBRARY(rview++ ${RVIEW_SRCS})
+irtk_add_library(rview++ ${RVIEW_SRCS})
 
 INSTALL_FILES(/include FILES ${RVIEW_INCLUDES})

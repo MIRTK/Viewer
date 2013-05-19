@@ -17,7 +17,7 @@ Fl_RView_Visualisation.cc
 Fl_RView_Segmentation.cc
 main.cc)
 
-ADD_EXECUTABLE(rview ${RVIEW_FLTK_SRCS})
+irtk_add_executable(rview ${RVIEW_FLTK_SRCS})
 
 INSTALL_TARGETS(/bin rview)
 

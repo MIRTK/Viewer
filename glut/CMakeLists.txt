@@ -29,5 +29,5 @@ ENDIF (OPENGL_LIBRARY)
 
 SET(GLUT_SRCS main.cc)
 
-ADD_EXECUTABLE(display ${GLUT_SRCS})
+irtk_add_executable(display ${GLUT_SRCS})
 INSTALL_TARGETS(/bin display)
