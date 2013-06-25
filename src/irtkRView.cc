@@ -2389,6 +2389,32 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   int i, j, k;
   double u, v, w;
 
+  // BEGIN of added code -as12312
+  // TODO Move the following code into separate method of irtkRView as it is
+  //      required in more places, e.g., also irtkViewer::Update uses it
+
+  // Cast input transformation to single-/multi-level FFD
+  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
+  irtkFreeFormTransformation   *affd = dynamic_cast<irtkFreeFormTransformation *>  (_sourceTransform);
+
+  // If multi-level FFD, set affd to FFD of final level
+  if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
+
+  // Determine time parameters for transformation
+  double t1, t2;
+  if (0 <= this->GetTargetFrame() && this->GetTargetFrame() < this->GetTarget()->GetT()) {
+    t1 = this->GetTarget()->ImageToTime(this->GetTargetFrame());
+  } else if (affd) {
+    t1 = affd->LatticeToTime(0);
+  }
+  if (0 <= this->GetSourceFrame() && this->GetSourceFrame() < this->GetSource()->GetT()) {
+    t2 = this->GetSource()->ImageToTime(this->GetSourceFrame());
+  } else if (affd) {
+    t2 = affd->LatticeToTime(affd->GetT() - 1);
+  }
+  // END of added code -as12312
+
+
   u = _origin_x;
   v = _origin_y;
   w = _origin_z;
@@ -2411,7 +2437,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   u = _origin_x;
   v = _origin_y;
   w = _origin_z;
-  _sourceTransform->Transform(u, v, w);
+  _sourceTransform->Transform(u, v, w, t1, t2);
   point = irtkPoint(u, v, w);
   _sourceImage->WorldToImage(u, v, w);
   i = round(u);
