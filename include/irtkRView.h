@@ -343,6 +343,9 @@ protected:
   /// Flag for line thickness
   double _LineThickness;
 
+  /// Flag for spedd
+  double _Speed;
+
   /// Flag for display of isolines from target image
   int _DisplayTargetContour;
 
@@ -618,6 +621,12 @@ public:
 
   /// Get glLine thickness
   double GetLineThickness();
+  
+  /// Set speed
+  void SetSpeed(double value);
+
+  /// Get speed
+  double GetSpeed();
 
   /// Get an information string about the transformation level
   void GetTransformationText(list<char *> &);
@@ -1156,6 +1165,19 @@ inline void irtkRView::CacheDisplacementsOff()
 inline int irtkRView::GetCacheDisplacements()
 {
   return _CacheDisplacements;
+}
+
+inline void irtkRView::SetSpeed(double value)
+{
+  _Speed = value;
+}
+
+inline double irtkRView::GetSpeed()
+{
+    if (_Speed >= 0)
+        return _Speed;
+    else
+        return -1/_Speed;
 }
 
 inline void irtkRView::DisplayTargetContoursOn()
