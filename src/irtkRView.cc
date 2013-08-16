@@ -1577,10 +1577,16 @@ void irtkRView::ReadTarget(int argc, char **argv)
   cout << "Reading " << argv[0] << endl;
   nimages[0] = irtkImage::New(argv[0]);
 
+  irtkImageAttributes refattr = nimages[0]->GetImageAttributes();
+  refattr._t  = 0;
+  refattr._dt = 1;
   for (i = 1; i < n; i++) {
     cout << "Reading " << argv[i] << endl;
     nimages[i] = irtkImage::New(argv[i]);
-    if (!(nimages[0]->GetImageAttributes() == nimages[i]->GetImageAttributes())) {
+    irtkImageAttributes attr = nimages[i]->GetImageAttributes();
+    attr._t  = 0;
+    attr._dt = 1;
+    if (attr != refattr) {
       cerr << "Mismatch of image geometry in sequence" << endl;
       nimages[0]->Print();
       nimages[i]->Print();
@@ -1704,11 +1710,17 @@ void irtkRView::ReadSource(int argc, char **argv)
 
   cout << "Reading " << argv[0] << endl;
   nimages[0] = irtkImage::New(argv[0]);
+  irtkImageAttributes refattr = nimages[0]->GetImageAttributes();
+  refattr._t  = 0;
+  refattr._dt = 1;
 
   for (i = 1; i < n; i++) {
     cout << "Reading " << argv[i] << endl;
     nimages[i] = irtkImage::New(argv[i]);
-    if (!(nimages[0]->GetImageAttributes() == nimages[i]->GetImageAttributes())) {
+    irtkImageAttributes attr = nimages[i]->GetImageAttributes();
+    attr._t  = 0;
+    attr._dt = 1;
+    if (attr != refattr) {
       cerr << "Mismatch of image geometry in sequence" << endl;
       exit(1);
     }
