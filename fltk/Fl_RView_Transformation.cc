@@ -72,7 +72,8 @@ void Fl_RViewUI::cb_loadTransformation(Fl_Button *, void *)
   // Update transformation valuator
   irtkTransformation *transform = rview->GetTransformation();
 
-  if (dynamic_cast<irtkFreeFormTransformation *>(transform) != NULL) return;
+  if (dynamic_cast<irtkFreeFormTransformation   *>(transform) ||
+      dynamic_cast<irtkMultiLevelTransformation *>(transform)) return;
 
   for (i = 0; i<transform->NumberOfDOFs(); i++) {
     rviewUI->transformationValuator[i]->value(transform->Get(i));
