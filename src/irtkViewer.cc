@@ -75,7 +75,6 @@ static double _BeforeTagGridZ[MaxNumberOfCP][MaxNumberOfCP];
 
 // vtk includes
 #include <vtkPlane.h>
-#include <vtkPolyDataSource.h>
 #include <vtkCutter.h>
 #include <vtkPointData.h>
 #include <vtkFloatArray.h>
@@ -934,7 +933,11 @@ void irtkViewer::DrawObject(vtkPointSet *points, irtkGreyImage *image, int warp,
 		plane->SetOrigin(p1);
 		plane->SetNormal(normal);
 		cutter->SetCutFunction(plane);
+#if VTK_MAJOR_VERSION >= 6
+    cutter->SetInputData(points);
+#else
 		cutter->SetInput(points);
+#endif
 
 		// Reslice object
 		cutter->Modified();
