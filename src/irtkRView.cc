@@ -1525,9 +1525,9 @@ void irtkRView::Write(char *name)
 void irtkRView::ReadTarget(char *name)
 {
   // Read target image
-  if (_targetImage != NULL)
-    delete _targetImage;
+  if (_targetImage != NULL) delete _targetImage;
   _targetImage = irtkImage::New(name);
+  if (!_targetImage->GetTSize()) _targetImage->PutTSize(1.0);
 
   // Find min and max values and initialize lookup table
   _targetImage->GetMinMaxAsDouble(&_targetMin, &_targetMax);
@@ -1672,9 +1672,9 @@ void irtkRView::ReadTarget(int argc, char **argv)
 void irtkRView::ReadSource(char *name)
 {
   // Read source image
-  if (_sourceImage != NULL)
-    delete _sourceImage;
+  if (_sourceImage != NULL) delete _sourceImage;
   _sourceImage = irtkImage::New(name);
+  if (!_sourceImage->GetTSize()) _sourceImage->PutTSize(1.0);
 
   // Find min and max values and initialize lookup table
   _sourceImage->GetMinMaxAsDouble(&_sourceMin, &_sourceMax);
