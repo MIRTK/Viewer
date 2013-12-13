@@ -43,7 +43,7 @@ static double _AfterZ[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridX[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridY[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridZ[MaxNumberOfCP][MaxNumberOfCP];
-static _Status _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
+static DOFStatus _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
 
 static int _NumberOfTagGridX;
 static int _NumberOfTagGridY;
@@ -154,10 +154,10 @@ void status_glColor(int status)
 {
 	switch (status)
 	{
-	case _Active:
+	case Active:
 		COLOR_POINTS_ACTIVE;
 		break;
-	case _Passive:
+	case Passive:
 		COLOR_POINTS_PASSIVE;
 		break;
 	case _Unknown:
@@ -391,10 +391,10 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				image->WorldToImage(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
 
 				index = i * affd->GetY() * affd->GetZ() + j * affd->GetZ() + k;
-				if (affd->GetStatus(index) == _Active) {
-					_CPStatus[m][n] = _Active;
+				if (affd->GetStatus(index) == Active) {
+					_CPStatus[m][n] = Active;
 				} else {
-					_CPStatus[m][n] = _Passive;
+					_CPStatus[m][n] = Passive;
 				}
 #ifndef IMPERIAL
 				_CPLabel[m][n] = affd->GetLabel(index);
