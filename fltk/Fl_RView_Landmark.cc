@@ -25,7 +25,6 @@
 // Bitmaps
 #include <bitmaps/landmarks.xbm>
 #include <bitmaps/fileopen.xpm>
-#include <bitmaps/filesave.xpm>
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;

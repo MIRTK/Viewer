@@ -2413,7 +2413,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
 
   // Determine time parameters for transformation
-  double t1, t2;
+  double t1 = .0, t2 = .0;
   if (0 <= this->GetTargetFrame() && this->GetTargetFrame() < this->GetTarget()->GetT()) {
     t1 = this->GetTarget()->ImageToTime(this->GetTargetFrame());
   } else if (affd) {
