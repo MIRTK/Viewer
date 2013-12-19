@@ -2630,14 +2630,18 @@ void irtkRView::GetTransformationText(list<char *> &text)
         irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-//      } else if (strcmp(name, "irtkLinearFreeFormTransformation") == 0) {
-//        irtkLinearFreeFormTransformation *ffd = dynamic_cast<irtkLinearFreeFormTransformation *> (mffd->GetLocalTransformation(i));
-//        ffd->GetSpacing(dx, dy, dz);
-//        sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-//      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
-//        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
-//        ffd->GetSpacing(dx, dy, dz);
-//        sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+      } else if (strcmp(name, "irtkLinearFreeFormTransformation3D") == 0) {
+        irtkLinearFreeFormTransformation3D *ffd = dynamic_cast<irtkLinearFreeFormTransformation3D *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+      } else if (strcmp(name, "irtkLinearFreeFormTransformation4D") == 0) {
+        irtkLinearFreeFormTransformation4D *ffd = dynamic_cast<irtkLinearFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz, dt);
+        sprintf(buffer, "4D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
+      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
+        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+        ffd->GetSpacing(dx, dy, dz);
+        sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
       } else {
         sprintf(buffer, "Unknown transformation type (%s)", name);
       }
