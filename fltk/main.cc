@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     argv++;
   }
   if ((argc > 1) && (argv[1][0] != '-' )) {
-    rview->ReadTransformation(argv[1]);
+    //rview->ReadTransformation(argv[1]);
     rviewUI->AddTransformation(argv[1]);
     argc--;
     argv++;
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     if ( (ok == false) && (strcmp(argv[1], "-dofin") == 0)) {
       argc--;
       argv++;
-      rview->ReadTransformation(argv[1]);
+      //rview->ReadTransformation(argv[1]);
       rviewUI->AddTransformation(argv[1]);
       argc--;
       argv++;
