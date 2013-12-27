@@ -258,11 +258,7 @@ void irtkRView::Update()
         // Only display the target image
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if (*ptr1 >= 0) {
-              *ptr3 = _targetLookupTable->lookupTable[*ptr1];
-            } else {
-              *ptr3 = irtkColor();
-            }
+            *ptr3 = _targetLookupTable->At(*ptr1);
             ptr1++;
             ptr3++;
           }
@@ -272,11 +268,7 @@ void irtkRView::Update()
         // Only display the source image
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if (*ptr2 >= 0) {
-              *ptr3 = _sourceLookupTable->lookupTable[*ptr2];
-            } else {
-              *ptr3 = irtkColor();
-            }
+            *ptr3 = _sourceLookupTable->At(*ptr2);
             ptr2++;
             ptr3++;
           }
@@ -287,18 +279,9 @@ void irtkRView::Update()
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
             if (i < _viewMix * _viewer[k]->GetWidth()) {
-              if (*ptr1 >= 0) {
-                *ptr3 = _targetLookupTable->lookupTable[*ptr1];
-              } else {
-                *ptr3 = irtkColor();
-              }
+              *ptr3 = _targetLookupTable->At(*ptr1);
             } else {
-              if (*ptr2 >= _sourceMin) {
-                *ptr3 = _sourceLookupTable->lookupTable[*ptr2];
-              } else {
-                *ptr3 = irtkColor();
-                ;
-              }
+              *ptr3 = _sourceLookupTable->At(*ptr2);
             }
             ptr1++;
             ptr2++;
@@ -311,22 +294,14 @@ void irtkRView::Update()
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           if (j < _viewMix * _viewer[k]->GetHeight()) {
             for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-              if (*ptr1 >= 0) {
-                *ptr3 = _targetLookupTable->lookupTable[*ptr1];
-              } else {
-                *ptr3 = irtkColor();
-              }
+              *ptr3 = _targetLookupTable->At(*ptr1);
               ptr1++;
               ptr2++;
               ptr3++;
             }
           } else {
             for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-              if (*ptr2 >= 0) {
-                *ptr3 = _sourceLookupTable->lookupTable[*ptr2];
-              } else {
-                *ptr3 = irtkColor();
-              }
+              *ptr3 = _sourceLookupTable->At(*ptr2);
               ptr1++;
               ptr2++;
               ptr3++;
@@ -338,8 +313,8 @@ void irtkRView::Update()
         // Display the subtraction of target and source
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if ((*ptr1 >= 0) && (*ptr2 >= 0)) {
-              *ptr3 = _subtractionLookupTable->lookupTable[*ptr1 - *ptr2];
+            if (*ptr1 >= 0 && *ptr2 >= 0) {
+              *ptr3 = _subtractionLookupTable->At(*ptr1 - *ptr2);
             } else {
               *ptr3 = irtkColor();
             }
@@ -355,16 +330,12 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if ((*ptr1 >= 0) && (*ptr2 >= 0)) {
-              ptr3->r = int(blendA * _targetLookupTable->lookupTable[*ptr1].r
-                            + blendB * _sourceLookupTable->lookupTable[*ptr2].r);
-              ptr3->g = int(blendA * _targetLookupTable->lookupTable[*ptr1].g
-                            + blendB * _sourceLookupTable->lookupTable[*ptr2].g);
-              ptr3->b = int(blendA * _targetLookupTable->lookupTable[*ptr1].b
-                            + blendB * _sourceLookupTable->lookupTable[*ptr2].b);
-            } else {
-              *ptr3 = irtkColor();
-            }
+            ptr3->r = int(  blendA * _targetLookupTable->At(*ptr1).r
+                          + blendB * _sourceLookupTable->At(*ptr2).r);
+            ptr3->g = int(  blendA * _targetLookupTable->At(*ptr1).g
+                          + blendB * _sourceLookupTable->At(*ptr2).g);
+            ptr3->b = int(  blendA * _targetLookupTable->At(*ptr1).b
+                          + blendB * _sourceLookupTable->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;
@@ -375,22 +346,18 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if ((*ptr1 >= 0) && (*ptr2 >= 0)) {
-              ptr3->r = int(_targetLookupTable->lookupTable[*ptr1].a
-                            * _targetLookupTable->lookupTable[*ptr1].r + (1
-                                - _targetLookupTable->lookupTable[*ptr1].a)
-                            * _sourceLookupTable->lookupTable[*ptr2].r);
-              ptr3->g = int(_targetLookupTable->lookupTable[*ptr1].a
-                            * _targetLookupTable->lookupTable[*ptr1].g + (1
-                                - _targetLookupTable->lookupTable[*ptr1].a)
-                            * _sourceLookupTable->lookupTable[*ptr2].g);
-              ptr3->b = int(_targetLookupTable->lookupTable[*ptr1].a
-                            * _targetLookupTable->lookupTable[*ptr1].b + (1
-                                - _targetLookupTable->lookupTable[*ptr1].a)
-                            * _sourceLookupTable->lookupTable[*ptr2].b);
-            } else {
-              *ptr3 = irtkColor();
-            }
+            ptr3->r = int(     _targetLookupTable->At(*ptr1).a
+                             * _targetLookupTable->At(*ptr1).r +
+                          (1 - _targetLookupTable->At(*ptr1).a)
+                             * _sourceLookupTable->At(*ptr2).r);
+            ptr3->g = int(     _targetLookupTable->At(*ptr1).a
+                             * _targetLookupTable->At(*ptr1).g +
+                          (1 - _targetLookupTable->At(*ptr1).a)
+                             * _sourceLookupTable->At(*ptr2).g);
+            ptr3->b = int(     _targetLookupTable->At(*ptr1).a
+                             * _targetLookupTable->At(*ptr1).b +
+                          (1 - _targetLookupTable->At(*ptr1).a)
+                             * _sourceLookupTable->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;
@@ -401,22 +368,18 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            if ((*ptr1 >= 0) && (*ptr2 >= 0)) {
-              ptr3->r = int((1 - _sourceLookupTable->lookupTable[*ptr2].a)
-                            * _targetLookupTable->lookupTable[*ptr1].r
-                            + _sourceLookupTable->lookupTable[*ptr2].a
-                            * _sourceLookupTable->lookupTable[*ptr2].r);
-              ptr3->g = int((1 - _sourceLookupTable->lookupTable[*ptr2].a)
-                            * _targetLookupTable->lookupTable[*ptr1].g
-                            + _sourceLookupTable->lookupTable[*ptr2].a
-                            * _sourceLookupTable->lookupTable[*ptr2].g);
-              ptr3->b = int((1 - _sourceLookupTable->lookupTable[*ptr2].a)
-                            * _targetLookupTable->lookupTable[*ptr1].b
-                            + _sourceLookupTable->lookupTable[*ptr2].a
-                            * _sourceLookupTable->lookupTable[*ptr2].b);
-            } else {
-              *ptr3 = irtkColor();
-            }
+            ptr3->r = int((1 - _sourceLookupTable->At(*ptr2).a)
+                          * _targetLookupTable->At(*ptr1).r
+                          + _sourceLookupTable->At(*ptr2).a
+                          * _sourceLookupTable->At(*ptr2).r);
+            ptr3->g = int((1 - _sourceLookupTable->At(*ptr2).a)
+                          * _targetLookupTable->At(*ptr1).g
+                          + _sourceLookupTable->At(*ptr2).a
+                          * _sourceLookupTable->At(*ptr2).g);
+            ptr3->b = int((1 - _sourceLookupTable->At(*ptr2).a)
+                          * _targetLookupTable->At(*ptr1).b
+                          + _sourceLookupTable->At(*ptr2).a
+                          * _sourceLookupTable->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;

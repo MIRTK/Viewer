@@ -102,6 +102,12 @@ public:
   void SetColorModeToJacobianExpansion();
   void SetColorModeToJacobianContraction();
 
+  /// Get color for given image value
+  irtkColorRGBA &At(int);
+
+  /// Get color for given image value
+  irtkColorRGBA &operator ()(int);
+
   /// Get minimum display intensity
   int  GetMinDisplayIntensity();
 
@@ -115,6 +121,18 @@ public:
   void Write(char *);
 
 };
+
+inline irtkColorRGBA &irtkLookupTable::At(int value)
+{
+  if      (value < _minData) return lookupTable[0];
+  else if (value > _maxData) return lookupTable[_maxData];
+  else                       return lookupTable[value];
+}
+
+inline irtkColorRGBA &irtkLookupTable::operator ()(int value)
+{
+  return At(value);
+}
 
 inline int irtkLookupTable::GetMinIntensity()
 {
