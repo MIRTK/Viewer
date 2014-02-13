@@ -80,6 +80,9 @@ irtkRView::irtkRView(int x, int y)
   _SegmentationMode = false;
   _PaintBrushWidth = 1;
 
+  // Default: Enable caching if required by transformation
+  _CacheDisplacements = true;
+
   // Default: No isolines
   _DisplayTargetContour = false;
   _DisplaySourceContour = false;
@@ -1868,8 +1871,9 @@ void irtkRView::ReadTransformation(char *name)
     _sourceTransformFilter[i] = irtkImageTransformation::New(_sourceTransform);
 
     // Set inputs and outputs for the transformation filter
-    _sourceTransformFilter[i]->SetInput(_sourceImage);
+    _sourceTransformFilter[i]->SetInput (_sourceImage);
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
+    _sourceTransformFilter[i]->SetCache (&_sourceTransformCache);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
     } else {
@@ -2343,6 +2347,7 @@ void irtkRView::Configure(irtkRViewConfig config[])
     _sourceTransformFilter[i] = irtkImageTransformation::New(_sourceTransform);
     _sourceTransformFilter[i]->SetInput(_sourceImage);
     _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
+    _sourceTransformFilter[i]->SetCache(&_sourceTransformCache);
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
     } else {
@@ -2647,7 +2652,7 @@ void irtkRView::GetTransformationText(list<char *> &text)
   }
 }
 
-void irtkRView::Initialize()
+void irtkRView::Initialize(bool initialize_cache)
 {
   int i;
   irtkImageAttributes attr;
@@ -2730,6 +2735,42 @@ void irtkRView::Initialize()
   _sourceUpdate = true;
   _segmentationUpdate = true;
   _selectionUpdate = true;
+
+  // Use source transformation cache if required and enabled
+  if (initialize_cache) {
+    if (_sourceImage && _sourceTransform && _sourceTransform->RequiresCachingOfDisplacements() && _CacheDisplacements) {
+      irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
+      irtkFreeFormTransformation   *ffd  = dynamic_cast<irtkFreeFormTransformation   *>(_sourceTransform);
+      if (mffd && mffd->NumberOfLevels() > 0) ffd = mffd->GetLocalTransformation(mffd->NumberOfLevels()-1);
+      irtkImageAttributes attr;
+      if (ffd) {
+        attr = ffd->GetFFDAttributes();
+        if (_targetImage) {
+          attr._x  = attr._x * attr._dx / _targetImage->GetXSize();
+          attr._y  = attr._y * attr._dy / _targetImage->GetYSize();
+          attr._z  = attr._z * attr._dz / _targetImage->GetZSize();
+          attr._dx = _targetImage->GetXSize();
+          attr._dy = _targetImage->GetYSize();
+          attr._dz = _targetImage->GetZSize();
+        } else {
+          attr._x  = attr._x * attr._dx / _sourceImage->GetXSize();
+          attr._y  = attr._y * attr._dy / _sourceImage->GetYSize();
+          attr._z  = attr._z * attr._dz / _sourceImage->GetZSize();
+          attr._dx = _sourceImage->GetXSize();
+          attr._dy = _sourceImage->GetYSize();
+          attr._dz = _sourceImage->GetZSize();
+        }
+      } else if (_targetImage) {
+        attr = _targetImage->GetImageAttributes();
+      } else {
+        attr = _sourceImage->GetImageAttributes();
+      }
+      _sourceTransformCache.Initialize(attr, 3);
+      _sourceTransformCache.Modified(true);
+    } else {
+      _sourceTransformCache.Clear();
+    }
+  }
 }
 
 void irtkRView::SetTargetFrame(int t)
@@ -2887,7 +2928,9 @@ void irtkRView::SetSourceTransformApply(bool value)
   for (i = 0; i < _NoOfViewers; i++) {
     if (_sourceTransformApply == true) {
       _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      _sourceTransformFilter[i]->SetCache(&_sourceTransformCache);
     } else {
+      _sourceTransformFilter[i]->SetCache(NULL);
       _sourceTransformFilter[i]->SetTransformation(_targetTransform);
     }
   }

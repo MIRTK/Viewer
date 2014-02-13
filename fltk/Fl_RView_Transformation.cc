@@ -368,6 +368,14 @@ void Fl_RViewUI::cb_viewDeformationPoints(Fl_Button* o, void*)
   viewer->redraw();
 }
 
+void Fl_RViewUI::cb_cacheDisplacements(Fl_Button* o, void*)
+{
+  if (o->value() == 0) rview->CacheDisplacementsOff();
+  if (o->value() == 1) rview->CacheDisplacementsOn();
+  rview->Update();
+  viewer->redraw();
+}
+
 void Fl_RViewUI::UpdateTransformationControlWindow()
 {
   int j;
@@ -393,6 +401,7 @@ void Fl_RViewUI::UpdateTransformationControlWindow()
   rviewUI->viewDeformationArrows->value(rview->GetDisplayDeformationArrows());
   rviewUI->viewDeformationGridResolution->value(rview->GetDisplayDeformationGridResolution());
   rviewUI->deformationBlending->value(rview->GetDisplayDeformationBlending());
+  rviewUI->cacheDisplacements->value(rview->GetCacheDisplacements());
 
   // Get transformation
   irtkTransformation *transform = rview->GetTransformation();
@@ -475,6 +484,10 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
     {
       Fl_Check_Button *o  = viewDeformationPoints = new Fl_Check_Button(210, 510, 60, 20, "Control points");
       o->callback((Fl_Callback*)cb_viewDeformationPoints);
+    }
+    {
+      Fl_Check_Button *o  = cacheDisplacements = new Fl_Check_Button(210, 540, 120, 20, "Cache displacements");
+      o->callback((Fl_Callback*)cb_cacheDisplacements);
     }
     {
       Fl_Value_Slider* o = viewDeformationGridResolution = new Fl_Value_Slider(10, 590, 380, 20, "Deformation field resolution");

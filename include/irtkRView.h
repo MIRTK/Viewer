@@ -162,6 +162,12 @@ protected:
   /// Transformation filter for reslicing of source image
   irtkImageTransformation **_sourceTransformFilter;
 
+  /// Displacement field used to cache source transformation
+  irtkImageTransformationCache _sourceTransformCache;
+
+  /// Whether to cache displacements or not
+  int _CacheDisplacements;
+
   /// Transformation filter for reslicing of segmentation image
   irtkImageTransformation **_segmentationTransformFilter;
 
@@ -438,7 +444,7 @@ public:
   void Resize(int, int);
 
   /// Initialize registration viewer
-  virtual void Initialize();
+  virtual void Initialize(bool = true);
 
   /// Configure registration viewer
   virtual void Configure(irtkRViewConfig []);
@@ -636,6 +642,15 @@ public:
 
   /// Set display mode
   void SetDisplayMode(irtkDisplayMode mode);
+
+  /// Turn caching of displacements on
+  void CacheDisplacementsOn();
+
+  /// Turn caching of displacements off
+  void CacheDisplacementsOff();
+
+  /// Return displacements caching mode
+  int GetCacheDisplacements();
 
   /// Turn snap to grid on
   void SnapToGridOn();
@@ -1070,7 +1085,7 @@ inline double irtkRView::GetResolution()
 inline void irtkRView::SetResolution(double resolution)
 {
   _resolution = resolution;
-  this->Initialize();
+  this->Initialize(false);
 }
 
 inline void irtkRView::SetViewMode(irtkRViewMode value)
@@ -1112,6 +1127,23 @@ inline void irtkRView::SetLineThickness(double value)
 inline double irtkRView::GetLineThickness()
 {
   return _LineThickness;
+}
+
+inline void irtkRView::CacheDisplacementsOn()
+{
+  _CacheDisplacements = true;
+  this->Initialize(true);
+}
+
+inline void irtkRView::CacheDisplacementsOff()
+{
+  _CacheDisplacements = false;
+  this->Initialize(true);
+}
+
+inline int irtkRView::GetCacheDisplacements()
+{
+  return _CacheDisplacements;
 }
 
 inline void irtkRView::DisplayTargetContoursOn()
