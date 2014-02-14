@@ -207,7 +207,7 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
 
   if (mffd == NULL) {
-    // Not an multi-level FFD, so let's try a single-level FFD
+    // Not a multi-level FFD, so let's try a single-level FFD
     affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
   } else {
     affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
@@ -483,8 +483,6 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
   } else {
     t2 = affd->LatticeToTime(affd->GetT() - 1);
   }
-
-//  cout << "irtkViewer::Update: t1 = " << t1 << ", t2 = " << t2 << endl; cout.flush();
 
   // Compute (control) points before and after transformation
   // (application of irtkTransformation::Transform or irtkTransformation::Inverse)
