@@ -2592,7 +2592,7 @@ void irtkRView::GetTransformationText(list<char *> &text)
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation4D") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
+  } else if (strcmp(name, "irtkBSplineFreeFormTransformationSV") == 0) {
     irtkBSplineFreeFormTransformationSV *ffd = dynamic_cast<irtkBSplineFreeFormTransformationSV *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz);
     sprintf(buffer, "SV B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
