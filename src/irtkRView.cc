@@ -2588,6 +2588,8 @@ void irtkRView::GetTransformationText(list<char *> &text)
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
+  } else if (strcmp(name, "irtkMultiLevelStationaryVelocityTransformation") == 0) {
+    ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkFluidFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation4D") == 0) {
@@ -2614,7 +2616,7 @@ void irtkRView::GetTransformationText(list<char *> &text)
   text.push_back(ptr);
 
   // Convert transformation
-  irtkMultiLevelFreeFormTransformation *mffd = dynamic_cast<irtkMultiLevelFreeFormTransformation *> (_sourceTransform);
+  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
 
   if (mffd != NULL) {
     for (i = 0; i < mffd->NumberOfLevels(); i++) {
