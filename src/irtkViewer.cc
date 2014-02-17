@@ -390,12 +390,8 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				image->WorldToImage(_BeforeX[m][n], _BeforeY[m][n], _BeforeZ[m][n]);
 				image->WorldToImage(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
 
-				index = i * affd->GetY() * affd->GetZ() + j * affd->GetZ() + k;
-				if (affd->GetStatus(index) == _Active) {
-					_CPStatus[m][n] = _Active;
-				} else {
-					_CPStatus[m][n] = _Passive;
-				}
+				index = affd->LatticeToIndex(i, j, k);
+        _CPStatus[m][n] = affd->GetStatus(index);
 #ifndef IMPERIAL
 				_CPLabel[m][n] = affd->GetLabel(index);
 				if (_CPLabel[m][n] > _CPMaxLabel) _CPMaxLabel = _CPLabel[m][n];
