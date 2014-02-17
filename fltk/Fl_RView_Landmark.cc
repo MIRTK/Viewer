@@ -24,7 +24,9 @@
 
 // Bitmaps
 #include <bitmaps/landmarks.xbm>
-#include <bitmaps/fileopen.xpm>
+#ifdef HAS_VTK
+#  include <bitmaps/fileopen.xpm>
+#endif
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
