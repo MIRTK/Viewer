@@ -373,6 +373,9 @@ protected:
   /// Flag for display of deformation arrows
   int _DisplayDeformationArrows;
 
+  /// 0: local, 1: global+local
+  int _DisplayDeformationTotal;
+
   /// Flag for display of landmarks
   int _DisplayLandmarks;
 
@@ -759,6 +762,15 @@ public:
 
   /// Return display of deformation points
   int GetDisplayDeformationPoints();
+
+  /// Turn display of total deformation on
+  void DisplayDeformationTotalOn();
+
+  /// Turn display of total deformation off
+  void DisplayDeformationTotalOff();
+
+  /// Return display of total deformation
+  int GetDisplayDeformationTotal();
 
   /// Turn display of ROI
   void DisplayROIOn();
@@ -1324,6 +1336,21 @@ inline void irtkRView::DisplayDeformationArrowsOff()
 inline int irtkRView::GetDisplayDeformationArrows()
 {
   return _DisplayDeformationArrows;
+}
+
+inline void irtkRView::DisplayDeformationTotalOn()
+{
+  _DisplayDeformationTotal = true;
+}
+
+inline void irtkRView::DisplayDeformationTotalOff()
+{
+  _DisplayDeformationTotal = false;
+}
+
+inline int irtkRView::GetDisplayDeformationTotal()
+{
+  return _DisplayDeformationTotal;
 }
 
 inline void irtkRView::DisplayLandmarksOn()

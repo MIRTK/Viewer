@@ -368,6 +368,14 @@ void Fl_RViewUI::cb_viewDeformationPoints(Fl_Button* o, void*)
   viewer->redraw();
 }
 
+void Fl_RViewUI::cb_viewDeformationTotal(Fl_Button* o, void*)
+{
+  if (o->value() == 1) rview->DisplayDeformationTotalOff();
+  if (o->value() == 0) rview->DisplayDeformationTotalOn();
+  rview->Update();
+  viewer->redraw();
+}
+
 void Fl_RViewUI::cb_cacheDisplacements(Fl_Button* o, void*)
 {
   if (o->value() == 0) rview->CacheDisplacementsOff();
@@ -399,6 +407,7 @@ void Fl_RViewUI::UpdateTransformationControlWindow()
   rviewUI->viewDeformationGrid->value(rview->GetDisplayDeformationGrid());
   rviewUI->viewDeformationPoints->value(rview->GetDisplayDeformationPoints());
   rviewUI->viewDeformationArrows->value(rview->GetDisplayDeformationArrows());
+  rviewUI->viewDeformationTotal->value(!rview->GetDisplayDeformationTotal());
   rviewUI->viewDeformationGridResolution->value(rview->GetDisplayDeformationGridResolution());
   rviewUI->deformationBlending->value(rview->GetDisplayDeformationBlending());
   rviewUI->cacheDisplacements->value(rview->GetCacheDisplacements());
@@ -422,7 +431,7 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
 {
   {
     // Create transformation controls
-    Fl_Group* o = new Fl_Group(0, 30, 400, 460, "Transformation controls");
+    Fl_Group* o = new Fl_Group(0, 30, 400, 430, "Transformation controls");
     o->user_data((void*)(this));
     o->box(FL_ENGRAVED_BOX);
     o->labeltype(FL_NO_LABEL);
@@ -462,31 +471,35 @@ void Fl_RViewUI::InitializeTransformationControlWindow()
 
       info_trans_filename = new Fl_Output(150, 350, 230, 20, "Transform filename = ");
       info_trans_filename->box(FL_FLAT_BOX);
-      info_trans_details = new Fl_Hold_Browser(150, 380, 230, 100, "Transform details    = ");
+      info_trans_details = new Fl_Hold_Browser(150, 380, 230, 70, "Transform details    = ");
       info_trans_details->align(FL_ALIGN_LEFT);
     }
     o->end(); // End of transformation controls
   }
   {
     // Create deformation display controls
-    Fl_Group* o = new Fl_Group(0, 490, 400, 220, "Deformation Display");
+    Fl_Group* o = new Fl_Group(0, 460, 400, 220, "Deformation Display");
     o->user_data((void*)(this));
     o->box(FL_ENGRAVED_BOX);
     o->labeltype(FL_NO_LABEL);
     {
-      Fl_Check_Button *o  = viewDeformationArrows = new Fl_Check_Button(20, 510, 60, 20, "Deformation vectors");
+      Fl_Check_Button *o  = viewDeformationArrows = new Fl_Check_Button(20, 480, 60, 20, "Deformation vectors");
       o->callback((Fl_Callback*)cb_viewDeformationArrows);
     }
     {
-      Fl_Check_Button *o  = viewDeformationGrid = new Fl_Check_Button(20, 540, 120, 20, "Deformation grid");
+      Fl_Check_Button *o  = viewDeformationGrid = new Fl_Check_Button(20, 510, 120, 20, "Deformation grid");
       o->callback((Fl_Callback*)cb_viewDeformationGrid);
     }
     {
-      Fl_Check_Button *o  = viewDeformationPoints = new Fl_Check_Button(210, 510, 60, 20, "Control points");
+      Fl_Check_Button *o  = viewDeformationPoints = new Fl_Check_Button(210, 480, 60, 20, "Control points");
       o->callback((Fl_Callback*)cb_viewDeformationPoints);
     }
     {
-      Fl_Check_Button *o  = cacheDisplacements = new Fl_Check_Button(210, 540, 120, 20, "Cache displacements");
+      Fl_Check_Button *o  = viewDeformationTotal = new Fl_Check_Button(210, 510, 120, 20, "Local deformation");
+      o->callback((Fl_Callback*)cb_viewDeformationTotal);
+    }
+    {
+      Fl_Check_Button *o  = cacheDisplacements = new Fl_Check_Button(20, 540, 120, 20, "Cache displacements");
       o->callback((Fl_Callback*)cb_cacheDisplacements);
     }
     {

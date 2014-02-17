@@ -40,6 +40,9 @@ Fl_Check_Button *viewDeformationGrid;
 /// Widget for display control of deformation arrows
 Fl_Check_Button *viewDeformationArrows;
 
+/// Widget for display control of total deformation
+Fl_Check_Button *viewDeformationTotal;
+
 /// Widget for control of displacement caching
 Fl_Check_Button *cacheDisplacements;
 
@@ -77,6 +80,7 @@ static void cb_viewDeformationGridResolution(Fl_Slider*, void*);
 static void cb_viewDeformationGrid(Fl_Button*, void*);
 static void cb_viewDeformationPoints(Fl_Button*, void*);
 static void cb_viewDeformationArrows(Fl_Button*, void*);
+static void cb_viewDeformationTotal(Fl_Button*, void*);
 static void cb_cacheDisplacements(Fl_Button*, void*);
 static void cb_loadTransformation(Fl_Button*, void*);
 static void cb_saveTransformation(Fl_Button*, void*);

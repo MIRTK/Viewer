@@ -125,6 +125,9 @@ irtkRView::irtkRView(int x, int y)
   // Default: No deformation arrows
   _DisplayDeformationArrows = false;
 
+  // Default: Local deformation only
+  _DisplayDeformationTotal = false;
+
   // Default: Contour is displayed in first viewer
   _contourViewer = -1;
   _contourViewerMode = Viewer_XY;
