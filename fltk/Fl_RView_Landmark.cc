@@ -22,7 +22,25 @@
 
 #ifdef HAS_LANDMARK_PANEL
 
+
 // Bitmaps
+/// \sa http://stackoverflow.com/questions/15695960/declaring-char-hexadecimal-constants-in-c11
+template <std::size_t S>
+struct bitmap_array {
+  char data_[S];
+  char *data() { return data_; }
+  operator char*() { return data_; }
+
+  const char *data() const { return data_; }
+  operator const char*() const { return data_; }
+
+  constexpr std::size_t size() const { return S; }
+};
+
+template <typename... A>
+constexpr bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
+{ return bitmap_array<sizeof...(A)>{{static_cast<char>(v)...}}; }
+
 #include <bitmaps/landmarks.xbm>
 #ifdef HAS_VTK
 #  include <bitmaps/fileopen.xpm>
