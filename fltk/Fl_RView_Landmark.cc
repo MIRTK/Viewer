@@ -34,14 +34,12 @@ struct bitmap_array {
   const char *data() const { return data_; }
   operator const char*() const { return data_; }
 
-  constexpr std::size_t size() const { return S; }
+  std::size_t size() const { return S; }
 };
 
 template <typename... A>
-constexpr bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
-{
-  return bitmap_array<sizeof...(A)>{{static_cast<char>(v)...}};
-}
+bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
+{ return bitmap_array<sizeof...(A)>{{static_cast<char>(v)...}}; }
 
 #include <bitmaps/landmarks.xbm>
 #ifdef HAS_VTK
