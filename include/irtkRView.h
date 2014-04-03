@@ -162,6 +162,12 @@ protected:
   /// Transformation filter for reslicing of source image
   irtkImageTransformation **_sourceTransformFilter;
 
+  /// Displacement field used to cache source transformation
+  irtkImageTransformationCache _sourceTransformCache;
+
+  /// Whether to cache displacements or not
+  int _CacheDisplacements;
+
   /// Transformation filter for reslicing of segmentation image
   irtkImageTransformation **_segmentationTransformFilter;
 
@@ -337,6 +343,9 @@ protected:
   /// Flag for line thickness
   double _LineThickness;
 
+  /// Flag for spedd
+  double _Speed;
+
   /// Flag for display of isolines from target image
   int _DisplayTargetContour;
 
@@ -366,6 +375,9 @@ protected:
 
   /// Flag for display of deformation arrows
   int _DisplayDeformationArrows;
+
+  /// 0: local, 1: global+local
+  int _DisplayDeformationTotal;
 
   /// Flag for display of landmarks
   int _DisplayLandmarks;
@@ -438,7 +450,7 @@ public:
   void Resize(int, int);
 
   /// Initialize registration viewer
-  virtual void Initialize();
+  virtual void Initialize(bool = true);
 
   /// Configure registration viewer
   virtual void Configure(irtkRViewConfig []);
@@ -609,6 +621,12 @@ public:
 
   /// Get glLine thickness
   double GetLineThickness();
+  
+  /// Set speed
+  void SetSpeed(double value);
+
+  /// Get speed
+  double GetSpeed();
 
   /// Get an information string about the transformation level
   void GetTransformationText(list<char *> &);
@@ -636,6 +654,15 @@ public:
 
   /// Set display mode
   void SetDisplayMode(irtkDisplayMode mode);
+
+  /// Turn caching of displacements on
+  void CacheDisplacementsOn();
+
+  /// Turn caching of displacements off
+  void CacheDisplacementsOff();
+
+  /// Return displacements caching mode
+  int GetCacheDisplacements();
 
   /// Turn snap to grid on
   void SnapToGridOn();
@@ -744,6 +771,15 @@ public:
 
   /// Return display of deformation points
   int GetDisplayDeformationPoints();
+
+  /// Turn display of total deformation on
+  void DisplayDeformationTotalOn();
+
+  /// Turn display of total deformation off
+  void DisplayDeformationTotalOff();
+
+  /// Return display of total deformation
+  int GetDisplayDeformationTotal();
 
   /// Turn display of ROI
   void DisplayROIOn();
@@ -1070,7 +1106,7 @@ inline double irtkRView::GetResolution()
 inline void irtkRView::SetResolution(double resolution)
 {
   _resolution = resolution;
-  this->Initialize();
+  this->Initialize(false);
 }
 
 inline void irtkRView::SetViewMode(irtkRViewMode value)
@@ -1112,6 +1148,36 @@ inline void irtkRView::SetLineThickness(double value)
 inline double irtkRView::GetLineThickness()
 {
   return _LineThickness;
+}
+
+inline void irtkRView::CacheDisplacementsOn()
+{
+  _CacheDisplacements = true;
+  this->Initialize(true);
+}
+
+inline void irtkRView::CacheDisplacementsOff()
+{
+  _CacheDisplacements = false;
+  this->Initialize(true);
+}
+
+inline int irtkRView::GetCacheDisplacements()
+{
+  return _CacheDisplacements;
+}
+
+inline void irtkRView::SetSpeed(double value)
+{
+  _Speed = value;
+}
+
+inline double irtkRView::GetSpeed()
+{
+    if (_Speed >= 0)
+        return _Speed;
+    else
+        return -1/_Speed;
 }
 
 inline void irtkRView::DisplayTargetContoursOn()
@@ -1292,6 +1358,21 @@ inline void irtkRView::DisplayDeformationArrowsOff()
 inline int irtkRView::GetDisplayDeformationArrows()
 {
   return _DisplayDeformationArrows;
+}
+
+inline void irtkRView::DisplayDeformationTotalOn()
+{
+  _DisplayDeformationTotal = true;
+}
+
+inline void irtkRView::DisplayDeformationTotalOff()
+{
+  _DisplayDeformationTotal = false;
+}
+
+inline int irtkRView::GetDisplayDeformationTotal()
+{
+  return _DisplayDeformationTotal;
 }
 
 inline void irtkRView::DisplayLandmarksOn()

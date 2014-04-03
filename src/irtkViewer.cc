@@ -207,7 +207,7 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
 
   if (mffd == NULL) {
-    // Not an multi-level FFD, so let's try a single-level FFD
+    // Not a multi-level FFD, so let's try a single-level FFD
     affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
   } else {
     affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
@@ -374,10 +374,18 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				_AfterY[m][n] = _BeforeY[m][n];
 				_AfterZ[m][n] = _BeforeZ[m][n];
 				if (mffd != NULL) {
-          if (_rview->GetSourceTransformInvert()) {
-            mffd->LocalInverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+          if (_rview->GetDisplayDeformationTotal()) {
+            if (_rview->GetSourceTransformInvert()) {
+              mffd->Inverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            } else {
+              mffd->Transform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            }
           } else {
-            mffd->LocalTransform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            if (_rview->GetSourceTransformInvert()) {
+              mffd->LocalInverse  (_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            } else {
+              mffd->LocalTransform(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n], t1, t2);
+            }
           }
         } else {
           if (_rview->GetSourceTransformInvert()) {
@@ -390,12 +398,8 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				image->WorldToImage(_BeforeX[m][n], _BeforeY[m][n], _BeforeZ[m][n]);
 				image->WorldToImage(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
 
-				index = i * affd->GetY() * affd->GetZ() + j * affd->GetZ() + k;
-				if (affd->GetStatus(index) == Active) {
-					_CPStatus[m][n] = Active;
-				} else {
-					_CPStatus[m][n] = Passive;
-				}
+				index = affd->LatticeToIndex(i, j, k);
+        _CPStatus[m][n] = affd->GetStatus(index);
 #ifndef IMPERIAL
 				_CPLabel[m][n] = affd->GetLabel(index);
 				if (_CPLabel[m][n] > _CPMaxLabel) _CPMaxLabel = _CPLabel[m][n];
@@ -433,11 +437,19 @@ bool irtkViewer::Update2(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 			image->ImageToWorld(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j]);
 
 			if (mffd != NULL) {
-				if (_rview->GetSourceTransformInvert()) {
-					mffd->LocalInverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
-				} else {
-					mffd->LocalTransform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
-				}
+        if (_rview->GetDisplayDeformationTotal()) {
+          if (_rview->GetSourceTransformInvert()) {
+            mffd->Inverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+          } else {
+            mffd->Transform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+          }
+        } else {
+          if (_rview->GetSourceTransformInvert()) {
+            mffd->LocalInverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+          } else {
+            mffd->LocalTransform(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
+          }
+        }
 			} else {
 				if (_rview->GetSourceTransformInvert()) {
 					affd->Inverse  (_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j], t1, t2);
@@ -484,8 +496,6 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
     t2 = affd->LatticeToTime(affd->GetT() - 1);
   }
 
-//  cout << "irtkViewer::Update: t1 = " << t1 << ", t2 = " << t2 << endl; cout.flush();
-
   // Compute (control) points before and after transformation
   // (application of irtkTransformation::Transform or irtkTransformation::Inverse)
   bool ok = false;
@@ -514,10 +524,18 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
           for (int i = 0; i < _NumberOfX; i++) {
             image->ImageToWorld(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j]);
             if (mffd != NULL) {
-              if (_rview->GetSourceTransformInvert()) {
-                mffd->LocalTransform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+              if (_rview->GetDisplayDeformationTotal()) {
+                if (_rview->GetSourceTransformInvert()) {
+                  mffd->Transform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+                } else {
+                  mffd->Inverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+                }
               } else {
-                mffd->LocalInverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+                if (_rview->GetSourceTransformInvert()) {
+                  mffd->LocalTransform(_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+                } else {
+                  mffd->LocalInverse  (_AfterGridX[i][j], _AfterGridY[i][j], _AfterGridZ[i][j], t1, t2);
+                }
               }
             } else {
               if (_rview->GetSourceTransformInvert()) {
