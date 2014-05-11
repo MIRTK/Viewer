@@ -2578,6 +2578,11 @@ void irtkRView::GetTransformationText(list<char *> &text)
     ffd->GetSpacing(dx, dy, dz, dt);
     sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
     ptr = strdup(buffer);
+  } else if (strcmp(name, "irtkBSplineFreeFormTransformationStatistical") == 0) {
+    irtkBSplineFreeFormTransformationStatistical *ffd = dynamic_cast<irtkBSplineFreeFormTransformationStatistical *> (_sourceTransform);
+    ffd->GetSpacing(dx, dy, dz, dt);
+    sprintf(buffer, "3D Statistical B-Spline FFD: (%.2f mm X %.2f mm X %.2f mm)", dx, dy, dz);
+    ptr = strdup(buffer);
   } else {
     sprintf(buffer, "Unknown transformation type (%s)", _sourceTransform->NameOfClass());
     ptr = strdup(buffer);
@@ -2606,6 +2611,11 @@ void irtkRView::GetTransformationText(list<char *> &text)
         irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
+      } else if (strcmp(name, "irtkBSplineFreeFormTransformationStatistical") == 0) {
+        irtkBSplineFreeFormTransformationStatistical *ffd = dynamic_cast<irtkBSplineFreeFormTransformationStatistical *> (_sourceTransform);
+        ffd->GetSpacing(dx, dy, dz, dt);
+        sprintf(buffer, "3D Statistical B-Spline FFD: (%.2f mm X %.2f mm X %.2f mm)", dx, dy, dz);
+        ptr = strdup(buffer);
       } else if (strcmp(name, "irtkLinearFreeFormTransformation3D") == 0) {
         irtkLinearFreeFormTransformation3D *ffd = dynamic_cast<irtkLinearFreeFormTransformation3D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
