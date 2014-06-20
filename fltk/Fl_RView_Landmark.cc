@@ -22,7 +22,13 @@
 
 #ifdef HAS_LANDMARK_PANEL
 
-
+// TODO: Get a hold on this nasty bitmap array fiasco. Maybe just make
+//       it work without C++11 variadic template feature. As it was before.
+//       -as12312
+#if WINDOWS
+#  define HAVE_VARIADIC_TEMPLATES 0
+#else
+#  define HAVE_VARIADIC_TEMPLATES 1
 // Bitmaps
 /// \sa http://stackoverflow.com/questions/15695960/declaring-char-hexadecimal-constants-in-c11
 template <std::size_t S>
@@ -40,6 +46,7 @@ struct bitmap_array {
 template <typename... A>
 bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
 { return bitmap_array<sizeof...(A)>{{static_cast<char>(v)...}}; }
+#endif
 
 #include <bitmaps/landmarks.xbm>
 #ifdef HAS_VTK
