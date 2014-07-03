@@ -214,12 +214,12 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   }
 
   // Find out time
-  if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
+  if (_rview->GetTarget() && 0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
     t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
   } else {
     t1 = affd->LatticeToTime(0);
   }
-  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
+  if (_rview->GetSource() && 0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
     t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
   } else {
     t2 = affd->LatticeToTime(affd->GetT() - 1);
@@ -485,12 +485,12 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
 
   // Determine time parameters for transformation
   double t1, t2;
-  if (0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
+  if (_rview->GetTarget() && 0 <= _rview->GetTargetFrame() && _rview->GetTargetFrame() < _rview->GetTarget()->GetT()) {
     t1 = _rview->GetTarget()->ImageToTime(_rview->GetTargetFrame());
   } else {
     t1 = affd->LatticeToTime(0);
   }
-  if (0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
+  if (_rview->GetSource() && 0 <= _rview->GetSourceFrame() && _rview->GetSourceFrame() < _rview->GetSource()->GetT()) {
     t2 = _rview->GetSource()->ImageToTime(_rview->GetSourceFrame());
   } else {
     t2 = affd->LatticeToTime(affd->GetT() - 1);
