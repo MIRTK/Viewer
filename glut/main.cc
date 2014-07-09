@@ -433,6 +433,14 @@ int main(int argc, char** argv)
       argv++;
       ok = true;
     }
+    if ((ok == false) && (strcmp(argv[1], "-grid_res") == 0)) {
+      argc--;
+      argv++;
+      rview->SetDisplayDeformationGridResolution(atoi(argv[1]));
+      argc--;
+      argv++;
+      ok = true;
+    }
     if ((ok == false) && (strcmp(argv[1], "-origin") == 0)) {
       argc--;
       argv++;
