@@ -2387,16 +2387,16 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
 
   // Determine time parameters for transformation
-  double t1 = .0, t2 = .0;
+  double tt = .0, ts = .0;
   if (0 <= this->GetTargetFrame() && this->GetTargetFrame() < this->GetTarget()->GetT()) {
-    t1 = this->GetTarget()->ImageToTime(this->GetTargetFrame());
+    tt = this->GetTarget()->ImageToTime(this->GetTargetFrame());
   } else if (affd) {
-    t1 = affd->LatticeToTime(0);
+    tt = affd->LatticeToTime(0);
   }
   if (0 <= this->GetSourceFrame() && this->GetSourceFrame() < this->GetSource()->GetT()) {
-    t2 = this->GetSource()->ImageToTime(this->GetSourceFrame());
+    ts = this->GetSource()->ImageToTime(this->GetSourceFrame());
   } else if (affd) {
-    t2 = affd->LatticeToTime(affd->GetT() - 1);
+    ts = affd->LatticeToTime(affd->GetT() - 1);
   }
   // END of added code -as12312
 
@@ -2423,7 +2423,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   u = _origin_x;
   v = _origin_y;
   w = _origin_z;
-  _sourceTransform->Transform(u, v, w, t1, t2);
+  _sourceTransform->Transform(u, v, w, ts, tt);
   point = irtkPoint(u, v, w);
   _sourceImage->WorldToImage(u, v, w);
   i = round(u);
@@ -2439,7 +2439,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   u = _origin_x;
   v = _origin_y;
   w = _origin_z;
-  _segmentationTransform->Transform(u, v, w);
+  _segmentationTransform->Transform(u, v, w, ts, tt);
   point = irtkPoint(u, v, w);
   _segmentationImage->WorldToImage(u, v, w);
   i = round(u);
@@ -3000,7 +3000,7 @@ double irtkRView::FitLandmarks()
 #endif
 
   // Calculate residual error
-  transformation.irtkTransformation::Transform(source_pts);
+  transformation.Transform(source_pts);
 
   error = 0;
   for (i = 0; i < target_pts.Size(); i++) {
