@@ -390,7 +390,7 @@ void Fl_RViewUI::cb_replaceLandmark(Fl_Button *, void* v)
 void Fl_RViewUI::cb_editLandmark(Fl_Button *, void* v)
 {
   // Alert user
-  fl_alert("Edit landmark not yet implemented");
+//  fl_alert("Edit landmark not yet implemented");
 
   int id;
   const char *buffer = NULL;
@@ -446,30 +446,41 @@ void Fl_RViewUI::cb_editLandmark(Fl_Button *, void* v)
 
 void Fl_RViewUI::cb_browseLandmark(Fl_Browser* o, void* v)
 {
-  // Go to selected landmark position, if mouse button was pressed twice
-  if (Fl::event_clicks() != 0) {
-    char *label = NULL;
-    irtkPoint point;
-
-    // Get landmark
-    if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
-      rview->GetTargetLandmark(point, o->value(), label);
-    } else {
-      rview->GetSourceLandmark(point, o->value(), label);
+  // Update set of selected landmarks
+  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+    for (int id = 1; id <= o->size(); ++id) {
+      if (o->selected(id)) rview->SelectTargetLandmark  (id);
+      else                 rview->DeselectTargetLandmark(id);
     }
-
-    // Set origin to landmark
-    rview->SetOrigin(point._x, point._y, point._z);
-
-    // Update
-    rview->Update();
-    rviewUI->update();
-    viewer->redraw();
-
-  } else if (Fl::event_is_click() == 0) {
-    // Landmark is being dragged
-    cerr << "Dragging landmark not implemented, ignoring...\n";
+  } else {
+    for (int id = 1; id <= o->size(); ++id) {
+      if (o->selected(id)) rview->SelectSourceLandmark  (id);
+      else                 rview->DeselectSourceLandmark(id);
+    }
   }
+
+  // Go to last selected landmark position
+  char *label = NULL;
+  irtkPoint point;
+
+  // Get landmark
+  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+    rview->GetTargetLandmark(point, o->value(), label);
+  } else {
+    rview->GetSourceLandmark(point, o->value(), label);
+  }
+
+  // Set origin to landmark
+  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+    rview->SetTargetOrigin(point._x, point._y, point._z);
+  } else {
+    rview->SetSourceOrigin(point._x, point._y, point._z);
+  }
+
+  // Update
+  rview->Update();
+  rviewUI->update();
+  viewer->redraw();
 }
 
 void Fl_RViewUI::cb_viewLandmarks(Fl_Button* o, void*)
