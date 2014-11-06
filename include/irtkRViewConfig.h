@@ -27,7 +27,10 @@ typedef struct {
 typedef enum { _View_XY, _View_XZ, _View_YZ,
                _View_XY_XZ_v, _View_XY_YZ_v, _View_XZ_YZ_v,
                _View_XY_XZ_h, _View_XY_YZ_h, _View_XZ_YZ_h,
-               _View_XY_XZ_YZ
+               _View_XY_XZ_YZ,
+               _View_AB_XY_v, _View_AB_XZ_v, _View_AB_YZ_v,
+               _View_AB_XY_h, _View_AB_XZ_h, _View_AB_YZ_h,
+               _View_AB_XY_XZ_v, _View_AB_XY_XZ_h
              } irtkConfigViewerMode;
 
 
@@ -60,5 +63,38 @@ extern irtkRViewConfig View_XZ_YZ_h[];
 
 /// RView configuration with three reslice planes
 extern irtkRViewConfig View_XY_XZ_YZ[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are left of those of the source
+extern irtkRViewConfig View_AB_XY_v[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are left of those of the source
+extern irtkRViewConfig View_AB_XZ_v[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are left of those of the source
+extern irtkRViewConfig View_AB_YZ_v[];
+
+/// RView configuration with two horizontal reslice planes for both images
+/// where the reslice planes of the target are left of those of the source
+extern irtkRViewConfig View_AB_XY_XZ_v[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are above those of the source
+extern irtkRViewConfig View_AB_XY_h[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are above those of the source
+extern irtkRViewConfig View_AB_XZ_h[];
+
+/// RView configuration with single reslice plane for each image,
+/// where the reslice planes of the target are above those of the source
+extern irtkRViewConfig View_AB_YZ_h[];
+
+/// RView configuration with two horizontal reslice planes for both images
+/// where the reslice planes of the target are above those of the source
+extern irtkRViewConfig View_AB_XY_XZ_h[];
+
 
 #endif

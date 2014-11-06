@@ -230,6 +230,7 @@ void irtkRView::Update()
   double blendA, blendB;
   irtkColor *ptr3;
   irtkGreyPixel *ptr1, *ptr2, *ptr4, *ptr5;
+  irtkLookupTable *lut1, *lut2;
 
   // Check whether target and/or source and/or segmentation need updating
   for (l = 0; l < _NoOfViewers; l++) {
@@ -258,16 +259,23 @@ void irtkRView::Update()
   // Combine target and source image
   for (k = 0; k < _NoOfViewers; k++) {
     ptr1 = _targetImageOutput[k]->GetPointerToVoxels();
+    lut1 = _targetLookupTable;
     ptr2 = _sourceImageOutput[k]->GetPointerToVoxels();
+    lut2 = _sourceLookupTable;
     ptr3 = _drawable[k];
     ptr4 = _segmentationImageOutput[k]->GetPointerToVoxels();
+
+    if (_isSourceViewer[k]) {
+      swap(ptr1, ptr2);
+      swap(lut1, lut2);
+    }
 
     switch (_viewMode) {
       case View_A:
         // Only display the target image
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            *ptr3 = _targetLookupTable->At(*ptr1);
+            *ptr3 = lut1->At(*ptr1);
             ptr1++;
             ptr3++;
           }
@@ -277,7 +285,7 @@ void irtkRView::Update()
         // Only display the source image
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            *ptr3 = _sourceLookupTable->At(*ptr2);
+            *ptr3 = lut2->At(*ptr2);
             ptr2++;
             ptr3++;
           }
@@ -288,9 +296,9 @@ void irtkRView::Update()
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
             if (i < _viewMix * _viewer[k]->GetWidth()) {
-              *ptr3 = _targetLookupTable->At(*ptr1);
+              *ptr3 = lut1->At(*ptr1);
             } else {
-              *ptr3 = _sourceLookupTable->At(*ptr2);
+              *ptr3 = lut2->At(*ptr2);
             }
             ptr1++;
             ptr2++;
@@ -303,14 +311,14 @@ void irtkRView::Update()
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           if (j < _viewMix * _viewer[k]->GetHeight()) {
             for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-              *ptr3 = _targetLookupTable->At(*ptr1);
+              *ptr3 = lut1->At(*ptr1);
               ptr1++;
               ptr2++;
               ptr3++;
             }
           } else {
             for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-              *ptr3 = _sourceLookupTable->At(*ptr2);
+              *ptr3 = lut2->At(*ptr2);
               ptr1++;
               ptr2++;
               ptr3++;
@@ -339,12 +347,12 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            ptr3->r = int(  blendA * _targetLookupTable->At(*ptr1).r
-                          + blendB * _sourceLookupTable->At(*ptr2).r);
-            ptr3->g = int(  blendA * _targetLookupTable->At(*ptr1).g
-                          + blendB * _sourceLookupTable->At(*ptr2).g);
-            ptr3->b = int(  blendA * _targetLookupTable->At(*ptr1).b
-                          + blendB * _sourceLookupTable->At(*ptr2).b);
+            ptr3->r = int(  blendA * lut1->At(*ptr1).r
+                          + blendB * lut2->At(*ptr2).r);
+            ptr3->g = int(  blendA * lut1->At(*ptr1).g
+                          + blendB * lut2->At(*ptr2).g);
+            ptr3->b = int(  blendA * lut1->At(*ptr1).b
+                          + blendB * lut2->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;
@@ -355,18 +363,18 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            ptr3->r = int(     _targetLookupTable->At(*ptr1).a
-                             * _targetLookupTable->At(*ptr1).r +
-                          (1 - _targetLookupTable->At(*ptr1).a)
-                             * _sourceLookupTable->At(*ptr2).r);
-            ptr3->g = int(     _targetLookupTable->At(*ptr1).a
-                             * _targetLookupTable->At(*ptr1).g +
-                          (1 - _targetLookupTable->At(*ptr1).a)
-                             * _sourceLookupTable->At(*ptr2).g);
-            ptr3->b = int(     _targetLookupTable->At(*ptr1).a
-                             * _targetLookupTable->At(*ptr1).b +
-                          (1 - _targetLookupTable->At(*ptr1).a)
-                             * _sourceLookupTable->At(*ptr2).b);
+            ptr3->r = int(     lut1->At(*ptr1).a
+                             * lut1->At(*ptr1).r +
+                          (1 - lut1->At(*ptr1).a)
+                             * lut2->At(*ptr2).r);
+            ptr3->g = int(     lut1->At(*ptr1).a
+                             * lut1->At(*ptr1).g +
+                          (1 - lut1->At(*ptr1).a)
+                             * lut2->At(*ptr2).g);
+            ptr3->b = int(     lut1->At(*ptr1).a
+                             * lut1->At(*ptr1).b +
+                          (1 - lut1->At(*ptr1).a)
+                             * lut2->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;
@@ -377,18 +385,18 @@ void irtkRView::Update()
         // Display target and source images in a checkerboard fashion
         for (j = 0; j < _viewer[k]->GetHeight(); j++) {
           for (i = 0; i < _viewer[k]->GetWidth(); i++) {
-            ptr3->r = int((1 - _sourceLookupTable->At(*ptr2).a)
-                          * _targetLookupTable->At(*ptr1).r
-                          + _sourceLookupTable->At(*ptr2).a
-                          * _sourceLookupTable->At(*ptr2).r);
-            ptr3->g = int((1 - _sourceLookupTable->At(*ptr2).a)
-                          * _targetLookupTable->At(*ptr1).g
-                          + _sourceLookupTable->At(*ptr2).a
-                          * _sourceLookupTable->At(*ptr2).g);
-            ptr3->b = int((1 - _sourceLookupTable->At(*ptr2).a)
-                          * _targetLookupTable->At(*ptr1).b
-                          + _sourceLookupTable->At(*ptr2).a
-                          * _sourceLookupTable->At(*ptr2).b);
+            ptr3->r = int((1 - lut2->At(*ptr2).a)
+                          * lut1->At(*ptr1).r
+                          + lut2->At(*ptr2).a
+                          * lut2->At(*ptr2).r);
+            ptr3->g = int((1 - lut2->At(*ptr2).a)
+                          * lut1->At(*ptr1).g
+                          + lut2->At(*ptr2).a
+                          * lut2->At(*ptr2).g);
+            ptr3->b = int((1 - lut2->At(*ptr2).a)
+                          * lut1->At(*ptr1).b
+                          + lut2->At(*ptr2).a
+                          * lut2->At(*ptr2).b);
             ptr1++;
             ptr2++;
             ptr3++;
@@ -446,8 +454,27 @@ void irtkRView::Draw()
   // Clear window
   glClear( GL_COLOR_BUFFER_BIT);
 
+  int count_view_mode[4] = {0, 0, 0, 0};
+  for (k = 0; k < _NoOfViewers; k++) {
+    count_view_mode[_viewer[k]->GetViewerMode()] += 1;
+  }
+
   // Draw images
   for (k = 0; k < _NoOfViewers; k++) {
+
+    bool display_target_contour        = _DisplayTargetContour;
+    bool display_source_contour        = _DisplaySourceContour;
+    bool display_target_landmarks      = _DisplayLandmarks;
+    bool display_source_landmarks      = _DisplayLandmarks;
+    bool display_segmentation_contours = _DisplaySegmentationContours;
+
+    if (count_view_mode[_viewer[k]->GetViewerMode()] > 1) {
+      display_target_contour        = !_isSourceViewer[k] && _DisplayTargetContour;
+      display_source_contour        =  _isSourceViewer[k] && _DisplaySourceContour;
+      display_target_landmarks      = !_isSourceViewer[k] && _DisplayLandmarks;
+      display_source_landmarks      =  _isSourceViewer[k] && _DisplayLandmarks;
+      display_segmentation_contours = !_isSourceViewer[k] && _DisplaySegmentationContours;
+    }
 
     // Draw the image
     _viewer[k]->DrawImage(_drawable[k]);
@@ -456,17 +483,17 @@ void irtkRView::Draw()
     _viewer[k]->Clip();
 
     // Draw iso-contours in target image if needed
-    if (_DisplayTargetContour) {
+    if (display_target_contour) {
       _viewer[k]->DrawIsolines(_targetImageOutput[k],
                                _targetLookupTable->GetMinDisplayIntensity());
     }
     // Draw iso-contours in source image if needed
-    if (_DisplaySourceContour) {
+    if (display_source_contour) {
       _viewer[k]->DrawIsolines(_sourceImageOutput[k],
                                _sourceLookupTable->GetMinDisplayIntensity());
     }
     // Draw segmentation if needed
-    if (_DisplaySegmentationContours) {
+    if (display_segmentation_contours) {
       _viewer[k]->DrawSegmentationContour(_segmentationImageOutput[k]);
     }
     // Draw tag grid if needed
@@ -482,24 +509,26 @@ void irtkRView::Draw()
       if (_viewer[k]->Update(_sourceImageOutput[k], _sourceTransform)) {
 
         // Draw deformation grid if needed
-        if (_DisplayDeformationGrid == true) {
+        if (_DisplayDeformationGrid) {
           _viewer[k]->DrawGrid();
         }
         // Draw deformation points if needed
-        if (_DisplayDeformationPoints == true) {
+        if (_DisplayDeformationPoints) {
           _viewer[k]->DrawPoints();
         }
         // Draw deformation arrows if needed
-        if (_DisplayDeformationArrows == true) {
+        if (_DisplayDeformationArrows) {
           _viewer[k]->DrawArrows();
         }
       }
     }
 
     // Draw landmarks if needed (true: red, false: green)
-    if (_DisplayLandmarks) {
-      _viewer[k]->DrawLandmarks(_targetLandmarks, _targetImageOutput[k], true);
-      _viewer[k]->DrawLandmarks(_sourceLandmarks, _targetImageOutput[k], false);
+    if (display_target_landmarks) {
+      _viewer[k]->DrawLandmarks(_targetLandmarks, _selectedTargetLandmarks, _targetImageOutput[k], true);
+    }
+    if (display_source_landmarks) {
+      _viewer[k]->DrawLandmarks(_sourceLandmarks, _selectedSourceLandmarks, _targetImageOutput[k], false);
     }
 
     // Draw ROI if needed
@@ -579,7 +608,6 @@ void irtkRView::SetOrigin(int i, int j)
   _sourceUpdate = true;
   _segmentationUpdate = true;
   _selectionUpdate = true;
-
 }
 
 void irtkRView::ResetROI()
@@ -928,6 +956,30 @@ void irtkRView::Read(char *name)
       } else if (strcmp(buffer2, "View_XY_XZ_YZ") == 0) {
         _configMode = _View_XY_XZ_YZ;
         ok = true;
+      } else if (strcmp(buffer2, "View_AB_XY_v") == 0) {
+        _configMode = _View_AB_XY_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_XZ_v") == 0) {
+        _configMode = _View_AB_XZ_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_YZ_v") == 0) {
+        _configMode = _View_AB_YZ_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_XY_XZ_v") == 0) {
+        _configMode = _View_AB_XY_XZ_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_XY_h") == 0) {
+        _configMode = _View_AB_XY_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_XZ_h") == 0) {
+        _configMode = _View_AB_XZ_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_YZ_h") == 0) {
+        _configMode = _View_AB_YZ_v;
+        ok = true;
+      } else if (strcmp(buffer2, "View_AB_XY_XZ_h") == 0) {
+        _configMode = _View_AB_XY_XZ_v;
+        ok = true;
       }
     }
     // Width of viewer (in pixels)
@@ -1243,6 +1295,30 @@ void irtkRView::Read(char *name)
     case _View_XY_XZ_YZ:
       this->Configure(View_XY_XZ_YZ);
       break;
+    case _View_AB_XY_v:
+      this->Configure(View_AB_XY_v);
+      break;
+    case _View_AB_XZ_v:
+      this->Configure(View_AB_XZ_v);
+      break;
+    case _View_AB_YZ_v:
+      this->Configure(View_AB_YZ_v);
+      break;
+    case _View_AB_XY_XZ_v:
+      this->Configure(View_AB_XY_XZ_v);
+      break;
+    case _View_AB_XY_h:
+      this->Configure(View_AB_XY_h);
+      break;
+    case _View_AB_XZ_h:
+      this->Configure(View_AB_XZ_h);
+      break;
+    case _View_AB_YZ_h:
+      this->Configure(View_AB_YZ_h);
+      break;
+    case _View_AB_XY_XZ_h:
+      this->Configure(View_AB_XY_XZ_h);
+      break;
   }
 
   // Close file
@@ -1290,6 +1366,30 @@ void irtkRView::Write(char *name)
       break;
     case _View_XY_XZ_YZ:
       to << "configMode                        = View_XY_XZ_YZ\n";
+      break;
+    case _View_AB_XY_v:
+      to << "configMode                        = View_AB_XY_v\n";
+      break;
+    case _View_AB_XZ_v:
+      to << "configMode                        = View_AB_XZ_v\n";
+      break;
+    case _View_AB_YZ_v:
+      to << "configMode                        = View_AB_YZ_v\n";
+      break;
+    case _View_AB_XY_XZ_v:
+      to << "configMode                        = View_AB_XY_XZ_v\n";
+      break;
+    case _View_AB_XY_h:
+      to << "configMode                        = View_AB_XY_h\n";
+      break;
+    case _View_AB_XZ_h:
+      to << "configMode                        = View_AB_XZ_h\n";
+      break;
+    case _View_AB_YZ_h:
+      to << "configMode                        = View_AB_YZ_h\n";
+      break;
+    case _View_AB_XY_XZ_h:
+      to << "configMode                        = View_AB_XY_XZ_h\n";
       break;
   }
   // Width of viewer  (in pixels)
@@ -1871,12 +1971,14 @@ void irtkRView::ReadTargetLandmarks(char *name)
 {
   // Read target landmarks
   _targetLandmarks.ReadVTK(name);
+  _selectedTargetLandmarks.clear();
 }
 
 void irtkRView::ReadSourceLandmarks(char *name)
 {
   // Read source landmarks
   _sourceLandmarks.ReadVTK(name);
+  _selectedSourceLandmarks.clear();
 }
 
 void irtkRView::WriteTargetLandmarks(char *name)
@@ -2267,6 +2369,7 @@ void irtkRView::Configure(irtkRViewConfig config[])
     delete[] _segmentationImageOutput;
     delete[] _selectionImageOutput;
     delete[] _viewer;
+    delete[] _isSourceViewer;
     delete[] _drawable;
   }
 
@@ -2288,15 +2391,19 @@ void irtkRView::Configure(irtkRViewConfig config[])
 
   // Allocate array for viewers
   _viewer = new irtkViewer*[_NoOfViewers];
+  _isSourceViewer = new bool[_NoOfViewers];
 
   // Allocate array for drawables
   _drawable = new irtkColor*[_NoOfViewers];
 
   // Configure each viewer
+  bool source_viewer[4] = {false, false, false, false};
   for (i = 0; i < _NoOfViewers; i++) {
 
     // Allocate _target viewer
     _viewer[i] = new irtkViewer(this, config[i].mode);
+    _isSourceViewer[i] = source_viewer[config[i].mode];
+    source_viewer[config[i].mode] = !source_viewer[config[i].mode];
 
     // Configure _target viewer
     _viewer[i]->SetViewport(config[i].xmin, config[i].ymin, config[i].xmax,

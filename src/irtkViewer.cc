@@ -804,10 +804,9 @@ void irtkViewer::DrawPoints()
 	glEnd();
 }
 
-void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, irtkGreyImage *image,
+void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyImage *image,
 		int bTarget)
 {
-	int i;
 	irtkPoint p;
 
 	// Adjust pointsize and colour
@@ -819,27 +818,96 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, irtkGreyImage *image,
 	}
 
 	// Draw landmarks
-	for (i = 0; i < landmarks.Size(); i++) {
+  if (ids.empty()) {
+    for (int i = 0; i < landmarks.Size(); ++i) {
 
-		// Get point
-		p = landmarks(i);
+      // Get point
+      p = landmarks(i);
 
-		if (bTarget == false) {
-			// Transform point
-			_rview->_sourceTransform->Inverse(p._x, p._y, p._z);
-		}
+      if (bTarget == false) {
+        // Transform point
+        _rview->_sourceTransform->Inverse(p._x, p._y, p._z);
+      }
 
-		// Draw point
-		if (image->IsInFOV(p._x, p._y, p._z) == true) {
-			image->WorldToImage(p);
-			glBegin (GL_LINES);
-			glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
-			glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
-			glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
-			glVertex2f(_screenX1 + p._x, _screenY1 + p._y + 8);
-			glEnd();
-		}
-	}
+      // Draw point
+      if (image->IsInFOV(p._x, p._y, p._z) == true) {
+        image->WorldToImage(p);
+        glBegin (GL_LINES);
+        glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
+        glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
+        glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
+        glVertex2f(_screenX1 + p._x, _screenY1 + p._y + 8);
+        glEnd();
+      }
+    }
+  } else {
+    for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
+
+      // Get point
+      p = landmarks(*id);
+
+      if (bTarget == false) {
+        // Transform point
+        _rview->_sourceTransform->Inverse(p._x, p._y, p._z);
+      }
+
+      // Draw point
+      if (image->IsInFOV(p._x, p._y, p._z) == true) {
+        image->WorldToImage(p);
+        glBegin (GL_LINES);
+        glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
+        glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
+        glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
+        glVertex2f(_screenX1 + p._x, _screenY1 + p._y + 8);
+        glEnd();
+      }
+    }
+  }
+}
+
+void irtkViewer
+::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source,
+                      set<int> &ids, irtkGreyImage *image)
+{
+  irtkPoint p1, p2;
+
+  // Adjust colour
+  glColor3f(0, 1, 0);
+
+  // Draw lines connecting corresponding landmarks
+  if (ids.empty()) {
+    for (int i = 0; i < target.Size() && i < source.Size(); ++i) {
+      p1 = target(i);
+      p2 = source(i);
+      _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
+      if (image->IsInFOV(p1._x, p1._y, p1._z) &&
+          image->IsInFOV(p2._x, p2._y, p2._z)) {
+        image->WorldToImage(p1);
+        image->WorldToImage(p2);
+        glBegin (GL_LINES);
+        glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
+        glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
+        glEnd();
+      }
+    }
+  } else {
+    for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
+      if (*id < target.Size() && *id < source.Size()) {
+        p1 = target(*id);
+        p2 = source(*id);
+        _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
+        if (image->IsInFOV(p1._x, p1._y, p1._z) &&
+            image->IsInFOV(p2._x, p2._y, p2._z)) {
+          image->WorldToImage(p1);
+          image->WorldToImage(p2);
+          glBegin (GL_LINES);
+          glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
+          glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
+          glEnd();
+        }
+      }
+    }
+  }
 }
 
 void irtkViewer::DrawImage(irtkColor *drawable)

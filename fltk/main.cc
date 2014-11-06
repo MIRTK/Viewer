@@ -37,6 +37,9 @@ void usage()
   cerr << "\t<-xy      | -xz      | -yz>      Single     view\n";
   cerr << "\t<-xy_xz_v | -xy_yz_v | -xz_yz_v> Vertical   view\n";
   cerr << "\t<-xy_xz_h | -xy_yz_h | -xz_yz_h> Horizontal view\n";
+  cerr << "\t<-ab_xy_v | -ab_xz_v | -ab_yz_v> Side-by-side view of single views\n";
+  cerr << "\t<-ab_xy_h | -ab_xz_h | -ab_yz_h> Side-by-side view of single views\n";
+  cerr << "\t<-ab_xy_xz_v | ab_xy_xz_h>       Side-by-side view of vertical/horizontal views\n";
   cerr << "\t<-cursor>                        Cursor off\n";
   cerr << "\t<-grid>                          Deformation grid   on\n";
   cerr << "\t<-points>                        Deformation points on\n";
@@ -255,6 +258,54 @@ int main(int argc, char **argv)
       argc--;
       argv++;
       rview->Configure(View_XZ_YZ_h);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xy_v") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XY_v);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xz_v") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XZ_v);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_yz_v") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_YZ_v);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xy_xz_v") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XY_XZ_v);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xy_h") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XY_h);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xz_h") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XZ_h);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_yz_h") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_YZ_h);
+      ok = true;
+    }
+    if ((ok == false) && (strcmp(argv[1], "-ab_xy_xz_h") == 0)) {
+      argc--;
+      argv++;
+      rview->Configure(View_AB_XY_XZ_h);
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-cursor") == 0)) {

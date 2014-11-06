@@ -129,6 +129,9 @@ protected:
   /// Image viewer for target image
   irtkViewer **_viewer;
 
+  /// Whether the given viewer displays the source image instead
+  bool *_isSourceViewer;
+
   /// Target image
   irtkImage *_targetImage;
 
@@ -382,6 +385,12 @@ protected:
   /// Flag for display of landmarks
   int _DisplayLandmarks;
 
+  /// IDs of target landmarks to display
+  set<int> _selectedTargetLandmarks;
+
+  /// IDs of source landmarks to display
+  set<int> _selectedSourceLandmarks;
+
   /// Flag for display of ROI
   int _DisplayROI;
 
@@ -536,7 +545,13 @@ public:
   double GetResolution();
 
   /// Set display origin (in mm)
-  void SetOrigin(double,   double,   double);
+  void SetOrigin(double, double, double);
+
+  /// Set display origin (in mm) of target (side-by-side view only)
+  void SetTargetOrigin(double, double, double);
+
+  /// Set display origin (in mm) of source (side-by-side view only)
+  void SetSourceOrigin(double, double, double);
 
   /// Set display origin (in display pixels)
   void SetOrigin(int, int);
@@ -828,6 +843,30 @@ public:
 
   /// Return display of landmarks
   int GetDisplayLandmarks();
+
+  /// Turn display of specified target landmark on
+  void SelectTargetLandmark(int);
+
+  /// Turn display of specified target landmark off
+  void DeselectTargetLandmark(int);
+
+  /// Return display of specified target landmark
+  int IsTargetLandmarkSelected(int);
+
+  /// Clear selection of target landmarks to display
+  void ClearTargetLandmarkSelection();
+
+  /// Turn display of specified source landmark on
+  void SelectSourceLandmark(int);
+
+  /// Turn display of specified source landmark off
+  void DeselectSourceLandmark(int);
+
+  /// Return display of specified source landmark
+  int IsSourceLandmarkSelected(int);
+
+  /// Clear selection of target landmarks to display
+  void ClearSourceLandmarkSelection();
 
 #ifdef HAS_VTK
   /// Turn display of object on
@@ -1390,6 +1429,50 @@ inline int irtkRView::GetDisplayLandmarks()
   return _DisplayLandmarks;
 }
 
+inline void irtkRView::SelectTargetLandmark(int id)
+{
+  if (0 < id && id <= _targetLandmarks.Size()) {
+    _selectedTargetLandmarks.insert(id-1);
+  }
+}
+
+inline void irtkRView::DeselectTargetLandmark(int id)
+{
+  _selectedTargetLandmarks.erase(id-1);
+}
+
+inline int irtkRView::IsTargetLandmarkSelected(int id)
+{
+  return _selectedTargetLandmarks.find(id-1) != _selectedTargetLandmarks.end();
+}
+
+inline void irtkRView::ClearTargetLandmarkSelection()
+{
+  _selectedTargetLandmarks.clear();
+}
+
+inline void irtkRView::SelectSourceLandmark(int id)
+{
+  if (0 < id && id <= _targetLandmarks.Size()) {
+    _selectedSourceLandmarks.insert(id-1);
+  }
+}
+
+inline void irtkRView::DeselectSourceLandmark(int id)
+{
+  _selectedSourceLandmarks.erase(id-1);
+}
+
+inline int irtkRView::IsSourceLandmarkSelected(int id)
+{
+  return _selectedSourceLandmarks.find(id-1) != _selectedSourceLandmarks.end();
+}
+
+inline void irtkRView::ClearSourceLandmarkSelection()
+{
+  _selectedSourceLandmarks.clear();
+}
+
 inline int irtkRView::GetDisplaySegmentationLabels()
 {
   return _DisplaySegmentationLabels;
@@ -1627,10 +1710,45 @@ inline void irtkRView::SetOrigin(double x, double y, double z)
     _segmentationImageOutput[i]->PutOrigin(_origin_x, _origin_y, _origin_z);
     _selectionImageOutput[i]->PutOrigin(_origin_x, _origin_y, _origin_z);
   }
-  _targetUpdate = true;
-  _sourceUpdate = true;
+  _targetUpdate       = true;
+  _sourceUpdate       = true;
   _segmentationUpdate = true;
-  _selectionUpdate = true;
+  _selectionUpdate    = true;
+}
+
+inline void irtkRView::SetTargetOrigin(double x, double y, double z)
+{
+  _origin_x = x;
+  _origin_y = y;
+  _origin_z = z;
+  for (int i = 0; i < _NoOfViewers; ++i) {
+    if (!_isSourceViewer[i]) {
+      _targetImageOutput      [i]->PutOrigin(_origin_x, _origin_y, _origin_z);
+      _sourceImageOutput      [i]->PutOrigin(_origin_x, _origin_y, _origin_z);
+      _segmentationImageOutput[i]->PutOrigin(_origin_x, _origin_y, _origin_z);
+      _selectionImageOutput   [i]->PutOrigin(_origin_x, _origin_y, _origin_z);
+    }
+  }
+  _targetUpdate       = true;
+  _sourceUpdate       = true;
+  _segmentationUpdate = true;
+  _selectionUpdate    = true;
+}
+
+inline void irtkRView::SetSourceOrigin(double x, double y, double z)
+{
+  for (int i = 0; i < _NoOfViewers; ++i) {
+    if (_isSourceViewer[i]) {
+      _targetImageOutput      [i]->PutOrigin(x, y, z);
+      _sourceImageOutput      [i]->PutOrigin(x, y, z);
+      _segmentationImageOutput[i]->PutOrigin(x, y, z);
+      _selectionImageOutput   [i]->PutOrigin(x, y, z);
+    }
+  }
+  _targetUpdate       = true;
+  _sourceUpdate       = true;
+  _segmentationUpdate = true;
+  _selectionUpdate    = true;
 }
 
 inline void irtkRView::GetOrigin(double &x, double &y, double &z)
@@ -1739,6 +1857,7 @@ inline void irtkRView::DeleteTargetLandmark(int id)
 {
   // Delete landmark from list
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
+    DeselectTargetLandmark(id);
     irtkPoint p = _targetLandmarks(id-1);
     _targetLandmarks.Del(p);
   }
@@ -1748,6 +1867,7 @@ inline void irtkRView::DeleteSourceLandmark(int id)
 {
   // Delete landmark from list
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
+    DeselectSourceLandmark(id);
     irtkPoint p = _sourceLandmarks(id-1);
     _sourceLandmarks.Del(p);
   }
