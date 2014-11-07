@@ -37,6 +37,7 @@ irtkRView::irtkRView(int x, int y)
 
   // Default: Reslice at origin
   _origin_x = 0;
+  _origin_y = 0;
   _origin_z = 0;
 
   // Default: Resolution is 1 mm
@@ -97,6 +98,7 @@ irtkRView::irtkRView(int x, int y)
   _DisplayROI = false;
 
   // Default: No TAG
+  _ViewTAG  = false;
   _TrackTAG = false;
 
   // Default: Cursor
@@ -209,6 +211,8 @@ irtkRView::irtkRView(int x, int y)
 
   // Region growing mode
   _regionGrowingMode = RegionGrowing2D;
+  _RegionGrowingThresholdMin = 0;
+  _RegionGrowingThresholdMax = 0;
 
   // By default configure rview to start with three orthogonal views
   _configMode = _View_XY_XZ_YZ;
@@ -2328,7 +2332,7 @@ void irtkRView::Resize(int w, int h)
   // Delete old drawables
   for (i = 0; i < _NoOfViewers; i++) {
     if (_drawable[i] != NULL)
-      delete _drawable[i];
+      delete[] _drawable[i];
   }
 
   // Allocate new drawables
@@ -2346,16 +2350,16 @@ void irtkRView::Configure(irtkRViewConfig config[])
 
   // Delete transformation filter, images and viewers
   for (i = 0; i < _NoOfViewers; i++) {
-    delete _targetTransformFilter[i];
-    delete _sourceTransformFilter[i];
-    delete _segmentationTransformFilter[i];
-    delete _selectionTransformFilter[i];
-    delete _targetImageOutput[i];
-    delete _sourceImageOutput[i];
-    delete _segmentationImageOutput[i];
-    delete _selectionImageOutput[i];
-    delete _viewer[i];
-    delete _drawable[i];
+    delete   _targetTransformFilter[i];
+    delete   _sourceTransformFilter[i];
+    delete   _segmentationTransformFilter[i];
+    delete   _selectionTransformFilter[i];
+    delete   _targetImageOutput[i];
+    delete   _sourceImageOutput[i];
+    delete   _segmentationImageOutput[i];
+    delete   _selectionImageOutput[i];
+    delete   _viewer[i];
+    delete[] _drawable[i];
   }
 
   // Delete array for transformation filter, images and viewers
