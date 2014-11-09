@@ -187,10 +187,12 @@ int main(int argc, char **argv)
     if ( (ok == false) && (strcmp(argv[1], "-object") == 0)) {
       argc--;
       argv++;
-      rview->ReadObject(argv[1]);
+      do {
+        rview->ReadObject(argv[1]);
+        argc--;
+        argv++;
+      } while ((argc > 1) && (argv[1][0] != '-'));
       rview->DisplayObjectOn();
-      argc--;
-      argv++;
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-object_warp") == 0)) {
