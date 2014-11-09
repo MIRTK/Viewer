@@ -67,7 +67,7 @@ public:
   virtual void DrawArrows();
 
   /// Draw landmarks
-  void DrawLandmarks(irtkPointSet &, set<int> &, irtkGreyImage *, int = true);
+  void DrawLandmarks(irtkPointSet &, set<int> &, irtkGreyImage *, int = true, int = true);
 
   /// Draw landmark correspondences
   void DrawCorrespondences(irtkPointSet &, irtkPointSet &, set<int> &, irtkGreyImage *);

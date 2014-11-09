@@ -446,39 +446,84 @@ void Fl_RViewUI::cb_editLandmark(Fl_Button *, void* v)
 
 void Fl_RViewUI::cb_browseLandmark(Fl_Browser* o, void* v)
 {
+  // Re-select landmark if entry was double clicked
+  // (if Ctrl is pressed, the entry was deselected by the first click)
+  if (Fl::event_clicks() != 0) o->select(o->value());
+
   // Update set of selected landmarks
-  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
-    for (int id = 1; id <= o->size(); ++id) {
-      if (o->selected(id)) rview->SelectTargetLandmark  (id);
-      else                 rview->DeselectTargetLandmark(id);
+  // TODO: Make selection of corresponding target/source landmark optional.
+  const bool _LinkLandmarkBrowsers = true;
+  if (_LinkLandmarkBrowsers) {
+    Fl_Browser *other;
+    if (o == rviewUI->targetLandmarkBrowser) {
+      other = rviewUI->sourceLandmarkBrowser;
+    } else {
+      other = rviewUI->targetLandmarkBrowser;
     }
+    rview->ClearTargetLandmarkSelection();
+    rview->ClearSourceLandmarkSelection();
+    int id = 1;
+    for (; id <= o->size(); ++id) {
+      if (o->selected(id)) {
+        rview->SelectTargetLandmark(id);
+        rview->SelectSourceLandmark(id);
+        other->select(id, 1);
+      } else {
+        rview->DeselectTargetLandmark(id);
+        rview->DeselectSourceLandmark(id);
+        other->select(id, 0);
+      }
+    }
+    for (; id <= other->size(); ++id) {
+      other->select(id, 0);
+    }
+    other->middleline(o->value());
   } else {
-    for (int id = 1; id <= o->size(); ++id) {
-      if (o->selected(id)) rview->SelectSourceLandmark  (id);
-      else                 rview->DeselectSourceLandmark(id);
+    if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+      rview->ClearTargetLandmarkSelection();
+      for (int id = 1; id <= o->size(); ++id) {
+        if (o->selected(id)) {
+          rview->SelectTargetLandmark(id);
+        } else {
+          rview->DeselectTargetLandmark(id);
+        }
+      }
+    } else {
+      rview->ClearSourceLandmarkSelection();
+      for (int id = 1; id <= o->size(); ++id) {
+        if (o->selected(id)) {
+          rview->SelectSourceLandmark(id);
+        } else {
+          rview->DeselectSourceLandmark(id);
+        }
+      }
     }
   }
 
-  // Go to last selected landmark position
-  char *label = NULL;
-  irtkPoint point;
+  // Go to last selected landmark position, if mouse button was pressed twice
+  if (Fl::event_clicks() != 0) {
+    char *label = NULL;
+    irtkPoint point;
 
-  // Get landmark
-  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
-    rview->GetTargetLandmark(point, o->value(), label);
-  } else {
-    rview->GetSourceLandmark(point, o->value(), label);
-  }
+    // Get landmark
+    if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+      rview->GetTargetLandmark(point, o->value(), label);
+    } else {
+      rview->GetSourceLandmark(point, o->value(), label);
+    }
 
-  // Set origin to landmark
-  if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
-    rview->SetTargetOrigin(point._x, point._y, point._z);
-  } else {
-    rview->SetSourceOrigin(point._x, point._y, point._z);
+    // Set origin to landmark
+    if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
+      rview->SetTargetOrigin(point._x, point._y, point._z);
+    } else {
+      rview->SetSourceOrigin(point._x, point._y, point._z);
+    }
+
+    // Update
+    rview->Update();
   }
 
   // Update
-  rview->Update();
   rviewUI->update();
   viewer->redraw();
 }

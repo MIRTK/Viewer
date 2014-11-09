@@ -466,17 +466,19 @@ void irtkRView::Draw()
   // Draw images
   for (k = 0; k < _NoOfViewers; k++) {
 
+    // Note: _DisplayLandmarks to enable/disable drawing of unselected
+    //        landmarks is passed on to irtkViewer::DrawLandmarks.
     bool display_target_contour        = _DisplayTargetContour;
     bool display_source_contour        = _DisplaySourceContour;
-    bool display_target_landmarks      = _DisplayLandmarks;
-    bool display_source_landmarks      = _DisplayLandmarks;
+    bool display_target_landmarks      = true;
+    bool display_source_landmarks      = true;
     bool display_segmentation_contours = _DisplaySegmentationContours;
 
     if (count_view_mode[_viewer[k]->GetViewerMode()] > 1) {
       display_target_contour        = !_isSourceViewer[k] && _DisplayTargetContour;
       display_source_contour        =  _isSourceViewer[k] && _DisplaySourceContour;
-      display_target_landmarks      = !_isSourceViewer[k] && _DisplayLandmarks;
-      display_source_landmarks      =  _isSourceViewer[k] && _DisplayLandmarks;
+      display_target_landmarks      = !_isSourceViewer[k];
+      display_source_landmarks      =  _isSourceViewer[k];
       display_segmentation_contours = !_isSourceViewer[k] && _DisplaySegmentationContours;
     }
 
@@ -529,10 +531,14 @@ void irtkRView::Draw()
 
     // Draw landmarks if needed (true: red, false: green)
     if (display_target_landmarks) {
-      _viewer[k]->DrawLandmarks(_targetLandmarks, _selectedTargetLandmarks, _targetImageOutput[k], true);
+      _viewer[k]->DrawLandmarks(_targetLandmarks, _selectedTargetLandmarks,
+                                _targetImageOutput[k], true,
+                                _DisplayLandmarks);
     }
     if (display_source_landmarks) {
-      _viewer[k]->DrawLandmarks(_sourceLandmarks, _selectedSourceLandmarks, _targetImageOutput[k], false);
+      _viewer[k]->DrawLandmarks(_sourceLandmarks, _selectedSourceLandmarks,
+                                _targetImageOutput[k], false,
+                                _DisplayLandmarks);
     }
 
     // Draw ROI if needed

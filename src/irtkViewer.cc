@@ -55,21 +55,23 @@ static double _BeforeTagGridY[MaxNumberOfCP][MaxNumberOfCP];
 static double _BeforeTagGridZ[MaxNumberOfCP][MaxNumberOfCP];
 
 // Define the default color scheme
-#define COLOR_GRID             glColor3f(1, 1, 0)
-#define COLOR_ARROWS           glColor3f(1, 1, 0)
-#define COLOR_ISOLINES         glColor3f(1, 1, 0)
-#define COLOR_CONTOUR          glColor4f(0, 1, 0, 0.5)
-#define COLOR_CURSOR           glColor3f(0, 1, 0)
-#define COLOR_POINTS_ACTIVE    glColor3f(0, 1, 0)
-#define COLOR_POINTS_PASSIVE   glColor3f(0, 0, 1)
-#define COLOR_POINTS_UNKNOWN   glColor3f(1, 1, 0)
-#define COLOR_TARGET_LANDMARKS glColor3f(1, 0, 0)
-#define COLOR_SOURCE_LANDMARKS glColor3f(0, 0, 1)
-#define COLOR_CONTOUR_1        glColor3f(1, 0, 0)
-#define COLOR_CONTOUR_2        glColor3f(0, 1, 0)
-#define COLOR_CONTOUR_3        glColor3f(0, 0, 1)
-#define COLOR_CONTOUR_4        glColor3f(1, 0, 1)
-#define COLOR_CONTOUR_5        glColor3f(0, 1, 1)
+#define COLOR_GRID                        glColor3f(1, 1, 0)
+#define COLOR_ARROWS                      glColor3f(1, 1, 0)
+#define COLOR_ISOLINES                    glColor3f(1, 1, 0)
+#define COLOR_CONTOUR                     glColor4f(0, 1, 0, 0.5)
+#define COLOR_CURSOR                      glColor3f(0, 1, 0)
+#define COLOR_POINTS_ACTIVE               glColor3f(0, 1, 0)
+#define COLOR_POINTS_PASSIVE              glColor3f(0, 0, 1)
+#define COLOR_POINTS_UNKNOWN              glColor3f(1, 1, 0)
+#define COLOR_CONTOUR_1                   glColor3f(1, 0, 0)
+#define COLOR_CONTOUR_2                   glColor3f(0, 1, 0)
+#define COLOR_CONTOUR_3                   glColor3f(0, 0, 1)
+#define COLOR_CONTOUR_4                   glColor3f(1, 0, 1)
+#define COLOR_CONTOUR_5                   glColor3f(0, 1, 1)
+#define COLOR_TARGET_LANDMARKS            glColor3f(1, 0, 0)
+#define COLOR_SOURCE_LANDMARKS            glColor3f(0, 0, 1)
+#define COLOR_SELECTED_TARGET_LANDMARKS   glColor3f(1, 1, 0)
+#define COLOR_SELECTED_SOURCE_LANDMARKS   glColor3f(0, 1, 1)
 
 #ifdef HAS_VTK
 
@@ -804,57 +806,28 @@ void irtkViewer::DrawPoints()
 	glEnd();
 }
 
-void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyImage *image,
-		int bTarget)
+void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyImage *image, int bTarget, int bAll)
 {
-	irtkPoint p;
-
-	// Adjust pointsize and colour
-	if (bTarget == true) {
-		COLOR_TARGET_LANDMARKS;
-	}
-	else {
-		COLOR_SOURCE_LANDMARKS;
-	}
-
-	// Draw landmarks
-  if (ids.empty()) {
+  // Draw unselected landmarks first
+  if (bAll) {
     for (int i = 0; i < landmarks.Size(); ++i) {
-
-      // Get point
-      p = landmarks(i);
-
-      if (bTarget == false) {
-        // Transform point
-        _rview->_sourceTransform->Inverse(p._x, p._y, p._z);
+      // Skip selected landmarks
+      if (ids.find(i) != ids.end()) continue;
+      // Adjust colour
+      if (bTarget) COLOR_TARGET_LANDMARKS;
+      else         COLOR_SOURCE_LANDMARKS;
+      // Get landmark point
+      irtkPoint p = landmarks(i);
+      // Transform point
+      if (!bTarget && _rview->GetSourceTransformApply()) {
+        const bool inv = !_rview->GetSourceTransformInvert();
+        if (inv) _rview->_sourceTransform->Inverse  (p);
+        else     _rview->_sourceTransform->Transform(p);
       }
-
       // Draw point
-      if (image->IsInFOV(p._x, p._y, p._z) == true) {
+      if (image->IsInFOV(p._x, p._y, p._z)) {
         image->WorldToImage(p);
-        glBegin (GL_LINES);
-        glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
-        glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
-        glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
-        glVertex2f(_screenX1 + p._x, _screenY1 + p._y + 8);
-        glEnd();
-      }
-    }
-  } else {
-    for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
-
-      // Get point
-      p = landmarks(*id);
-
-      if (bTarget == false) {
-        // Transform point
-        _rview->_sourceTransform->Inverse(p._x, p._y, p._z);
-      }
-
-      // Draw point
-      if (image->IsInFOV(p._x, p._y, p._z) == true) {
-        image->WorldToImage(p);
-        glBegin (GL_LINES);
+        glBegin(GL_LINES);
         glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
         glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
         glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
@@ -863,22 +836,45 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
       }
     }
   }
+  // Draw selected landmarks on top
+  for (set<int>::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+    // Adjust colour
+    if (bTarget) COLOR_SELECTED_TARGET_LANDMARKS;
+    else         COLOR_SELECTED_SOURCE_LANDMARKS;
+    // Get landmark point
+    irtkPoint p = landmarks(*i);
+    // Transform point
+    if (!bTarget && _rview->GetSourceTransformApply()) {
+      const bool inv = !_rview->GetSourceTransformInvert();
+      if (inv) _rview->_sourceTransform->Inverse  (p);
+      else     _rview->_sourceTransform->Transform(p);
+    }
+    // Draw point
+    if (image->IsInFOV(p._x, p._y, p._z)) {
+      image->WorldToImage(p);
+      glBegin(GL_LINES);
+      glVertex2f(_screenX1 + p._x - 8, _screenY1 + p._y);
+      glVertex2f(_screenX1 + p._x + 8, _screenY1 + p._y);
+      glVertex2f(_screenX1 + p._x, _screenY1 + p._y - 8);
+      glVertex2f(_screenX1 + p._x, _screenY1 + p._y + 8);
+      glEnd();
+    }
+  }
 }
 
 void irtkViewer
 ::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source,
                       set<int> &ids, irtkGreyImage *image)
 {
-  irtkPoint p1, p2;
-
   // Adjust colour
   glColor3f(0, 1, 0);
 
   // Draw lines connecting corresponding landmarks
-  if (ids.empty()) {
-    for (int i = 0; i < target.Size() && i < source.Size(); ++i) {
-      p1 = target(i);
-      p2 = source(i);
+  irtkPoint p1, p2;
+  for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
+    if (*id < target.Size() && *id < source.Size()) {
+      p1 = target(*id);
+      p2 = source(*id);
       _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
       if (image->IsInFOV(p1._x, p1._y, p1._z) &&
           image->IsInFOV(p2._x, p2._y, p2._z)) {
@@ -888,23 +884,6 @@ void irtkViewer
         glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
         glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
         glEnd();
-      }
-    }
-  } else {
-    for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
-      if (*id < target.Size() && *id < source.Size()) {
-        p1 = target(*id);
-        p2 = source(*id);
-        _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
-        if (image->IsInFOV(p1._x, p1._y, p1._z) &&
-            image->IsInFOV(p2._x, p2._y, p2._z)) {
-          image->WorldToImage(p1);
-          image->WorldToImage(p2);
-          glBegin (GL_LINES);
-          glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
-          glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
-          glEnd();
-        }
       }
     }
   }
