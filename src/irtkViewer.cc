@@ -808,6 +808,7 @@ void irtkViewer::DrawPoints()
 
 void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyImage *image, int bTarget, int bAll)
 {
+  glLineWidth(1.0);
   // Draw unselected landmarks first
   if (bAll) {
     for (int i = 0; i < landmarks.Size(); ++i) {
