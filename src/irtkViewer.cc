@@ -864,29 +864,52 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
   }
 }
 
-void irtkViewer
-::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source,
-                      set<int> &ids, irtkGreyImage *image)
+void irtkViewer::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source, irtkGreyImage *image)
 {
   // Adjust colour
+  glLineWidth(1.0);
+  glColor3f(0, 1, 0);
+
+  // Draw lines connecting corresponding landmarks
+  irtkPoint p1, p2;
+  for (int i = 0; i < target.Size(); ++i) {
+    if (i >= source.Size()) continue;
+    p1 = target(i);
+    p2 = source(i);
+    _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
+    if (image->IsInFOV(p1._x, p1._y, p1._z) &&
+        image->IsInFOV(p2._x, p2._y, p2._z)) {
+      image->WorldToImage(p1);
+      image->WorldToImage(p2);
+      glBegin (GL_LINES);
+      glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
+      glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
+      glEnd();
+    }
+  }
+}
+
+void irtkViewer::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source, set<int> &ids, irtkGreyImage *image)
+{
+  // Adjust colour
+  glLineWidth(1.0);
   glColor3f(0, 1, 0);
 
   // Draw lines connecting corresponding landmarks
   irtkPoint p1, p2;
   for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
-    if (*id < target.Size() && *id < source.Size()) {
-      p1 = target(*id);
-      p2 = source(*id);
-      _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
-      if (image->IsInFOV(p1._x, p1._y, p1._z) &&
-          image->IsInFOV(p2._x, p2._y, p2._z)) {
-        image->WorldToImage(p1);
-        image->WorldToImage(p2);
-        glBegin (GL_LINES);
-        glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
-        glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
-        glEnd();
-      }
+    if (*id < 0 || *id >= target.Size() || *id >= source.Size()) continue;
+    p1 = target(*id);
+    p2 = source(*id);
+    _rview->_sourceTransform->Inverse(p1._x, p1._y, p1._z);
+    if (image->IsInFOV(p1._x, p1._y, p1._z) &&
+        image->IsInFOV(p2._x, p2._y, p2._z)) {
+      image->WorldToImage(p1);
+      image->WorldToImage(p2);
+      glBegin (GL_LINES);
+      glVertex2f(_screenX1 + p1._x, _screenY1 + p1._y);
+      glVertex2f(_screenX1 + p2._x, _screenY1 + p2._y);
+      glEnd();
     }
   }
 }

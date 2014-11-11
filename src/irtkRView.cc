@@ -472,6 +472,7 @@ void irtkRView::Draw()
     bool display_source_contour        = _DisplaySourceContour;
     bool display_target_landmarks      = true;
     bool display_source_landmarks      = true;
+    bool display_correspondences       = _DisplayLandmarks;
     bool display_segmentation_contours = _DisplaySegmentationContours;
 
     if (count_view_mode[_viewer[k]->GetViewerMode()] > 1) {
@@ -481,6 +482,8 @@ void irtkRView::Draw()
       display_source_landmarks      =  _isSourceViewer[k];
       display_segmentation_contours = !_isSourceViewer[k] && _DisplaySegmentationContours;
     }
+//    display_correspondences = (display_target_landmarks && display_source_landmarks);
+    display_correspondences = false;
 
     // Draw the image
     _viewer[k]->DrawImage(_drawable[k]);
@@ -539,6 +542,11 @@ void irtkRView::Draw()
       _viewer[k]->DrawLandmarks(_sourceLandmarks, _selectedSourceLandmarks,
                                 _targetImageOutput[k], false,
                                 _DisplayLandmarks);
+    }
+    if (display_correspondences) {
+      _viewer[k]->DrawCorrespondences(_targetLandmarks, _sourceLandmarks,
+//                                      _selectedTargetLandmarks,
+                                      _targetImageOutput[k]);
     }
 
     // Draw ROI if needed
