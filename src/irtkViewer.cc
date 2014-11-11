@@ -839,6 +839,7 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
   }
   // Draw selected landmarks on top
   for (set<int>::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+    if (*i < 0 || *i >= landmarks.Size()) continue;
     // Adjust colour
     if (bTarget) COLOR_SELECTED_TARGET_LANDMARKS;
     else         COLOR_SELECTED_SOURCE_LANDMARKS;
