@@ -25,5 +25,6 @@ irtkSegmentTable.cc
 irtkVoxelContour.cc)
 
 irtk_add_library(rview++ ${RVIEW_SRCS})
+target_link_libraries(rview++ fltk fltk_gl)
 
 INSTALL_FILES(/include FILES ${RVIEW_INCLUDES})
