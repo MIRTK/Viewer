@@ -2019,18 +2019,12 @@ void irtkRView::ReadObject(const char *name)
     return;
   }
 
-  // Let vtk do its thing
-  vtkPolyDataReader *data_reader = vtkPolyDataReader::New();
-  data_reader->SetFileName(name);
-  data_reader->Update();
-  _Object[_NoOfObjects] = data_reader->GetOutput();
+  vtkSmartPointer<vtkPolyData> object = ReadPolyData(name);
+  _Object[_NoOfObjects] = object.GetPointer();
   _Object[_NoOfObjects]->Register(_Object[_NoOfObjects]);
 
   // Increment objects counter
   _NoOfObjects++;
-
-  // Be good
-  data_reader->Delete();
 }
 
 void irtkRView::RemoveObject()
