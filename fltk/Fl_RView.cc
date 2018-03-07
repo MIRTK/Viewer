@@ -22,7 +22,7 @@ extern Fl_RViewUI *rviewUI;
 
 Fl_RView::Fl_RView(int x, int y, int w, int h, const char *name) : Fl_Gl_Window(x, y, w, h, name)
 {
-  v = new irtkRView(w, h);
+  v = new RView(w, h);
 }
 
 void Fl_RView::draw()

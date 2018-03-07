@@ -55,7 +55,7 @@ bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 void Fl_RViewUI::cb_loadTargetLandmarks(Fl_Button *, void *)
 {

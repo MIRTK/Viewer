@@ -21,7 +21,7 @@
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 void registration_cb1()
 {
@@ -161,7 +161,7 @@ void Fl_RViewUI::cb_startRegistration(Fl_Button* o, void* v)
   if ((rview->GetTarget()->IsEmpty() != true) &&
       (rview->GetSource()->IsEmpty() != true)) {
 
-    irtkRegistration *registration = rview->GetRegistration();
+    Registration *registration = rview->GetRegistration();
 
     // Calculate ROI
     rview->GetROI(x1, y1, z1, x2, y2, z2);

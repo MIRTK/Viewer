@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,12 +10,12 @@
 
 =========================================================================*/
 
-#ifndef _IRTKLOOKUPTABLE_H
+#ifndef _LOOKUPTABLE_H
 
-#define _IRTKLOOKUPTABLE_H
+#define _LOOKUPTABLE_H
 
-#include <irtkColorRGBA.h>
-#include <irtkColor.h>
+#include <ColorRGBA.h>
+#include <Color.h>
 
 typedef enum { ColorMode_Custom,
                ColorMode_HotMetal,
@@ -28,13 +28,13 @@ typedef enum { ColorMode_Custom,
                ColorMode_Luminance,
                ColorMode_InverseLuminance,
                ColorMode_Rainbow
-             } irtkColorMode;
+             } ColorMode;
 
              
-class irtkLookupTable
+class LookupTable
 {
 
-	friend class irtkRView;
+	friend class RView;
 	
   /// Min value of data
   int _minData;
@@ -49,7 +49,7 @@ class irtkLookupTable
   int _maxDisplay;
 
   /// Color mode
-  irtkColorMode _mode;
+  ColorMode _mode;
 
   /// Update lookup table
   void Update();
@@ -82,13 +82,13 @@ class irtkLookupTable
 public:
 
   /// Lookup table
-  irtkColorRGBA *lookupTable;
+  ColorRGBA *lookupTable;
 
   /// Constructor
-  irtkLookupTable(int = 0, int = 10000);
+  LookupTable(int = 0, int = 10000);
 
   /// Destructor
-  ~irtkLookupTable();
+  ~LookupTable();
 
   /// Color scheme functions
   void SetColorModeToLuminance();
@@ -103,16 +103,16 @@ public:
   void SetColorModeToJacobianContraction();
 
   /// Get color for given image value
-  irtkColorRGBA &At(int);
+  ColorRGBA &At(int);
 
   /// Get color for given image value
-  irtkColorRGBA &operator ()(int);
+  ColorRGBA &operator ()(int);
 
   /// Get minimum display intensity
   int  GetMinDisplayIntensity();
 
   /// Return color scheme
-  irtkColorMode GetColorMode();
+  ColorMode GetColorMode();
 
   /// Read lookup table from file
   void Read(char *);
@@ -122,39 +122,39 @@ public:
 
 };
 
-inline irtkColorRGBA &irtkLookupTable::At(int value)
+inline ColorRGBA &LookupTable::At(int value)
 {
   if      (value < _minData) return lookupTable[0];
   else if (value > _maxData) return lookupTable[_maxData];
   else                       return lookupTable[value];
 }
 
-inline irtkColorRGBA &irtkLookupTable::operator ()(int value)
+inline ColorRGBA &LookupTable::operator ()(int value)
 {
   return At(value);
 }
 
-inline int irtkLookupTable::GetMinIntensity()
+inline int LookupTable::GetMinIntensity()
 {
   return _minData;
 }
 
-inline int irtkLookupTable::GetMaxIntensity()
+inline int LookupTable::GetMaxIntensity()
 {
   return _maxData;
 }
 
-inline int irtkLookupTable::GetMinDisplayIntensity()
+inline int LookupTable::GetMinDisplayIntensity()
 {
   return _minDisplay;
 }
 
-inline int irtkLookupTable::GetMaxDisplayIntensity()
+inline int LookupTable::GetMaxDisplayIntensity()
 {
   return _maxDisplay;
 }
 
-inline void irtkLookupTable::SetMinDisplayIntensity(int value)
+inline void LookupTable::SetMinDisplayIntensity(int value)
 {
   if (value > _maxData) {
     _minDisplay = _maxData;
@@ -164,7 +164,7 @@ inline void irtkLookupTable::SetMinDisplayIntensity(int value)
   this->Update();
 }
 
-inline void irtkLookupTable::SetMaxDisplayIntensity(int value)
+inline void LookupTable::SetMaxDisplayIntensity(int value)
 {
   if (value < _minData) {
     _maxDisplay = _minData;
@@ -174,7 +174,7 @@ inline void irtkLookupTable::SetMaxDisplayIntensity(int value)
   this->Update();
 }
 
-inline void irtkLookupTable::SetMinMaxDisplayIntensity(int value1, int value2)
+inline void LookupTable::SetMinMaxDisplayIntensity(int value1, int value2)
 {
   if (value1 > _maxData) {
     _minDisplay = _maxData;
@@ -190,7 +190,7 @@ inline void irtkLookupTable::SetMinMaxDisplayIntensity(int value1, int value2)
   this->Update();
 }
 
-inline irtkColorMode irtkLookupTable::GetColorMode()
+inline ColorMode LookupTable::GetColorMode()
 {
   return _mode;
 }

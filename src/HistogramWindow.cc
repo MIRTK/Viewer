@@ -22,7 +22,7 @@
 #include <GL/glu.h>
 #endif
 
-#include <irtkRView.h>
+#include <RView.h>
 
 #ifdef HAS_VTK
 #include <vtkPolyDataReader.h>
@@ -30,14 +30,14 @@
 #include <vtkUnstructuredGridReader.h>
 #endif
 
-#include <irtkHistogramWindow.h>
+#include <HistogramWindow.h>
 
-irtkHistogramWindow::irtkHistogramWindow(irtkRView  *viewer)
+HistogramWindow::HistogramWindow(RView  *viewer)
 {
   _v = viewer;
 }
 
-void irtkHistogramWindow::CalculateHistograms()
+void HistogramWindow::CalculateHistograms()
 {
   int i;
 
@@ -56,7 +56,7 @@ void irtkHistogramWindow::CalculateHistograms()
   }
 }
 
-void irtkHistogramWindow::CalculateHistogram(int label_id)
+void HistogramWindow::CalculateHistogram(int label_id)
 {
   int i, j, k, l;
   double min, max;

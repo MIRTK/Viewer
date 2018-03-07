@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#ifndef _IRTKRVIEW_H
+#ifndef _RVIEW_H
 
-#define _IRTKRVIEW_H
+#define _RVIEW_H
 
 typedef enum { View_A,
                View_B,
@@ -22,22 +22,22 @@ typedef enum { View_A,
                View_VShutter,
                View_AoverB,
                View_BoverA
-             } irtkRViewMode;
+             } RViewMode;
 
 typedef enum { NoneDef,
                Displacement,
                Jacobian,
                Jacobian_Expansion,
                Jacobian_Contraction
-             } irtkDeformationProperty;
+             } DeformationProperty;
 
-typedef enum { Viewer_XY, Viewer_XZ, Viewer_YZ, Viewer_None } irtkViewerMode;
+typedef enum { Viewer_XY, Viewer_XZ, Viewer_YZ, Viewer_None } ViewerMode;
 
-typedef enum { CrossHair, CursorX, CursorV, CursorBar } irtkCursorMode;
+typedef enum { CrossHair, CursorX, CursorV, CursorBar } CursorMode;
 
-typedef enum { Neurological, Radiological, Native } irtkDisplayMode;
+typedef enum { Neurological, Radiological, Native } DisplayMode;
 
-typedef enum { RegionGrowing2D, RegionGrowing3D } irtkRegionGrowingMode;
+typedef enum { RegionGrowing2D, RegionGrowing3D } RegionGrowingMode;
 
 #define DEFORMATION_DISPLACEMENT_MIN 0
 #define DEFORMATION_DISPLACEMENT_MAX 100
@@ -78,13 +78,13 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } irtkRegionGrowingMode;
 
 //#include <mirtk::TransformationCollection.h>
 
-#define AFFDTransformation "irtkAdaptiveFreeFormTransformation"
+#define AFFDTransformation "AdaptiveFreeFormTransformation"
 #define MFFDTransformation "mirtk::TransformationCollection"
 
-#define irtkBSplineFreeFormTransformation irtkAdaptiveFreeFormTransformation
-#define irtkMFreeFormTransformation mirtk::TransformationCollection
-#define irtkMFreeFormRegistration   irtkAdaptiveFreeFormRegistration
-#define irtkMFreeFormRegistration2D irtkAdaptiveFreeFormRegistration2D
+#define BSplineFreeFormTransformation AdaptiveFreeFormTransformation
+#define MFreeFormTransformation mirtk::TransformationCollection
+#define MFreeFormRegistration   AdaptiveFreeFormRegistration
+#define MFreeFormRegistration2D AdaptiveFreeFormRegistration2D
 
 #endif
 
@@ -105,32 +105,32 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } irtkRegionGrowingMode;
 
 #define MAX_NUMBER_OF_OBJECTS 40
 
-#include <irtkSegmentTable.h>
+#include <SegmentTable.h>
 
-#include <irtkLookupTable.h>
-#include <irtkViewer.h>
-#include <irtkRViewConfig.h>
-#include <irtkHistogramWindow.h>
-#include <irtkVoxelContour.h>
+#include <LookupTable.h>
+#include <Viewer.h>
+#include <RViewConfig.h>
+#include <HistogramWindow.h>
+#include <VoxelContour.h>
 
-class irtkVoxelContour;
+class VoxelContour;
 
-class irtkRView
+class RView
 {
 
 protected:
 
   /// Friends
-  friend class irtkViewer;
-  friend class irtkLookupTable;
-  friend class irtkVoxelContour;
-  friend class irtkSegmentationEditor;
+  friend class Viewer;
+  friend class LookupTable;
+  friend class VoxelContour;
+  friend class SegmentationEditor;
 
   /// Number of image viewers
   int _NoOfViewers;
 
   /// Image viewer for target image
-  irtkViewer **_viewer;
+  Viewer **_viewer;
 
   /// Whether the given viewer displays the source image instead
   bool *_isSourceViewer;
@@ -145,10 +145,10 @@ protected:
   mirtk::GreyImage *_segmentationImage;
 
   /// Segment Table
-  irtkSegmentTable *_segmentTable;
+  SegmentTable *_segmentTable;
 
   /// Color Table
-  irtkColor *_segmentColorTable;
+  Color *_segmentColorTable;
 
   /// Transformation for reslicing of target image
   mirtk::Transformation *_targetTransform;
@@ -199,13 +199,13 @@ protected:
   mirtk::PointSet _sourceLandmarks;
 
   /// Contour
-  irtkVoxelContour _voxelContour;
+  VoxelContour _voxelContour;
 
   /// Contour viewer
   int _contourViewer;
 
   /// Contour viewer mode
-  irtkViewerMode _contourViewerMode;
+  ViewerMode _contourViewerMode;
 
 #ifdef HAS_VTK
   /// Number of vtk objects
@@ -220,16 +220,16 @@ protected:
 #endif
 
   /// Combined source and target images in OpenGL format
-  irtkColor **_drawable;
+  Color **_drawable;
 
   /// Color lookup table for target image
-  irtkLookupTable *_targetLookupTable;
+  LookupTable *_targetLookupTable;
 
   /// Color lookup table for source image
-  irtkLookupTable *_sourceLookupTable;
+  LookupTable *_sourceLookupTable;
 
   /// Color lookup table for subtraction of target and source image
-  irtkLookupTable *_subtractionLookupTable;
+  LookupTable *_subtractionLookupTable;
 
   /// Target value range
   double _targetMin, _targetMax;
@@ -314,10 +314,10 @@ protected:
   double _viewMix;
 
   /// Flag for rview mode
-  irtkRViewMode _viewMode;
+  RViewMode _viewMode;
 
   /// Flag for configuration mode
-  irtkConfigViewerMode _configMode;
+  ConfigViewerMode _configMode;
 
   /// Flag for display labels of segmentation image
   int _DisplaySegmentationLabels;
@@ -338,13 +338,13 @@ protected:
   int _RegionGrowingThresholdMax;
 
   /// Deformation property
-  irtkDeformationProperty _DeformationProperty;
+  DeformationProperty _DeformationProperty;
 
   /// Deformation blending
   double _DeformationBlending;
 
   /// Flag for display orientation
-  irtkDisplayMode _DisplayMode;
+  DisplayMode _DisplayMode;
 
   /// Flag for line thickness
   double _LineThickness;
@@ -365,7 +365,7 @@ protected:
   int _DisplayCursor;
 
   /// Mode for cursor display
-  irtkCursorMode _CursorMode;
+  CursorMode _CursorMode;
 
   /// Flag for display of axis labels
   int _DisplayAxisLabels;
@@ -422,7 +422,7 @@ protected:
   int _mouseViewer;
 
   /// Region growing mode
-  irtkRegionGrowingMode _regionGrowingMode;
+  RegionGrowingMode _regionGrowingMode;
 
 #ifdef HAS_VTK
   /// Flag for display of object
@@ -438,10 +438,10 @@ protected:
 public:
 
   /// Constructor
-  irtkRView(int, int);
+  RView(int, int);
 
   /// Destructor
-  virtual ~irtkRView();
+  virtual ~RView();
 
   /// Render
   void Draw();
@@ -465,7 +465,7 @@ public:
   virtual void Initialize(bool = true);
 
   /// Configure registration viewer
-  virtual void Configure(irtkRViewConfig []);
+  virtual void Configure(RViewConfig []);
 
   /// Read configuration
   virtual void Read(char *);
@@ -668,10 +668,10 @@ public:
   int GetDisplaySourceContours();
 
   /// Return display mode
-  irtkDisplayMode GetDisplayMode();
+  DisplayMode GetDisplayMode();
 
   /// Set display mode
-  void SetDisplayMode(irtkDisplayMode mode);
+  void SetDisplayMode(DisplayMode mode);
 
   /// Turn caching of displacements on
   void CacheDisplacementsOn();
@@ -701,10 +701,10 @@ public:
   int GetDisplayCursor();
 
   /// Return cursor mode
-  irtkCursorMode GetCursorMode();
+  CursorMode GetCursorMode();
 
   /// Set cursor mode
-  void SetCursorMode(irtkCursorMode mode);
+  void SetCursorMode(CursorMode mode);
 
   /// Return minimum display intensity of target image
   double GetDisplayMinTarget();
@@ -901,10 +901,10 @@ public:
 #endif
 
   /// Set region growing mode
-  void SetRegionGrowingMode(irtkRegionGrowingMode);
+  void SetRegionGrowingMode(RegionGrowingMode);
 
   /// Get region growing mode
-  irtkRegionGrowingMode GetRegionGrowingMode();
+  RegionGrowingMode GetRegionGrowingMode();
 
   /// Flip X on
   void FlipXOn();
@@ -931,16 +931,16 @@ public:
   double GetViewMix();
 
   /// Get viewing mode for registration viewer
-  irtkRViewMode GetViewMode();
+  RViewMode GetViewMode();
 
   /// Set viewing mode for registration viewer
-  void SetViewMode(irtkRViewMode);
+  void SetViewMode(RViewMode);
 
   /// Get configuration mode for viewer
-  irtkConfigViewerMode GetConfigMode();
+  ConfigViewerMode GetConfigMode();
 
   /// Set configuration mode for viewer
-  void SetConfigMode(irtkConfigViewerMode );
+  void SetConfigMode(ConfigViewerMode );
 
   /// Set interpolation mode for target image
   void SetTargetInterpolationMode(mirtk::InterpolationMode);
@@ -973,16 +973,16 @@ public:
   mirtk::Image *GetSource();
 
   /// Get a pointer to the lookup table of the target image
-  irtkLookupTable *GetTargetLookupTable();
+  LookupTable *GetTargetLookupTable();
 
   /// Get a pointer to the lookup table of the source image
-  irtkLookupTable *GetSourceLookupTable();
+  LookupTable *GetSourceLookupTable();
 
   /// Get a pointer to the lookup table of the subtraction of target and source
-  irtkLookupTable *GetSubtractionLookupTable();
+  LookupTable *GetSubtractionLookupTable();
 
   /// Get a pointer to the lookup table of the deformation
-  irtkLookupTable *GetDeformationLookupTable();
+  LookupTable *GetDeformationLookupTable();
 
   /// Get transformation
   mirtk::Transformation *GetTransformation();
@@ -994,7 +994,7 @@ public:
   void Reset();
 
   /// Get a pointer to segment table
-  irtkSegmentTable *GetSegmentTable();
+  SegmentTable *GetSegmentTable();
 
   /// Set interpolation mode for segmentation image
   void SetSegmentationInterpolationMode(mirtk::InterpolationMode);
@@ -1006,10 +1006,10 @@ public:
   mirtk::GreyImage *GetSegmentation();
 
   /// Get a pointer to the lookup table of the segmentation image
-  irtkLookupTable *GetSegmentationLookupTable();
+  LookupTable *GetSegmentationLookupTable();
 
   /// Get a pointer to the lookup table of the segmentation image
-  irtkVoxelContour *GetVoxelContour();
+  VoxelContour *GetVoxelContour();
 
   /// Turns on the segmentation drawing
   void SegmentationLabelsOn();
@@ -1119,102 +1119,102 @@ public:
 
 };
 
-inline void irtkRView::SourceUpdateOn()
+inline void RView::SourceUpdateOn()
 {
   _sourceUpdate = true;
 }
 
-inline void irtkRView::SegmentationUpdateOn()
+inline void RView::SegmentationUpdateOn()
 {
   _segmentationUpdate = true;
 }
 
 
-inline int irtkRView::GetWidth()
+inline int RView::GetWidth()
 {
   return _screenX;
 }
 
-inline int irtkRView::GetHeight()
+inline int RView::GetHeight()
 {
   return _screenY;
 }
 
-inline double irtkRView::GetResolution()
+inline double RView::GetResolution()
 {
   return _resolution;
 }
 
-inline void irtkRView::SetResolution(double resolution)
+inline void RView::SetResolution(double resolution)
 {
   _resolution = resolution;
   this->Initialize(false);
 }
 
-inline void irtkRView::SetViewMode(irtkRViewMode value)
+inline void RView::SetViewMode(RViewMode value)
 {
   _viewMode = value;
 }
 
-inline irtkRViewMode irtkRView::GetViewMode()
+inline RViewMode RView::GetViewMode()
 {
   return _viewMode;
 }
 
 
-inline irtkConfigViewerMode irtkRView::GetConfigMode()
+inline ConfigViewerMode RView::GetConfigMode()
 {
   return _configMode;
 }
 
-inline void irtkRView::SetConfigMode(irtkConfigViewerMode configMode)
+inline void RView::SetConfigMode(ConfigViewerMode configMode)
 {
   _configMode = configMode;
 }
 
-inline void irtkRView::SetViewMix(double value)
+inline void RView::SetViewMix(double value)
 {
   _viewMix = value;
 }
 
-inline double irtkRView::GetViewMix()
+inline double RView::GetViewMix()
 {
   return _viewMix;
 }
 
-inline void irtkRView::SetLineThickness(double value)
+inline void RView::SetLineThickness(double value)
 {
   _LineThickness = value;
 }
 
-inline double irtkRView::GetLineThickness()
+inline double RView::GetLineThickness()
 {
   return _LineThickness;
 }
 
-inline void irtkRView::CacheDisplacementsOn()
+inline void RView::CacheDisplacementsOn()
 {
   _CacheDisplacements = true;
   this->Initialize(true);
 }
 
-inline void irtkRView::CacheDisplacementsOff()
+inline void RView::CacheDisplacementsOff()
 {
   _CacheDisplacements = false;
   this->Initialize(true);
 }
 
-inline int irtkRView::GetCacheDisplacements()
+inline int RView::GetCacheDisplacements()
 {
   return _CacheDisplacements;
 }
 
-inline void irtkRView::SetSpeed(double value)
+inline void RView::SetSpeed(double value)
 {
   _Speed = value;
 }
 
-inline double irtkRView::GetSpeed()
+inline double RView::GetSpeed()
 {
     if (_Speed >= 0)
         return _Speed;
@@ -1222,37 +1222,37 @@ inline double irtkRView::GetSpeed()
         return -1/_Speed;
 }
 
-inline void irtkRView::DisplayTargetContoursOn()
+inline void RView::DisplayTargetContoursOn()
 {
   _DisplayTargetContour = true;
 }
 
-inline void irtkRView::DisplayTargetContoursOff()
+inline void RView::DisplayTargetContoursOff()
 {
   _DisplayTargetContour = false;
 }
 
-inline int irtkRView::GetDisplayTargetContours()
+inline int RView::GetDisplayTargetContours()
 {
   return _DisplayTargetContour;
 }
 
-inline void irtkRView::DisplaySourceContoursOn()
+inline void RView::DisplaySourceContoursOn()
 {
   _DisplaySourceContour = true;
 }
 
-inline void irtkRView::DisplaySourceContoursOff()
+inline void RView::DisplaySourceContoursOff()
 {
   _DisplaySourceContour = false;
 }
 
-inline int irtkRView::GetDisplaySourceContours()
+inline int RView::GetDisplaySourceContours()
 {
   return _DisplaySourceContour;
 }
 
-inline void irtkRView::SnapToGridOn()
+inline void RView::SnapToGridOn()
 {
   _SnapToGrid = true;
 
@@ -1279,82 +1279,82 @@ inline void irtkRView::SnapToGridOn()
 
 }
 
-inline void irtkRView::SnapToGridOff()
+inline void RView::SnapToGridOff()
 {
   _SnapToGrid = false;
 }
 
-inline int irtkRView::GetSnapToGrid()
+inline int RView::GetSnapToGrid()
 {
   return _SnapToGrid;
 }
 
-inline void irtkRView::DisplayCursorOn()
+inline void RView::DisplayCursorOn()
 {
   _DisplayCursor = true;
 }
 
-inline void irtkRView::DisplayCursorOff()
+inline void RView::DisplayCursorOff()
 {
   _DisplayCursor = false;
 }
 
-inline irtkCursorMode irtkRView::GetCursorMode()
+inline CursorMode RView::GetCursorMode()
 {
   return _CursorMode;
 }
 
-inline void irtkRView::SetCursorMode(irtkCursorMode mode)
+inline void RView::SetCursorMode(CursorMode mode)
 {
   _CursorMode = mode;
 }
 
-inline int irtkRView::GetDisplayCursor()
+inline int RView::GetDisplayCursor()
 {
   return _DisplayCursor;
 }
 
-inline void irtkRView::DisplayAxisLabelsOn()
+inline void RView::DisplayAxisLabelsOn()
 {
   _DisplayAxisLabels = true;
 }
 
-inline void irtkRView::DisplayAxisLabelsOff()
+inline void RView::DisplayAxisLabelsOff()
 {
   _DisplayAxisLabels = false;
 }
 
-inline irtkDisplayMode irtkRView::GetDisplayMode()
+inline DisplayMode RView::GetDisplayMode()
 {
   return _DisplayMode;
 }
 
-inline void irtkRView::SetDisplayMode(irtkDisplayMode mode)
+inline void RView::SetDisplayMode(DisplayMode mode)
 {
   _DisplayMode = mode;
 }
 
-inline void irtkRView::DisplayDeformationGridOn()
+inline void RView::DisplayDeformationGridOn()
 {
   _DisplayDeformationGrid = true;
 }
 
-inline void irtkRView::DisplayDeformationGridOff()
+inline void RView::DisplayDeformationGridOff()
 {
   _DisplayDeformationGrid = false;
 }
 
-inline int irtkRView::GetDisplayDeformationGrid()
+inline int RView::GetDisplayDeformationGrid()
 {
   return _DisplayDeformationGrid;
 }
 
-inline int irtkRView::GetDisplayDeformationGridResolution()
+inline int RView::GetDisplayDeformationGridResolution()
 {
   return _DisplayDeformationGridResolution;
 }
 
-inline void irtkRView::SetDisplayDeformationBlending(double a)
+inline void RView::SetDisplayDeformationBlending(double a)
 {
   if      (a < 0.0) _DeformationBlending = 0.0;
   else if (a > 1.0) _DeformationBlending = 1.0;
@@ -1362,279 +1362,279 @@ inline void irtkRView::SetDisplayDeformationBlending(double a)
   //if (_sourceTransformApply) _sourceUpdate = true;
 }
 
-inline double irtkRView::GetDisplayDeformationBlending()
+inline double RView::GetDisplayDeformationBlending()
 {
   return _DeformationBlending;
 }
 
-inline void irtkRView::SetDisplayDeformationGridResolution(int res)
+inline void RView::SetDisplayDeformationGridResolution(int res)
 {
   _DisplayDeformationGridResolution = res;
 }
 
-inline void irtkRView::DisplayDeformationPointsOn()
+inline void RView::DisplayDeformationPointsOn()
 {
   _DisplayDeformationPoints = true;
 }
 
-inline void irtkRView::DisplayDeformationPointsOff()
+inline void RView::DisplayDeformationPointsOff()
 {
   _DisplayDeformationPoints = false;
 }
 
-inline int irtkRView::GetDisplayDeformationPoints()
+inline int RView::GetDisplayDeformationPoints()
 {
   return _DisplayDeformationPoints;
 }
 
-inline void irtkRView::DisplayDeformationArrowsOn()
+inline void RView::DisplayDeformationArrowsOn()
 {
   _DisplayDeformationArrows = true;
 }
 
-inline void irtkRView::DisplayDeformationArrowsOff()
+inline void RView::DisplayDeformationArrowsOff()
 {
   _DisplayDeformationArrows = false;
 }
 
-inline int irtkRView::GetDisplayDeformationArrows()
+inline int RView::GetDisplayDeformationArrows()
 {
   return _DisplayDeformationArrows;
 }
 
-inline void irtkRView::DisplayDeformationTotalOn()
+inline void RView::DisplayDeformationTotalOn()
 {
   _DisplayDeformationTotal = true;
 }
 
-inline void irtkRView::DisplayDeformationTotalOff()
+inline void RView::DisplayDeformationTotalOff()
 {
   _DisplayDeformationTotal = false;
 }
 
-inline int irtkRView::GetDisplayDeformationTotal()
+inline int RView::GetDisplayDeformationTotal()
 {
   return _DisplayDeformationTotal;
 }
 
-inline void irtkRView::DisplayLandmarksOn()
+inline void RView::DisplayLandmarksOn()
 {
   _DisplayLandmarks = true;
 }
 
-inline void irtkRView::DisplayLandmarksOff()
+inline void RView::DisplayLandmarksOff()
 {
   _DisplayLandmarks = false;
 }
 
-inline int irtkRView::GetDisplayLandmarks()
+inline int RView::GetDisplayLandmarks()
 {
   return _DisplayLandmarks;
 }
 
-inline void irtkRView::SelectTargetLandmark(int id)
+inline void RView::SelectTargetLandmark(int id)
 {
   if (0 < id && id <= _targetLandmarks.Size()) {
     _selectedTargetLandmarks.insert(id-1);
   }
 }
 
-inline void irtkRView::DeselectTargetLandmark(int id)
+inline void RView::DeselectTargetLandmark(int id)
 {
   _selectedTargetLandmarks.erase(id-1);
 }
 
-inline int irtkRView::IsTargetLandmarkSelected(int id)
+inline int RView::IsTargetLandmarkSelected(int id)
 {
   return _selectedTargetLandmarks.find(id-1) != _selectedTargetLandmarks.end();
 }
 
-inline void irtkRView::ClearTargetLandmarkSelection()
+inline void RView::ClearTargetLandmarkSelection()
 {
   _selectedTargetLandmarks.clear();
 }
 
-inline void irtkRView::SelectSourceLandmark(int id)
+inline void RView::SelectSourceLandmark(int id)
 {
   if (0 < id && id <= _targetLandmarks.Size()) {
     _selectedSourceLandmarks.insert(id-1);
   }
 }
 
-inline void irtkRView::DeselectSourceLandmark(int id)
+inline void RView::DeselectSourceLandmark(int id)
 {
   _selectedSourceLandmarks.erase(id-1);
 }
 
-inline int irtkRView::IsSourceLandmarkSelected(int id)
+inline int RView::IsSourceLandmarkSelected(int id)
 {
   return _selectedSourceLandmarks.find(id-1) != _selectedSourceLandmarks.end();
 }
 
-inline void irtkRView::ClearSourceLandmarkSelection()
+inline void RView::ClearSourceLandmarkSelection()
 {
   _selectedSourceLandmarks.clear();
 }
 
-inline int irtkRView::GetDisplaySegmentationLabels()
+inline int RView::GetDisplaySegmentationLabels()
 {
   return _DisplaySegmentationLabels;
 }
 
-inline int irtkRView::GetDisplaySegmentationContours()
+inline int RView::GetDisplaySegmentationContours()
 {
   return _DisplaySegmentationContours;
 }
 
-inline int irtkRView::GetSegmentationMode()
+inline int RView::GetSegmentationMode()
 {
   return _SegmentationMode;
 }
 
-inline int irtkRView::GetPaintBrushWidth()
+inline int RView::GetPaintBrushWidth()
 {
   return _PaintBrushWidth;
 }
 
-inline int irtkRView::GetRegionGrowingThresholdMinimum()
+inline int RView::GetRegionGrowingThresholdMinimum()
 {
   return _RegionGrowingThresholdMin;
 }
 
-inline int irtkRView::GetRegionGrowingThresholdMaximum()
+inline int RView::GetRegionGrowingThresholdMaximum()
 {
   return _RegionGrowingThresholdMax;
 }
 
-inline void irtkRView::DisplayROIOn()
+inline void RView::DisplayROIOn()
 {
   _DisplayROI = true;
 }
 
-inline void irtkRView::DisplayROIOff()
+inline void RView::DisplayROIOff()
 {
   _DisplayROI = false;
 }
 
-inline int irtkRView::GetDisplayROI()
+inline int RView::GetDisplayROI()
 {
   return _DisplayROI;
 }
 
-inline void irtkRView::TrackTAGOn()
+inline void RView::TrackTAGOn()
 {
   _TrackTAG = true;
 }
 
-inline void irtkRView::TrackTAGOff()
+inline void RView::TrackTAGOff()
 {
   _TrackTAG = false;
 }
 
-inline int irtkRView::GetTrackTAG()
+inline int RView::GetTrackTAG()
 {
   return _TrackTAG;
 }
 
-inline void irtkRView::ViewTAGOn()
+inline void RView::ViewTAGOn()
 {
   _ViewTAG = true;
 }
 
-inline void irtkRView::ViewTAGOff()
+inline void RView::ViewTAGOff()
 {
   _ViewTAG = false;
 }
 
-inline int irtkRView::GetViewTAG()
+inline int RView::GetViewTAG()
 {
   return _ViewTAG;
 }
 
 #ifdef HAS_VTK
 
-inline vtkPointSet *irtkRView::GetObject(int i)
+inline vtkPointSet *RView::GetObject(int i)
 {
   if ((i < 0) || (i > _NoOfObjects-1)) {
-    cerr << "irtkRView::GetObject: Invalid object: " << i << endl;
+    cerr << "RView::GetObject: Invalid object: " << i << endl;
     return NULL;
   }
   return _Object[i];
 }
 
-inline void irtkRView::ObjectMovieOn()
+inline void RView::ObjectMovieOn()
 {
     _ObjectMovie = true;
 }
 
-inline void irtkRView::ObjectMovieOff()
+inline void RView::ObjectMovieOff()
 {
     _ObjectMovie = false;
 }
 
-inline int irtkRView::GetObjectMovie()
+inline int RView::GetObjectMovie()
 {
     return _ObjectMovie;
 }
 
-inline void irtkRView::DisplayObjectOn()
+inline void RView::DisplayObjectOn()
 {
     _DisplayObject = true;
 }
 
-inline void irtkRView::DisplayObjectOff()
+inline void RView::DisplayObjectOff()
 {
   _DisplayObject = false;
 }
 
-inline int irtkRView::GetDisplayObject()
+inline int RView::GetDisplayObject()
 {
   return _DisplayObject;
 }
 
-inline void irtkRView::DisplayObjectWarpOn()
+inline void RView::DisplayObjectWarpOn()
 {
   _DisplayObjectWarp = true;
 }
 
-inline void irtkRView::DisplayObjectWarpOff()
+inline void RView::DisplayObjectWarpOff()
 {
   _DisplayObjectWarp = false;
 }
 
-inline int irtkRView::GetDisplayObjectWarp()
+inline int RView::GetDisplayObjectWarp()
 {
   return _DisplayObjectWarp;
 }
 
-inline void irtkRView::DisplayObjectGridOn()
+inline void RView::DisplayObjectGridOn()
 {
   _DisplayObjectGrid = true;
 }
 
-inline void irtkRView::DisplayObjectGridOff()
+inline void RView::DisplayObjectGridOff()
 {
   _DisplayObjectGrid = false;
 }
 
-inline int irtkRView::GetDisplayObjectGrid()
+inline int RView::GetDisplayObjectGrid()
 {
   return _DisplayObjectGrid;
 }
 
 #endif
 
-inline irtkRegionGrowingMode irtkRView::GetRegionGrowingMode()
+inline RegionGrowingMode RView::GetRegionGrowingMode()
 {
   return _regionGrowingMode;
 }
 
-inline void irtkRView::SetRegionGrowingMode(irtkRegionGrowingMode mode)
+inline void RView::SetRegionGrowingMode(RegionGrowingMode mode)
 {
   _regionGrowingMode = mode;
 }
 
-inline void irtkRView::FlipXOff()
+inline void RView::FlipXOff()
 {
   if (_FlipX == true) {
     _FlipX = false;
@@ -1645,7 +1645,7 @@ inline void irtkRView::FlipXOff()
   }
 }
 
-inline void irtkRView::FlipXOn()
+inline void RView::FlipXOn()
 {
   if (_FlipX == false) {
     _FlipX = true;
@@ -1656,7 +1656,7 @@ inline void irtkRView::FlipXOn()
   }
 }
 
-inline void irtkRView::FlipYOff()
+inline void RView::FlipYOff()
 {
   if (_FlipY == true) {
     _FlipY = false;
@@ -1667,7 +1667,7 @@ inline void irtkRView::FlipYOff()
   }
 }
 
-inline void irtkRView::FlipYOn()
+inline void RView::FlipYOn()
 {
   if (_FlipY == false) {
     _FlipY = true;
@@ -1678,7 +1678,7 @@ inline void irtkRView::FlipYOn()
   }
 }
 
-inline void irtkRView::FlipZOff()
+inline void RView::FlipZOff()
 {
   if (_FlipZ == true) {
     _FlipZ = false;
@@ -1689,7 +1689,7 @@ inline void irtkRView::FlipZOff()
   }
 }
 
-inline void irtkRView::FlipZOn()
+inline void RView::FlipZOn()
 {
   if (_FlipZ == false) {
     _FlipZ = true;
@@ -1700,7 +1700,7 @@ inline void irtkRView::FlipZOn()
   }
 }
 
-inline void irtkRView::SetOrigin(double x, double y, double z)
+inline void RView::SetOrigin(double x, double y, double z)
 {
   int i;
 
@@ -1719,7 +1719,7 @@ inline void irtkRView::SetOrigin(double x, double y, double z)
   _selectionUpdate    = true;
 }
 
-inline void irtkRView::SetTargetOrigin(double x, double y, double z)
+inline void RView::SetTargetOrigin(double x, double y, double z)
 {
   _origin_x = x;
   _origin_y = y;
@@ -1738,7 +1738,7 @@ inline void irtkRView::SetTargetOrigin(double x, double y, double z)
   _selectionUpdate    = true;
 }
 
-inline void irtkRView::SetSourceOrigin(double x, double y, double z)
+inline void RView::SetSourceOrigin(double x, double y, double z)
 {
   for (int i = 0; i < _NoOfViewers; ++i) {
     if (_isSourceViewer[i]) {
@@ -1754,14 +1754,14 @@ inline void irtkRView::SetSourceOrigin(double x, double y, double z)
   _selectionUpdate    = true;
 }
 
-inline void irtkRView::GetOrigin(double &x, double &y, double &z)
+inline void RView::GetOrigin(double &x, double &y, double &z)
 {
   x = _origin_x;
   y = _origin_y;
   z = _origin_z;
 }
 
-inline void irtkRView::SetROI(double x1, double y1, double z1, double x2, double y2, double z2)
+inline void RView::SetROI(double x1, double y1, double z1, double x2, double y2, double z2)
 {
   _x1 = x1;
   _y1 = y1;
@@ -1772,7 +1772,7 @@ inline void irtkRView::SetROI(double x1, double y1, double z1, double x2, double
 
 }
 
-inline void irtkRView::GetROI(double &x1, double &y1, double &z1, double &x2, double &y2, double &z2)
+inline void RView::GetROI(double &x1, double &y1, double &z1, double &x2, double &y2, double &z2)
 {
   x1 = _x1;
   y1 = _y1;
@@ -1782,58 +1782,58 @@ inline void irtkRView::GetROI(double &x1, double &y1, double &z1, double &x2, do
   z2 = _z2;
 }
 
-inline mirtk::Image *irtkRView::GetTarget()
+inline mirtk::Image *RView::GetTarget()
 {
   return _targetImage;
 }
 
-inline mirtk::Image *irtkRView::GetSource()
+inline mirtk::Image *RView::GetSource()
 {
   return _sourceImage;
 }
 
-inline mirtk::GreyImage *irtkRView::GetSegmentation()
+inline mirtk::GreyImage *RView::GetSegmentation()
 {
   return _segmentationImage;
 }
 
-inline irtkVoxelContour *irtkRView::GetVoxelContour()
+inline VoxelContour *RView::GetVoxelContour()
 {
   return &_voxelContour;
 }
 
-inline irtkSegmentTable *irtkRView::GetSegmentTable()
+inline SegmentTable *RView::GetSegmentTable()
 {
   return _segmentTable;
 }
 
-inline irtkLookupTable *irtkRView::GetTargetLookupTable()
+inline LookupTable *RView::GetTargetLookupTable()
 {
   return _targetLookupTable;
 }
 
-inline irtkLookupTable *irtkRView::GetSourceLookupTable()
+inline LookupTable *RView::GetSourceLookupTable()
 {
   return _sourceLookupTable;
 }
 
-inline irtkLookupTable *irtkRView::GetSubtractionLookupTable()
+inline LookupTable *RView::GetSubtractionLookupTable()
 {
   return _subtractionLookupTable;
 }
 
-inline mirtk::Transformation *irtkRView::GetTransformation()
+inline mirtk::Transformation *RView::GetTransformation()
 {
   return _sourceTransform;
 }
 
-inline mirtk::MultiLevelFreeFormTransformation *irtkRView::GetMFFD()
+inline mirtk::MultiLevelFreeFormTransformation *RView::GetMFFD()
 {
   mirtk::MultiLevelFreeFormTransformation *transform = dynamic_cast<mirtk::MultiLevelFreeFormTransformation *>(_sourceTransform);
   return transform;
 }
 
-inline void irtkRView::Clip()
+inline void RView::Clip()
 {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glViewport(0, 0, (GLsizei) _screenX, (GLsizei) _screenY);
@@ -1844,19 +1844,19 @@ inline void irtkRView::Clip()
   glLoadIdentity();
 }
 
-inline void irtkRView::AddTargetLandmark(mirtk::Point &point, char *)
+inline void RView::AddTargetLandmark(mirtk::Point &point, char *)
 {
   // Add landmark as point, ignoring label for now
       _targetLandmarks.Add(point);
 }
 
-inline void irtkRView::AddSourceLandmark(mirtk::Point &point, char *)
+inline void RView::AddSourceLandmark(mirtk::Point &point, char *)
 {
   // Add landmark as point, ignoring label for now	
 	  _sourceLandmarks.Add(point);
 }
 
-inline void irtkRView::DeleteTargetLandmark(int id)
+inline void RView::DeleteTargetLandmark(int id)
 {
   // Delete landmark from list
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
@@ -1866,7 +1866,7 @@ inline void irtkRView::DeleteTargetLandmark(int id)
   }
 }
 
-inline void irtkRView::DeleteSourceLandmark(int id)
+inline void RView::DeleteSourceLandmark(int id)
 {
   // Delete landmark from list
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
@@ -1876,7 +1876,7 @@ inline void irtkRView::DeleteSourceLandmark(int id)
   }
 }
 
-inline void irtkRView::InsertTargetLandmark(mirtk::Point &point, int id, char *)
+inline void RView::InsertTargetLandmark(mirtk::Point &point, int id, char *)
 {
   // Insert landmark, ignoring label for now
   if (_targetLandmarks.Size() == 0) {
@@ -1894,11 +1894,11 @@ inline void irtkRView::InsertTargetLandmark(mirtk::Point &point, int id, char *)
       _targetLandmarks.Add(pset(i-1));
     }
   } else {
-    cerr << "irtkRView::InsertTargetLandmark : invalid position " << id << endl;
+    cerr << "RView::InsertTargetLandmark : invalid position " << id << endl;
   }
 }
 
-inline void irtkRView::InsertSourceLandmark(mirtk::Point &point, int id, char *)
+inline void RView::InsertSourceLandmark(mirtk::Point &point, int id, char *)
 {
   // Insert landmark, ignoring label for now
   if (_sourceLandmarks.Size() == 0) {
@@ -1916,21 +1916,21 @@ inline void irtkRView::InsertSourceLandmark(mirtk::Point &point, int id, char *)
       _sourceLandmarks.Add(pset(i-1));
     }
   } else {
-    cerr << "irtkRView::InsertSourceLandmark : invalid position " << id << endl;
+    cerr << "RView::InsertSourceLandmark : invalid position " << id << endl;
   }
 }
 
-inline void irtkRView::LabelTargetLandmark(int, char *)
+inline void RView::LabelTargetLandmark(int, char *)
 {
   // So far, labelling of mirtk::PointSet is not possible
 }
 
-inline void irtkRView::LabelSourceLandmark(int, char *)
+inline void RView::LabelSourceLandmark(int, char *)
 {
   // So far, labelling of mirtk::PointSet is not possible
 }
 
-inline void irtkRView::GetTargetLandmark(mirtk::Point &point, int id, char *)
+inline void RView::GetTargetLandmark(mirtk::Point &point, int id, char *)
 {
   // Get landmark from list, ignoring label for now
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
@@ -1938,7 +1938,7 @@ inline void irtkRView::GetTargetLandmark(mirtk::Point &point, int id, char *)
   }
 }
 
-inline void irtkRView::GetSourceLandmark(mirtk::Point &point, int id, char *)
+inline void RView::GetSourceLandmark(mirtk::Point &point, int id, char *)
 {
   // Get landmark from list, ignoring label for now
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
@@ -1946,7 +1946,7 @@ inline void irtkRView::GetSourceLandmark(mirtk::Point &point, int id, char *)
   }
 }
 
-inline void irtkRView::PutTargetLandmark(mirtk::Point point, int id, char *)
+inline void RView::PutTargetLandmark(mirtk::Point point, int id, char *)
 {
   // Put landmark in list, ignoring label for now
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
@@ -1954,7 +1954,7 @@ inline void irtkRView::PutTargetLandmark(mirtk::Point point, int id, char *)
   }
 }
 
-inline void irtkRView::PutSourceLandmark(mirtk::Point point, int id, char *)
+inline void RView::PutSourceLandmark(mirtk::Point point, int id, char *)
 {
   // Put landmark in list, ignoring label for now
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
@@ -1962,127 +1962,127 @@ inline void irtkRView::PutSourceLandmark(mirtk::Point point, int id, char *)
   }
 }
 
-inline int irtkRView::GetNumberOfTargetLandmarks()
+inline int RView::GetNumberOfTargetLandmarks()
 {
   return _targetLandmarks.Size();
 }
 
-inline int irtkRView::GetNumberOfSourceLandmarks()
+inline int RView::GetNumberOfSourceLandmarks()
 {
   return _sourceLandmarks.Size();
 }
 
-inline void irtkRView::SegmentationLabelsOn()
+inline void RView::SegmentationLabelsOn()
 {
   _DisplaySegmentationLabels = true;
 }
 
-inline void irtkRView::SegmentationLabelsOff()
+inline void RView::SegmentationLabelsOff()
 {
   _DisplaySegmentationLabels = false;
 }
 
-inline void irtkRView::SegmentationContoursOn()
+inline void RView::SegmentationContoursOn()
 {
   _DisplaySegmentationContours = true;
 }
 
-inline void irtkRView::SegmentationContoursOff()
+inline void RView::SegmentationContoursOff()
 {
   _DisplaySegmentationContours = false;
 }
 
-inline double irtkRView::GetTargetMin()
+inline double RView::GetTargetMin()
 {
   return _targetMin;
 }
 
-inline double irtkRView::GetTargetMax()
+inline double RView::GetTargetMax()
 {
   return _targetMax;
 }
 
-inline double irtkRView::GetSourceMin()
+inline double RView::GetSourceMin()
 {
   return _sourceMin;
 }
 
-inline double irtkRView::GetSourceMax()
+inline double RView::GetSourceMax()
 {
   return _sourceMax;
 }
 
-inline double irtkRView::GetSubtractionMin()
+inline double RView::GetSubtractionMin()
 {
   return _subtractionMin;
 }
 
-inline double irtkRView::GetSubtractionMax()
+inline double RView::GetSubtractionMax()
 {
   return _subtractionMax;
 }
 
-inline double irtkRView::GetDisplayMinTarget()
+inline double RView::GetDisplayMinTarget()
 {
 	return _targetDisplayMin;
 }
 
-inline double irtkRView::GetDisplayMaxTarget()
+inline double RView::GetDisplayMaxTarget()
 {
 	return _targetDisplayMax;
 }
 
-inline void irtkRView::SetDisplayMinTarget(double value)
+inline void RView::SetDisplayMinTarget(double value)
 {
 	_targetDisplayMin = value;
 	_targetLookupTable->SetMinDisplayIntensity(round((value - _targetMin) * 10000.0 / (_targetMax - _targetMin)));
 }
 
-inline void irtkRView::SetDisplayMaxTarget(double value)
+inline void RView::SetDisplayMaxTarget(double value)
 {
 	_targetDisplayMax = value;
 	_targetLookupTable->SetMaxDisplayIntensity(round((value - _targetMin) * 10000.0 / (_targetMax - _targetMin)));
 }
 
-inline double irtkRView::GetDisplayMinSource()
+inline double RView::GetDisplayMinSource()
 {
 	return _sourceDisplayMin;
 }
 
-inline double irtkRView::GetDisplayMaxSource()
+inline double RView::GetDisplayMaxSource()
 {
 	return _sourceDisplayMax;
 }
 
-inline void irtkRView::SetDisplayMinSource(double value)
+inline void RView::SetDisplayMinSource(double value)
 {
 	_sourceDisplayMin = value;
 	_sourceLookupTable->SetMinDisplayIntensity(round((value - _sourceMin) * 10000.0 / (_sourceMax - _sourceMin)));
 }
 
-inline void irtkRView::SetDisplayMaxSource(double value)
+inline void RView::SetDisplayMaxSource(double value)
 {
 	_sourceDisplayMax = value;
 	_sourceLookupTable->SetMaxDisplayIntensity(round((value - _sourceMin) * 10000.0 / (_sourceMax - _sourceMin)));
 }
 
-inline double irtkRView::GetDisplayMinSubtraction()
+inline double RView::GetDisplayMinSubtraction()
 {
 	return _subtractionDisplayMin;
 }
 
-inline double irtkRView::GetDisplayMaxSubtraction()
+inline double RView::GetDisplayMaxSubtraction()
 {
 	return _subtractionDisplayMax;
 }
 
-inline void irtkRView::SetDisplayMinSubtraction(double value)
+inline void RView::SetDisplayMinSubtraction(double value)
 {
 	_subtractionDisplayMin = value;
 	_subtractionLookupTable->SetMinDisplayIntensity(round(value * 20000.0 / (_subtractionMax - _subtractionMin)));
 }
 
-inline void irtkRView::SetDisplayMaxSubtraction(double value)
+inline void RView::SetDisplayMaxSubtraction(double value)
 {
 	_subtractionDisplayMax = value;
 	_subtractionLookupTable->SetMaxDisplayIntensity(round(value * 20000.0 / (_subtractionMax - _subtractionMin)));

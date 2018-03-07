@@ -19,7 +19,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/fl_draw.H>
 
-#include <irtkRView.h>
+#include <RView.h>
 
 class Fl_HistogramWindow : public Fl_Window
 {
@@ -27,7 +27,7 @@ class Fl_HistogramWindow : public Fl_Window
 protected:
 
   /// Pointer to histogram window
-  irtkHistogramWindow _histogramWindow;
+  HistogramWindow _histogramWindow;
 
   /// Maximum in histogram
   int _maxHistogram;
@@ -35,10 +35,10 @@ protected:
 public:
 
   /// Pointer to the registration viewer
-  irtkRView *_v;
+  RView *_v;
 
   /// Constructor
-  Fl_HistogramWindow(int, int, int, int, const char *, irtkRView *);
+  Fl_HistogramWindow(int, int, int, int, const char *, RView *);
 
   /// Destructor
   ~Fl_HistogramWindow();

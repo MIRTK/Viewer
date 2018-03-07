@@ -24,7 +24,7 @@
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 void Fl_RViewUI::AddTransformation(char *filename)
 {

@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,27 +10,27 @@
 
 =========================================================================*/
 
-#ifndef _IRTKSEGMENT_H
+#ifndef _SEGMENT_H
 
-#define _IRTKSEGMENT_H
+#define _SEGMENT_H
 
 #define HEX_LENGTH 7
 
 #include <mirtk/Image.h>
 
-#include <irtkColorRGBA.h>
-#include <irtkColor.h>
+#include <ColorRGBA.h>
+#include <Color.h>
 
-class irtkSegment
+class Segment
 {
 
-  friend class irtkRView;
-  friend class irtkViewer;
+  friend class RView;
+  friend class Viewer;
 
 protected:
 
   /// Color
-  irtkColor _color;
+  Color _color;
 
   /// Color in hex format
   char _hexColor[HEX_LENGTH];
@@ -49,16 +49,16 @@ protected:
 public:
 
   // Constructor (default)
-  irtkSegment();
+  Segment();
 
   // Constructor (existing)
-  irtkSegment(char*, unsigned char, unsigned char, unsigned char, double, int = true);
+  Segment(char*, unsigned char, unsigned char, unsigned char, double, int = true);
 
   // Destructor
-  virtual ~irtkSegment(void);
+  virtual ~Segment(void);
 
   // Copy operator
-  irtkSegment& operator = (const irtkSegment&);
+  Segment& operator = (const Segment&);
 
   /// Set color
   void setColor(unsigned char, unsigned char, unsigned char);

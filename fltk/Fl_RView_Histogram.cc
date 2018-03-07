@@ -22,7 +22,7 @@
 
 extern Fl_RViewUI *rviewUI;
 
-Fl_HistogramWindow::Fl_HistogramWindow(int x, int y, int w, int h, const char *name, irtkRView  *viewer) : Fl_Window(x, y, w, h, name), _histogramWindow(viewer)
+Fl_HistogramWindow::Fl_HistogramWindow(int x, int y, int w, int h, const char *name, RView  *viewer) : Fl_Window(x, y, w, h, name), _histogramWindow(viewer)
 {
   _v = viewer;
 }

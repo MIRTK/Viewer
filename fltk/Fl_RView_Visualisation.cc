@@ -33,7 +33,7 @@
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 char interpStrings[5][255] = {"nn", "linear", "c1spline", "bspline", "sinc"};
 

@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,34 +10,34 @@
 
 =========================================================================*/
 
-#ifndef _IRTKSEGMENTTABLE_H
+#ifndef _SEGMENTTABLE_H
 
-#define _IRTKSEGMENTTABLE_H
+#define _SEGMENTTABLE_H
 
-#include <irtkSegment.h>
+#include <Segment.h>
 #include <limits.h>
 
-class irtkSegmentTable
+class SegmentTable
 {
 
-  friend class irtkRView;
-  friend class irtkViewer;
+  friend class RView;
+  friend class Viewer;
 
 protected:
 
   /// Segment Table
-  irtkSegment _entry[SHRT_MAX+1];
+  Segment _entry[SHRT_MAX+1];
 
 public:
 
 /// Constructor (basic)
-  irtkSegmentTable();
+  SegmentTable();
 
   /// Constructor (default)
-  irtkSegmentTable(int);
+  SegmentTable(int);
 
   /// Destructor
-  virtual ~irtkSegmentTable();
+  virtual ~SegmentTable();
 
   /// Size of lookup table
   int Size();
@@ -91,32 +91,32 @@ public:
   void Write(char *);
 };
 
-inline void irtkSegmentTable::GetColor(int id, unsigned char* r, unsigned char* g, unsigned char* b)
+inline void SegmentTable::GetColor(int id, unsigned char* r, unsigned char* g, unsigned char* b)
 {
   _entry[id].getColor(r, g, b);
 }
 
-inline void irtkSegmentTable::GetTrans(int id, double* d)
+inline void SegmentTable::GetTrans(int id, double* d)
 {
   *d = _entry[id].getTrans();
 }
 
-inline void irtkSegmentTable::GetHex(int id, char* h)
+inline void SegmentTable::GetHex(int id, char* h)
 {
   _entry[id].getHex(h);
 }
 
-inline char *irtkSegmentTable::GetLabel(int id)
+inline char *SegmentTable::GetLabel(int id)
 {
   return _entry[id].getLabel();
 }
 
-inline int irtkSegmentTable::GetVisibility(int id)
+inline int SegmentTable::GetVisibility(int id)
 {
   return _entry[id].getVisibility();
 }
 
-inline int irtkSegmentTable::IsValid(int id)
+inline int SegmentTable::IsValid(int id)
 {
   if (_entry[id].getLabel() != NULL) {
     return true;
@@ -125,7 +125,7 @@ inline int irtkSegmentTable::IsValid(int id)
   }
 }
 
-inline int irtkSegmentTable::Size()
+inline int SegmentTable::Size()
 {
   return SHRT_MAX+1;
 }

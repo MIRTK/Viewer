@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,16 +10,16 @@
 
 =========================================================================*/
 
-#ifndef _IRTKVIEWER_H
+#ifndef _VIEWER_H
 
-#define _IRTKVIEWER_H
+#define _VIEWER_H
 
-class irtkRView;
-class irtkVoxelContour;
-class irtkMultiLevelTransformation;
-class irtkFreeFormTransformation;
+class RView;
+class VoxelContour;
+class MultiLevelTransformation;
+class FreeFormTransformation;
 
-class irtkViewer
+class Viewer
 {
 
   /// Screen corrdinates
@@ -29,21 +29,21 @@ class irtkViewer
   double _viewportX1, _viewportY1, _viewportX2, _viewportY2;
 
   /// Pointer to registration viewer
-  irtkRView *_rview;
+  RView *_rview;
 
   /// Viewer mode
-  irtkViewerMode _viewerMode;
+  ViewerMode _viewerMode;
 
 public:
 
   /// Constructor
-  irtkViewer(irtkRView *, irtkViewerMode);
+  Viewer(RView *, ViewerMode);
 
   /// Destructor
-  virtual ~irtkViewer();
+  virtual ~Viewer();
 
   /// Draw image viewer
-  virtual void DrawImage(irtkColor *);
+  virtual void DrawImage(Color *);
 
   /// Draw isolines in image viewer
   virtual void DrawIsolines(mirtk::GreyImage *, int);
@@ -52,7 +52,7 @@ public:
   virtual void DrawSegmentationContour(mirtk::GreyImage *);
 
   /// Draw cursor in image viewer
-  virtual void DrawCursor(irtkCursorMode mode);
+  virtual void DrawCursor(CursorMode mode);
 
   /// Draw control points
   virtual void DrawPoints();
@@ -88,7 +88,7 @@ public:
 #endif
 
   /// Draw information about L/R, A/P, S/I on the viewer
-  void DrawInfo(irtkDisplayMode);
+  void DrawInfo(DisplayMode);
 
   /// Update Grid Pattern
   bool UpdateTagGrid(mirtk::GreyImage *, mirtk::Transformation *, mirtk::PointSet);
@@ -121,27 +121,27 @@ public:
   void GetScreen(int &, int &, int &, int &);
 
   /// Set viewer mode
-  void SetViewerMode(irtkViewerMode);
+  void SetViewerMode(ViewerMode);
 
   /// Get viewer mode
-  irtkViewerMode GetViewerMode();
+  ViewerMode GetViewerMode();
 
   /// Clipping of a drawable to the viewport
   void  Clip();
 
 };
 
-inline int irtkViewer::GetWidth()
+inline int Viewer::GetWidth()
 {
   return _screenX2 - _screenX1 + 1;
 }
 
-inline int irtkViewer::GetHeight()
+inline int Viewer::GetHeight()
 {
   return _screenY2 - _screenY1 + 1;
 }
 
-inline void irtkViewer::SetViewport(double x1, double y1, double x2, double y2)
+inline void Viewer::SetViewport(double x1, double y1, double x2, double y2)
 {
   _viewportX1 = x1;
   _viewportY1 = y1;
@@ -149,7 +149,7 @@ inline void irtkViewer::SetViewport(double x1, double y1, double x2, double y2)
   _viewportY2 = y2;
 }
 
-inline void irtkViewer::GetViewport(double &x1, double &y1, double &x2, double &y2)
+inline void Viewer::GetViewport(double &x1, double &y1, double &x2, double &y2)
 {
   x1 = _viewportX1;
   y1 = _viewportY1;
@@ -157,7 +157,7 @@ inline void irtkViewer::GetViewport(double &x1, double &y1, double &x2, double &
   y2 = _viewportY2;
 }
 
-inline void irtkViewer::SetScreen(int x, int y)
+inline void Viewer::SetScreen(int x, int y)
 {
   _screenX1 = round(x * _viewportX1);
   _screenY1 = round(y * _viewportY1);
@@ -165,7 +165,7 @@ inline void irtkViewer::SetScreen(int x, int y)
   _screenY2 = round(y * _viewportY2);
 }
 
-inline void irtkViewer::GetScreen(int &x1, int &y1, int &x2, int &y2)
+inline void Viewer::GetScreen(int &x1, int &y1, int &x2, int &y2)
 {
   x1 = _screenX1;
   y1 = _screenY1;
@@ -173,17 +173,17 @@ inline void irtkViewer::GetScreen(int &x1, int &y1, int &x2, int &y2)
   y2 = _screenY2;
 }
 
-inline void irtkViewer::SetViewerMode(irtkViewerMode viewerMode)
+inline void Viewer::SetViewerMode(ViewerMode viewerMode)
 {
   _viewerMode = viewerMode;
 }
 
-inline irtkViewerMode irtkViewer::GetViewerMode()
+inline ViewerMode Viewer::GetViewerMode()
 {
   return _viewerMode;
 }
 
-inline void irtkViewer::Clip()
+inline void Viewer::Clip()
 {
   glViewport(_screenX1, _screenY1, this->GetWidth(), this->GetHeight());
   glMatrixMode(GL_PROJECTION);

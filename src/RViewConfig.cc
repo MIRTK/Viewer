@@ -22,86 +22,86 @@
 #include <GL/glu.h>
 #endif
 
-#include <irtkRView.h>
+#include <RView.h>
 
-irtkRViewConfig View_XY[] = {
+RViewConfig View_XY[] = {
   {  0.0, 0.0, 1.0, 1.0, Viewer_XY },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XZ[] = {
+RViewConfig View_XZ[] = {
   {  0.0, 0.0, 1.0, 1.0, Viewer_XZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_YZ[] = {
+RViewConfig View_YZ[] = {
   {  0.0, 0.0, 1.0, 1.0, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XY_XZ_v[] = {
+RViewConfig View_XY_XZ_v[] = {
   {  0.0, 0.5, 1.0, 1.0, Viewer_XY },
   {  0.0, 0.0, 1.0, 0.5, Viewer_XZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XY_XZ_h[] = {
+RViewConfig View_XY_XZ_h[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.0, 1.0, 1.0, Viewer_XZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XY_YZ_v[] = {
+RViewConfig View_XY_YZ_v[] = {
   {  0.0, 0.5, 1.0, 1.0, Viewer_XY },
   {  0.0, 0.0, 1.0, 0.5, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XY_YZ_h[] = {
+RViewConfig View_XY_YZ_h[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.0, 1.0, 1.0, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XZ_YZ_v[] = {
+RViewConfig View_XZ_YZ_v[] = {
   {  0.0, 0.5, 1.0, 1.0, Viewer_XZ },
   {  0.0, 0.0, 1.0, 0.5, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 
 };
 
-irtkRViewConfig View_XZ_YZ_h[] = {
+RViewConfig View_XZ_YZ_h[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_XZ },
   {  0.5, 0.0, 1.0, 1.0, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_XY_XZ_YZ[] = {
+RViewConfig View_XY_XZ_YZ[] = {
   {  0.0, 0.5, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.5, 1.0, 1.0, Viewer_XZ },
   {  0.0, 0.0, 0.5, 0.5, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XY_v[] = {
+RViewConfig View_AB_XY_v[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.0, 1.0, 1.0, Viewer_XY },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XZ_v[] = {
+RViewConfig View_AB_XZ_v[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_XZ },
   {  0.5, 0.0, 1.0, 1.0, Viewer_XZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_YZ_v[] = {
+RViewConfig View_AB_YZ_v[] = {
   {  0.0, 0.0, 0.5, 1.0, Viewer_YZ },
   {  0.5, 0.0, 1.0, 1.0, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XY_XZ_v[] = {
+RViewConfig View_AB_XY_XZ_v[] = {
   {  0.0, 0.5, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.5, 1.0, 1.0, Viewer_XY },
   {  0.0, 0.0, 0.5, 0.5, Viewer_XZ },
@@ -109,25 +109,25 @@ irtkRViewConfig View_AB_XY_XZ_v[] = {
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XY_h[] = {
+RViewConfig View_AB_XY_h[] = {
   {  0.0, 0.0, 1.0, 0.5, Viewer_XY },
   {  0.0, 0.5, 1.0, 1.0, Viewer_XY },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XZ_h[] = {
+RViewConfig View_AB_XZ_h[] = {
   {  0.0, 0.0, 1.0, 0.5, Viewer_XZ },
   {  0.0, 0.5, 1.0, 1.0, Viewer_XZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_YZ_h[] = {
+RViewConfig View_AB_YZ_h[] = {
   {  0.0, 0.0, 1.0, 0.5, Viewer_YZ },
   {  0.0, 0.5, 1.0, 1.0, Viewer_YZ },
   { -1.0, 0.0, 0.0, 0.0, Viewer_None }
 };
 
-irtkRViewConfig View_AB_XY_XZ_h[] = {
+RViewConfig View_AB_XY_XZ_h[] = {
   {  0.0, 0.5, 0.5, 1.0, Viewer_XY },
   {  0.5, 0.5, 1.0, 1.0, Viewer_XZ },
   {  0.0, 0.0, 0.5, 0.5, Viewer_XY },

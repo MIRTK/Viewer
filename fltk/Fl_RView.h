@@ -26,7 +26,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Gl_Window.H>
 
-#include <irtkRView.h>
+#include <RView.h>
 
 
 class Fl_RView : public Fl_Gl_Window
@@ -35,7 +35,7 @@ class Fl_RView : public Fl_Gl_Window
 public:
 
   /// Pointer to the registration viewer
-  irtkRView *v;
+  RView *v;
 
   /// Constructor
   Fl_RView(int, int, int, int, const char *);
