@@ -63,28 +63,28 @@ class irtkVoxelContour
 public:
 
   /// Pointer to segmentation
-  irtkGreyImage *_raster;
+  mirtk::GreyImage *_raster;
 
   /// Constructor
   irtkVoxelContour();
 
   /// Initialise contour
-  void Initialise(irtkRView *, irtkGreyImage *);
+  void Initialise(irtkRView *, mirtk::GreyImage *);
 
   /// Operator for access
-  irtkPoint &operator()(int);
+  mirtk::Point &operator()(int);
 
   /// Add a single point (in world coordinates)
-  void AddPoint(irtkPoint p, int width);
+  void AddPoint(mirtk::Point p, int width);
 
   /// Add a single point (in pixel coordinates)
   void AddPoint(int x, int y, int z);
 
   /// Add a segment
-  void AddPointSet(irtkPoint p, int width);
+  void AddPointSet(mirtk::Point p, int width);
 
   /// Add a single point and connect to first point
-  void Close(irtkPoint p, int width);
+  void Close(mirtk::Point p, int width);
 
   /// Undo: Remove last segment which has been added
   void Undo();
@@ -96,10 +96,10 @@ public:
   void Clear();
 
   /// Region growing
-  void RegionGrowing(irtkPoint, int thresholdMin, int thresholdMax, irtkRegionGrowingMode);
+  void RegionGrowing(mirtk::Point, int thresholdMin, int thresholdMax, irtkRegionGrowingMode);
 
   /// Fill area
-  void FillArea(irtkPoint);
+  void FillArea(mirtk::Point);
 
 };
 

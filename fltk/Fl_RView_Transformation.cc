@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,10 +40,10 @@ void Fl_RViewUI::AddTransformation(char *filename)
   free(buffer);
 
   // Update transformation valuator
-  irtkTransformation *transform = rview->GetTransformation();
+  mirtk::Transformation *transform = rview->GetTransformation();
 
-  if (dynamic_cast<irtkFreeFormTransformation   *>(transform) ||
-      dynamic_cast<irtkMultiLevelTransformation *>(transform)) return;
+  if (dynamic_cast<mirtk::FreeFormTransformation   *>(transform) ||
+      dynamic_cast<mirtk::MultiLevelTransformation *>(transform)) return;
 
   for (i = 0; i<transform->NumberOfDOFs(); i++) {
     rviewUI->transformationValuator[i]->value(transform->Get(i));
@@ -70,10 +70,10 @@ void Fl_RViewUI::cb_loadTransformation(Fl_Button *, void *)
   }
 
   // Update transformation valuator
-  irtkTransformation *transform = rview->GetTransformation();
+  mirtk::Transformation *transform = rview->GetTransformation();
 
-  if (dynamic_cast<irtkFreeFormTransformation   *>(transform) ||
-      dynamic_cast<irtkMultiLevelTransformation *>(transform)) return;
+  if (dynamic_cast<mirtk::FreeFormTransformation   *>(transform) ||
+      dynamic_cast<mirtk::MultiLevelTransformation *>(transform)) return;
 
   for (i = 0; i<transform->NumberOfDOFs(); i++) {
     rviewUI->transformationValuator[i]->value(transform->Get(i));
@@ -177,7 +177,7 @@ void Fl_RViewUI::cb_editTransformationApply(Fl_Button*, void*)
 void Fl_RViewUI::cb_editTransformationUpdate(Fl_Valuator* o, void* v)
 {
   // Get transformation
-  irtkTransformation *transform = rview->GetTransformation();
+  mirtk::Transformation *transform = rview->GetTransformation();
 
   // Set values to selected values
   if ((long)v < transform->NumberOfDOFs()) transform->Put((long)v, o->value());
@@ -194,7 +194,7 @@ void Fl_RViewUI::cb_editTransformationReset(Fl_Button*, void*)
     int i;
 
     // Get transformation
-    irtkTransformation *transform = rview->GetTransformation();
+    mirtk::Transformation *transform = rview->GetTransformation();
 
     // Reset values to identity
     for (i=0; i<transform->NumberOfDOFs(); i++) transform->Put(i, 0);
@@ -387,8 +387,8 @@ void Fl_RViewUI::cb_cacheDisplacements(Fl_Button* o, void*)
 void Fl_RViewUI::UpdateTransformationControlWindow()
 {
   int j;
-  list<char *> textList;
-  list<char *>::iterator i;
+  std::list<char *> textList;
+  std::list<char *>::iterator i;
 
   // Get list with transformation information
   rview->GetTransformationText(textList);
@@ -413,11 +413,11 @@ void Fl_RViewUI::UpdateTransformationControlWindow()
   rviewUI->cacheDisplacements->value(rview->GetCacheDisplacements());
 
   // Get transformation
-  irtkTransformation *transform = rview->GetTransformation();
+  mirtk::Transformation *transform = rview->GetTransformation();
 
   // Reset values to identity if transformation is has affine component
-  if (dynamic_cast<irtkFreeFormTransformation   *>(transform) ||
-      dynamic_cast<irtkMultiLevelTransformation *>(transform)) return;
+  if (dynamic_cast<mirtk::FreeFormTransformation   *>(transform) ||
+      dynamic_cast<mirtk::MultiLevelTransformation *>(transform)) return;
 
   for (j = 0; j < transform->NumberOfDOFs(); j++) {
     rviewUI->transformationValuator[j]->value(transform->Get(j));
@@ -588,7 +588,7 @@ void Fl_RViewUI::InitializeTransformationEditor()
           }
 
           // Settings and callback
-          irtkTransformation *transform = rview->GetTransformation();
+          mirtk::Transformation *transform = rview->GetTransformation();
           for (i=0; i<transform->NumberOfDOFs(); i++) {
             o[i]->callback((Fl_Callback*)cb_editTransformationUpdate,
                            reinterpret_cast<void *>(i));

@@ -10,7 +10,7 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
+#include <mirtk/Image.h>
 
 #include <irtkColorRGBA.h>
 
@@ -32,7 +32,7 @@ void irtkColorRGBA::HSVtoRGB(double h, double s, double v)
       g = round(255*v);
       b = round(255*v);
     } else {
-      cerr << "irtkColorRGBA::HSV: Undefined HSV color" << endl;
+      std::cerr << "irtkColorRGBA::HSV: Undefined HSV color" << std::endl;
       exit(1);
     }
   } else {

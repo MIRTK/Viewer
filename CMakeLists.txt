@@ -1,12 +1,32 @@
-FIND_PACKAGE(FLTK REQUIRED NO_MODULE)
-INCLUDE(${FLTK_USE_FILE})
+find_package(FLTK REQUIRED NO_MODULE)
+cmake_minimum_required(VERSION 3.9)
 
-IF (BUILD_MPI_EXE)
+find_package(VTK)
 
-ELSE (BUILD_MPI_EXE)
+find_package(MIRTK REQUIRED
+	PointSet
+	Common 
+	Numerics 
+	IO 
+	Image 
+	Transformation 
+	Registration
+)
 
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/packages/rview/include ${CMAKE_SOURCE_DIR}/packages/rview/fltk)
+include(MIRTKTargets)
 
-  SUBDIRS(src fltk glut)
+find_package(OpenGL)
 
-ENDIF (BUILD_MPI_EXE)
+find_package(GLUT)
+
+include_directories(${FLTK_INCLUDE_DIRS})
+
+if (BUILD_MPI_EXE)
+
+else (BUILD_MPI_EXE)
+
+  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/fltk)
+
+  subdirs(src fltk glut)
+
+endif (BUILD_MPI_EXE)

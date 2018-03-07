@@ -16,7 +16,7 @@
 
 #define HEX_LENGTH 7
 
-#include <irtkImage.h>
+#include <mirtk/Image.h>
 
 #include <irtkColorRGBA.h>
 #include <irtkColor.h>

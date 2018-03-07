@@ -10,9 +10,10 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
+
 #include <irtkSegment.h>
 
 #include <FL/Fl_Window.H>

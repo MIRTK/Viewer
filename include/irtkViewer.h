@@ -46,10 +46,10 @@ public:
   virtual void DrawImage(irtkColor *);
 
   /// Draw isolines in image viewer
-  virtual void DrawIsolines(irtkGreyImage *, int);
+  virtual void DrawIsolines(mirtk::GreyImage *, int);
 
   /// Draw segmentation contours in image viewer
-  virtual void DrawSegmentationContour(irtkGreyImage *);
+  virtual void DrawSegmentationContour(mirtk::GreyImage *);
 
   /// Draw cursor in image viewer
   virtual void DrawCursor(irtkCursorMode mode);
@@ -67,40 +67,40 @@ public:
   virtual void DrawArrows();
 
   /// Draw landmarks
-  void DrawLandmarks(irtkPointSet &, set<int> &, irtkGreyImage *, int = true, int = true);
+  void DrawLandmarks(mirtk::PointSet &, std::set<int> &, mirtk::GreyImage *, int = true, int = true);
 
   /// Draw landmark correspondences
-  void DrawCorrespondences(irtkPointSet &, irtkPointSet &, irtkGreyImage *);
+  void DrawCorrespondences(mirtk::PointSet &, mirtk::PointSet &, mirtk::GreyImage *);
 
   /// Draw landmark correspondences
-  void DrawCorrespondences(irtkPointSet &, irtkPointSet &, set<int> &, irtkGreyImage *);
+  void DrawCorrespondences(mirtk::PointSet &, mirtk::PointSet &, std::set<int> &, mirtk::GreyImage *);
 
   /// Draw ROI
-  void DrawROI(irtkGreyImage *image, double, double, double, double,
+  void DrawROI(mirtk::GreyImage *image, double, double, double, double,
                double, double);
 
 #ifdef HAS_VTK
   /// Draw multiple objects
-  void DrawObject(vtkPointSet **, irtkGreyImage *, int = false, int = false, irtkTransformation* = NULL);
+  void DrawObject(vtkPointSet **, mirtk::GreyImage *, int = false, int = false, mirtk::Transformation* = NULL);
 
   /// Draw object
-  void DrawObject(vtkPointSet *, irtkGreyImage *, int = false, int = false, irtkTransformation* = NULL);
+  void DrawObject(vtkPointSet *, mirtk::GreyImage *, int = false, int = false, mirtk::Transformation* = NULL);
 #endif
 
   /// Draw information about L/R, A/P, S/I on the viewer
   void DrawInfo(irtkDisplayMode);
 
   /// Update Grid Pattern
-  bool UpdateTagGrid(irtkGreyImage *, irtkTransformation *, irtkPointSet);
+  bool UpdateTagGrid(mirtk::GreyImage *, mirtk::Transformation *, mirtk::PointSet);
 
   /// Update using control points
-  bool Update1(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
+  bool Update1(mirtk::GreyImage *, mirtk::MultiLevelTransformation *, mirtk::FreeFormTransformation *, double, double);
 
   /// Update using display resolution
-  bool Update2(irtkGreyImage *, irtkMultiLevelTransformation *, irtkFreeFormTransformation *, double, double);
+  bool Update2(mirtk::GreyImage *, mirtk::MultiLevelTransformation *, mirtk::FreeFormTransformation *, double, double);
 
   /// Update
-  bool Update(irtkGreyImage *, irtkTransformation *);
+  bool Update(mirtk::GreyImage *, mirtk::Transformation *);
 
   /// Get width of viewer
   int GetWidth();

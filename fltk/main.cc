@@ -10,10 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #include <Fl_RViewUI.h>
 
@@ -404,36 +403,36 @@ int main(int argc, char **argv)
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-nn") == 0)) {
-      rview->SetTargetInterpolationMode(Interpolation_NN);
-      rview->SetSourceInterpolationMode(Interpolation_NN);
+      rview->SetTargetInterpolationMode(mirtk::Interpolation_NN);
+      rview->SetSourceInterpolationMode(mirtk::Interpolation_NN);
       argc--;
       argv++;
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-linear") == 0)) {
-      rview->SetTargetInterpolationMode(Interpolation_Linear);
-      rview->SetSourceInterpolationMode(Interpolation_Linear);
+      rview->SetTargetInterpolationMode(mirtk::Interpolation_Linear);
+      rview->SetSourceInterpolationMode(mirtk::Interpolation_Linear);
       argc--;
       argv++;
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-cspline") == 0)) {
-      rview->SetTargetInterpolationMode(Interpolation_CSpline);
-      rview->SetSourceInterpolationMode(Interpolation_CSpline);
+      rview->SetTargetInterpolationMode(mirtk::Interpolation_CSpline);
+      rview->SetSourceInterpolationMode(mirtk::Interpolation_CSpline);
       argc--;
       argv++;
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-bspline") == 0)) {
-      rview->SetTargetInterpolationMode(Interpolation_BSpline);
-      rview->SetSourceInterpolationMode(Interpolation_BSpline);
+      rview->SetTargetInterpolationMode(mirtk::Interpolation_BSpline);
+      rview->SetSourceInterpolationMode(mirtk::Interpolation_BSpline);
       argc--;
       argv++;
       ok = true;
     }
     if ((ok == false) && (strcmp(argv[1], "-sinc") == 0)) {
-      rview->SetTargetInterpolationMode(Interpolation_Sinc);
-      rview->SetSourceInterpolationMode(Interpolation_Sinc);
+      rview->SetTargetInterpolationMode(mirtk::Interpolation_Sinc);
+      rview->SetSourceInterpolationMode(mirtk::Interpolation_Sinc);
       argc--;
       argv++;
       ok = true;

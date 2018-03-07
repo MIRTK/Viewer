@@ -76,13 +76,13 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } irtkRegionGrowingMode;
 
 #ifndef IMPERIAL
 
-#include <irtkTransformationCollection.h>
+//#include <mirtk::TransformationCollection.h>
 
 #define AFFDTransformation "irtkAdaptiveFreeFormTransformation"
-#define MFFDTransformation "irtkTransformationCollection"
+#define MFFDTransformation "mirtk::TransformationCollection"
 
 #define irtkBSplineFreeFormTransformation irtkAdaptiveFreeFormTransformation
-#define irtkMFreeFormTransformation irtkTransformationCollection
+#define irtkMFreeFormTransformation mirtk::TransformationCollection
 #define irtkMFreeFormRegistration   irtkAdaptiveFreeFormRegistration
 #define irtkMFreeFormRegistration2D irtkAdaptiveFreeFormRegistration2D
 
@@ -97,6 +97,9 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } irtkRegionGrowingMode;
 #include <vtkStructuredGrid.h>
 #include <vtkUnstructuredGrid.h>
 #endif
+
+#include <mirtk/ImageTransformation.h>
+#include <mirtk/MultiLevelFreeFormTransformation.h>
 
 #define MAX_SEGMENTS 256
 
@@ -133,13 +136,13 @@ protected:
   bool *_isSourceViewer;
 
   /// Target image
-  irtkImage *_targetImage;
+  mirtk::Image *_targetImage;
 
   /// Source image
-  irtkImage *_sourceImage;
+  mirtk::Image *_sourceImage;
 
   /// Segmentation image
-  irtkGreyImage *_segmentationImage;
+  mirtk::GreyImage *_segmentationImage;
 
   /// Segment Table
   irtkSegmentTable *_segmentTable;
@@ -148,52 +151,52 @@ protected:
   irtkColor *_segmentColorTable;
 
   /// Transformation for reslicing of target image
-  irtkTransformation *_targetTransform;
+  mirtk::Transformation *_targetTransform;
 
   /// Transformation for reslicing of source image
-  irtkTransformation *_sourceTransform;
+  mirtk::Transformation *_sourceTransform;
 
   /// Transformation for reslicing of segmentation image
-  irtkTransformation *_segmentationTransform;
+  mirtk::Transformation *_segmentationTransform;
 
   /// Transformation for reslicing of selection image
-  irtkTransformation *_selectionTransform;
+  mirtk::Transformation *_selectionTransform;
 
   /// Transformation filter for reslicing of target image
-  irtkImageTransformation **_targetTransformFilter;
+  mirtk::ImageTransformation **_targetTransformFilter;
 
   /// Transformation filter for reslicing of source image
-  irtkImageTransformation **_sourceTransformFilter;
+  mirtk::ImageTransformation **_sourceTransformFilter;
 
   /// Displacement field used to cache source transformation
-  irtkImageTransformationCache _sourceTransformCache;
+  mirtk::ImageTransformationCache _sourceTransformCache;
 
   /// Whether to cache displacements or not
   int _CacheDisplacements;
 
   /// Transformation filter for reslicing of segmentation image
-  irtkImageTransformation **_segmentationTransformFilter;
+  mirtk::ImageTransformation **_segmentationTransformFilter;
 
   /// Transformation filter for reslicing of selection image
-  irtkImageTransformation **_selectionTransformFilter;
+  mirtk::ImageTransformation **_selectionTransformFilter;
 
   /// Target image
-  irtkGreyImage **_targetImageOutput;
+  mirtk::GreyImage **_targetImageOutput;
 
   /// Source image
-  irtkGreyImage **_sourceImageOutput;
+  mirtk::GreyImage **_sourceImageOutput;
 
   /// Segmentation image
-  irtkGreyImage **_segmentationImageOutput;
+  mirtk::GreyImage **_segmentationImageOutput;
 
   /// Selection image
-  irtkGreyImage **_selectionImageOutput;
+  mirtk::GreyImage **_selectionImageOutput;
 
   /// Target landmarks (pointset)
-  irtkPointSet _targetLandmarks;
+  mirtk::PointSet _targetLandmarks;
 
   /// Source landmarks (pointset)
-  irtkPointSet _sourceLandmarks;
+  mirtk::PointSet _sourceLandmarks;
 
   /// Contour
   irtkVoxelContour _voxelContour;
@@ -290,16 +293,16 @@ protected:
 
   /// Current mouse
   /// Interpolator for target image
-  irtkImageFunction *_targetInterpolator;
+  mirtk::InterpolateImageFunction *_targetInterpolator;
 
   /// Interpolator for source image
-  irtkImageFunction *_sourceInterpolator;
+  mirtk::InterpolateImageFunction *_sourceInterpolator;
 
   /// Interpolator for segmentation image
-  irtkImageFunction *_segmentationInterpolator;
+  mirtk::InterpolateImageFunction *_segmentationInterpolator;
 
   /// Interpolator for selection image
-  irtkImageFunction *_selectionInterpolator;
+  mirtk::InterpolateImageFunction *_selectionInterpolator;
 
   /// Flag whether transformation for reslicing of source image should be applied
   bool _sourceTransformApply;
@@ -386,10 +389,10 @@ protected:
   int _DisplayLandmarks;
 
   /// IDs of target landmarks to display
-  set<int> _selectedTargetLandmarks;
+  std::set<int> _selectedTargetLandmarks;
 
   /// IDs of source landmarks to display
-  set<int> _selectedSourceLandmarks;
+  std::set<int> _selectedSourceLandmarks;
 
   /// Flag for display of ROI
   int _DisplayROI;
@@ -644,7 +647,7 @@ public:
   double GetSpeed();
 
   /// Get an information string about the transformation level
-  void GetTransformationText(list<char *> &);
+  void GetTransformationText(std::list<char *> &);
 
   /// Turn iso-contours extracted from target image on
   void DisplayTargetContoursOn();
@@ -940,16 +943,16 @@ public:
   void SetConfigMode(irtkConfigViewerMode );
 
   /// Set interpolation mode for target image
-  void SetTargetInterpolationMode(irtkInterpolationMode);
+  void SetTargetInterpolationMode(mirtk::InterpolationMode);
 
   /// Get interpolation mode for target image
-  irtkInterpolationMode GetTargetInterpolationMode();
+  mirtk::InterpolationMode GetTargetInterpolationMode();
 
   /// Set interpolation mode for source image
-  void SetSourceInterpolationMode(irtkInterpolationMode);
+  void SetSourceInterpolationMode(mirtk::InterpolationMode);
 
   /// Get interpolation model fo target image
-  irtkInterpolationMode GetSourceInterpolationMode();
+  mirtk::InterpolationMode GetSourceInterpolationMode();
 
   /// Set transformation apply flag for source image
   void SetSourceTransformApply(bool);
@@ -964,10 +967,10 @@ public:
   bool GetSourceTransformInvert();
 
   /// Get a pointer to target image
-  irtkImage *GetTarget();
+  mirtk::Image *GetTarget();
 
   /// Get a pointer to source image
-  irtkImage *GetSource();
+  mirtk::Image *GetSource();
 
   /// Get a pointer to the lookup table of the target image
   irtkLookupTable *GetTargetLookupTable();
@@ -982,10 +985,10 @@ public:
   irtkLookupTable *GetDeformationLookupTable();
 
   /// Get transformation
-  irtkTransformation *GetTransformation();
+  mirtk::Transformation *GetTransformation();
 
   /// Get local transformation
-  irtkMultiLevelFreeFormTransformation *GetMFFD();
+  mirtk::MultiLevelFreeFormTransformation *GetMFFD();
 
   /// Reset the display origin to origin of target image
   void Reset();
@@ -994,13 +997,13 @@ public:
   irtkSegmentTable *GetSegmentTable();
 
   /// Set interpolation mode for segmentation image
-  void SetSegmentationInterpolationMode(irtkInterpolationMode);
+  void SetSegmentationInterpolationMode(mirtk::InterpolationMode);
 
   /// Get interpolation mode for segmentation image
-  irtkInterpolationMode GetSegmentationInterpolationMode();
+  mirtk::InterpolationMode GetSegmentationInterpolationMode();
 
   /// Get a pointer to segmentation image
-  irtkGreyImage *GetSegmentation();
+  mirtk::GreyImage *GetSegmentation();
 
   /// Get a pointer to the lookup table of the segmentation image
   irtkLookupTable *GetSegmentationLookupTable();
@@ -1057,10 +1060,10 @@ public:
   void Clip();
 
   /// Add target landmark
-  void AddTargetLandmark(irtkPoint &, char *);
+  void AddTargetLandmark(mirtk::Point &, char *);
 
   /// Add source landmark
-  void AddSourceLandmark(irtkPoint &, char *);
+  void AddSourceLandmark(mirtk::Point &, char *);
 
   /// Delete target landmark
   void DeleteTargetLandmark(int);
@@ -1069,22 +1072,22 @@ public:
   void DeleteSourceLandmark(int);
 
   /// Insert target landmark
-  void InsertTargetLandmark(irtkPoint &, int, char *);
+  void InsertTargetLandmark(mirtk::Point &, int, char *);
 
   /// Insert source landmark
-  void InsertSourceLandmark(irtkPoint &, int, char *);
+  void InsertSourceLandmark(mirtk::Point &, int, char *);
 
   /// Get target landmark
-  void GetTargetLandmark(irtkPoint &, int, char *);
+  void GetTargetLandmark(mirtk::Point &, int, char *);
 
   /// Get source landmark
-  void GetSourceLandmark(irtkPoint &, int, char *);
+  void GetSourceLandmark(mirtk::Point &, int, char *);
 
   /// Put target landmark
-  void PutTargetLandmark(irtkPoint, int, char *);
+  void PutTargetLandmark(mirtk::Point, int, char *);
 
   /// Put source landmark
-  void PutSourceLandmark(irtkPoint, int, char *);
+  void PutSourceLandmark(mirtk::Point, int, char *);
 
   /// Label target landmark
   void LabelTargetLandmark(int, char *);
@@ -1779,17 +1782,17 @@ inline void irtkRView::GetROI(double &x1, double &y1, double &z1, double &x2, do
   z2 = _z2;
 }
 
-inline irtkImage *irtkRView::GetTarget()
+inline mirtk::Image *irtkRView::GetTarget()
 {
   return _targetImage;
 }
 
-inline irtkImage *irtkRView::GetSource()
+inline mirtk::Image *irtkRView::GetSource()
 {
   return _sourceImage;
 }
 
-inline irtkGreyImage *irtkRView::GetSegmentation()
+inline mirtk::GreyImage *irtkRView::GetSegmentation()
 {
   return _segmentationImage;
 }
@@ -1819,14 +1822,14 @@ inline irtkLookupTable *irtkRView::GetSubtractionLookupTable()
   return _subtractionLookupTable;
 }
 
-inline irtkTransformation *irtkRView::GetTransformation()
+inline mirtk::Transformation *irtkRView::GetTransformation()
 {
   return _sourceTransform;
 }
 
-inline irtkMultiLevelFreeFormTransformation *irtkRView::GetMFFD()
+inline mirtk::MultiLevelFreeFormTransformation *irtkRView::GetMFFD()
 {
-  irtkMultiLevelFreeFormTransformation *transform = dynamic_cast<irtkMultiLevelFreeFormTransformation *>(_sourceTransform);
+  mirtk::MultiLevelFreeFormTransformation *transform = dynamic_cast<mirtk::MultiLevelFreeFormTransformation *>(_sourceTransform);
   return transform;
 }
 
@@ -1841,13 +1844,13 @@ inline void irtkRView::Clip()
   glLoadIdentity();
 }
 
-inline void irtkRView::AddTargetLandmark(irtkPoint &point, char *)
+inline void irtkRView::AddTargetLandmark(mirtk::Point &point, char *)
 {
   // Add landmark as point, ignoring label for now
       _targetLandmarks.Add(point);
 }
 
-inline void irtkRView::AddSourceLandmark(irtkPoint &point, char *)
+inline void irtkRView::AddSourceLandmark(mirtk::Point &point, char *)
 {
   // Add landmark as point, ignoring label for now	
 	  _sourceLandmarks.Add(point);
@@ -1858,7 +1861,7 @@ inline void irtkRView::DeleteTargetLandmark(int id)
   // Delete landmark from list
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
     DeselectTargetLandmark(id);
-    irtkPoint p = _targetLandmarks(id-1);
+    mirtk::Point p = _targetLandmarks(id-1);
     _targetLandmarks.Del(p);
   }
 }
@@ -1868,20 +1871,20 @@ inline void irtkRView::DeleteSourceLandmark(int id)
   // Delete landmark from list
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
     DeselectSourceLandmark(id);
-    irtkPoint p = _sourceLandmarks(id-1);
+    mirtk::Point p = _sourceLandmarks(id-1);
     _sourceLandmarks.Del(p);
   }
 }
 
-inline void irtkRView::InsertTargetLandmark(irtkPoint &point, int id, char *)
+inline void irtkRView::InsertTargetLandmark(mirtk::Point &point, int id, char *)
 {
   // Insert landmark, ignoring label for now
   if (_targetLandmarks.Size() == 0) {
     _targetLandmarks.Add(point);
   } else if ((id > 0) && (id <= _targetLandmarks.Size())) {
-    // Would be nice to call an irtkPointSet::Insert method...
+    // Would be nice to call an mirtk::PointSet::Insert method...
     int i;
-    irtkPointSet pset(_targetLandmarks);
+    mirtk::PointSet pset(_targetLandmarks);
     _targetLandmarks.Clear();
     for (i = 1; i < id; i++) {
       _targetLandmarks.Add(pset(i-1));
@@ -1895,15 +1898,15 @@ inline void irtkRView::InsertTargetLandmark(irtkPoint &point, int id, char *)
   }
 }
 
-inline void irtkRView::InsertSourceLandmark(irtkPoint &point, int id, char *)
+inline void irtkRView::InsertSourceLandmark(mirtk::Point &point, int id, char *)
 {
   // Insert landmark, ignoring label for now
   if (_sourceLandmarks.Size() == 0) {
     _sourceLandmarks.Add(point);
   } else if ((id > 0) && (id <= _sourceLandmarks.Size())) {
-    // Would be nice to call an irtkPointSet::Insert method...
+    // Would be nice to call an mirtk::PointSet::Insert method...
     int i;
-    irtkPointSet pset(_sourceLandmarks);
+    mirtk::PointSet pset(_sourceLandmarks);
     _sourceLandmarks.Clear();
     for (i = 1; i < id; i++) {
       _sourceLandmarks.Add(pset(i-1));
@@ -1919,15 +1922,15 @@ inline void irtkRView::InsertSourceLandmark(irtkPoint &point, int id, char *)
 
 inline void irtkRView::LabelTargetLandmark(int, char *)
 {
-  // So far, labelling of irtkPointSet is not possible
+  // So far, labelling of mirtk::PointSet is not possible
 }
 
 inline void irtkRView::LabelSourceLandmark(int, char *)
 {
-  // So far, labelling of irtkPointSet is not possible
+  // So far, labelling of mirtk::PointSet is not possible
 }
 
-inline void irtkRView::GetTargetLandmark(irtkPoint &point, int id, char *)
+inline void irtkRView::GetTargetLandmark(mirtk::Point &point, int id, char *)
 {
   // Get landmark from list, ignoring label for now
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
@@ -1935,7 +1938,7 @@ inline void irtkRView::GetTargetLandmark(irtkPoint &point, int id, char *)
   }
 }
 
-inline void irtkRView::GetSourceLandmark(irtkPoint &point, int id, char *)
+inline void irtkRView::GetSourceLandmark(mirtk::Point &point, int id, char *)
 {
   // Get landmark from list, ignoring label for now
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {
@@ -1943,7 +1946,7 @@ inline void irtkRView::GetSourceLandmark(irtkPoint &point, int id, char *)
   }
 }
 
-inline void irtkRView::PutTargetLandmark(irtkPoint point, int id, char *)
+inline void irtkRView::PutTargetLandmark(mirtk::Point point, int id, char *)
 {
   // Put landmark in list, ignoring label for now
   if ((id > 0) && (id <= _targetLandmarks.Size())) {
@@ -1951,7 +1954,7 @@ inline void irtkRView::PutTargetLandmark(irtkPoint point, int id, char *)
   }
 }
 
-inline void irtkRView::PutSourceLandmark(irtkPoint point, int id, char *)
+inline void irtkRView::PutSourceLandmark(mirtk::Point point, int id, char *)
 {
   // Put landmark in list, ignoring label for now
   if ((id > 0) && (id <= _sourceLandmarks.Size())) {

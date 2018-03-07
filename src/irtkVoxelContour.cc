@@ -10,9 +10,9 @@
  
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -42,16 +42,17 @@ irtkLocation;
 
 irtkVoxelContour::irtkVoxelContour()
 {
-  _raster = new irtkGreyImage;
+  _raster = new mirtk::GreyImage;
   _rview  = NULL;
   _currentSize = 0;
   _totalSize = 0;
   _current = 0;
 }
 
-void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
+void irtkVoxelContour::Initialise(irtkRView *rview, mirtk::GreyImage* viewer)
 {
-  int i, i1, j1, k1, i2, j2, k2, axis[3];
+  mirtk::BaseImage::OrientationCode i1, j1, k1, i2, j2, k2;
+  int i, axis[3];
   double x1, y1, z1, x2, y2, z2;
 
   // Pointer to rview
@@ -64,121 +65,121 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
   axis[1] = 1;
   axis[2] = 2;
   switch (i1) {
-    case IRTK_L2R:
-    case IRTK_R2L:
-      if ((i2 == IRTK_L2R) || (i2 == IRTK_R2L)) {
+    case mirtk::BaseImage::OrientationCode::L2R:
+    case mirtk::BaseImage::OrientationCode::R2L:
+      if ((i2 == mirtk::BaseImage::OrientationCode::L2R) || (i2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[0] = 0;
       }
-      if ((j2 == IRTK_L2R) || (j2 == IRTK_R2L)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::L2R) || (j2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[0] = 1;
       }
-      if ((k2 == IRTK_L2R) || (k2 == IRTK_R2L)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::L2R) || (k2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[0] = 2;
       }
       break;
-    case IRTK_A2P:
-    case IRTK_P2A:
-      if ((i2 == IRTK_A2P) || (i2 == IRTK_P2A)) {
+    case mirtk::BaseImage::OrientationCode::A2P:
+    case mirtk::BaseImage::OrientationCode::P2A:
+      if ((i2 == mirtk::BaseImage::OrientationCode::A2P) || (i2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[0] = 0;
       }
-      if ((j2 == IRTK_A2P) || (j2 == IRTK_P2A)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::A2P) || (j2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[0] = 1;
       }
-      if ((k2 == IRTK_A2P) || (k2 == IRTK_P2A)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::A2P) || (k2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[0] = 2;
       }
       break;
-    case IRTK_S2I:
-    case IRTK_I2S:
-      if ((i2 == IRTK_S2I) || (i2 == IRTK_I2S)) {
+    case mirtk::BaseImage::OrientationCode::S2I:
+    case mirtk::BaseImage::OrientationCode::I2S:
+      if ((i2 == mirtk::BaseImage::OrientationCode::S2I) || (i2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[0] = 0;
       }
-      if ((j2 == IRTK_S2I) || (j2 == IRTK_I2S)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::S2I) || (j2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[0] = 1;
       }
-      if ((k2 == IRTK_S2I) || (k2 == IRTK_I2S)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::S2I) || (k2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[0] = 2;
       }
       break;
   }
   switch (j1) {
-    case IRTK_L2R:
-    case IRTK_R2L:
-      if ((i2 == IRTK_L2R) || (i2 == IRTK_R2L)) {
+    case mirtk::BaseImage::OrientationCode::L2R:
+    case mirtk::BaseImage::OrientationCode::R2L:
+      if ((i2 == mirtk::BaseImage::OrientationCode::L2R) || (i2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[1] = 0;
       }
-      if ((j2 == IRTK_L2R) || (j2 == IRTK_R2L)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::L2R) || (j2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[1] = 1;
       }
-      if ((k2 == IRTK_L2R) || (k2 == IRTK_R2L)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::L2R) || (k2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[1] = 2;
       }
       break;
-    case IRTK_A2P:
-    case IRTK_P2A:
-      if ((i2 == IRTK_A2P) || (i2 == IRTK_P2A)) {
+    case mirtk::BaseImage::OrientationCode::A2P:
+    case mirtk::BaseImage::OrientationCode::P2A:
+      if ((i2 == mirtk::BaseImage::OrientationCode::A2P) || (i2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[1] = 0;
       }
-      if ((j2 == IRTK_A2P) || (j2 == IRTK_P2A)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::A2P) || (j2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[1] = 1;
       }
-      if ((k2 == IRTK_A2P) || (k2 == IRTK_P2A)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::A2P) || (k2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[1] = 2;
       }
       break;
-    case IRTK_S2I:
-    case IRTK_I2S:
-      if ((i2 == IRTK_S2I) || (i2 == IRTK_I2S)) {
+    case mirtk::BaseImage::OrientationCode::S2I:
+    case mirtk::BaseImage::OrientationCode::I2S:
+      if ((i2 == mirtk::BaseImage::OrientationCode::S2I) || (i2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[1] = 0;
       }
-      if ((j2 == IRTK_S2I) || (j2 == IRTK_I2S)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::S2I) || (j2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[1] = 1;
       }
-      if ((k2 == IRTK_S2I) || (k2 == IRTK_I2S)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::S2I) || (k2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[1] = 2;
       }
       break;
   }
   switch (k1) {
-    case IRTK_L2R:
-    case IRTK_R2L:
-      if ((i2 == IRTK_L2R) || (i2 == IRTK_R2L)) {
+    case mirtk::BaseImage::OrientationCode::L2R:
+    case mirtk::BaseImage::OrientationCode::R2L:
+      if ((i2 == mirtk::BaseImage::OrientationCode::L2R) || (i2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[2] = 0;
       }
-      if ((j2 == IRTK_L2R) || (j2 == IRTK_R2L)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::L2R) || (j2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[2] = 1;
       }
-      if ((k2 == IRTK_L2R) || (k2 == IRTK_R2L)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::L2R) || (k2 == mirtk::BaseImage::OrientationCode::R2L)) {
         axis[2] = 2;
       }
       break;
-    case IRTK_A2P:
-    case IRTK_P2A:
-      if ((i2 == IRTK_A2P) || (i2 == IRTK_P2A)) {
+    case mirtk::BaseImage::OrientationCode::A2P:
+    case mirtk::BaseImage::OrientationCode::P2A:
+      if ((i2 == mirtk::BaseImage::OrientationCode::A2P) || (i2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[2] = 0;
       }
-      if ((j2 == IRTK_A2P) || (j2 == IRTK_P2A)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::A2P) || (j2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[2] = 1;
       }
-      if ((k2 == IRTK_A2P) || (k2 == IRTK_P2A)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::A2P) || (k2 == mirtk::BaseImage::OrientationCode::P2A)) {
         axis[2] = 2;
       }
       break;
-    case IRTK_S2I:
-    case IRTK_I2S:
-      if ((i2 == IRTK_S2I) || (i2 == IRTK_I2S)) {
+    case mirtk::BaseImage::OrientationCode::S2I:
+    case mirtk::BaseImage::OrientationCode::I2S:
+      if ((i2 == mirtk::BaseImage::OrientationCode::S2I) || (i2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[2] = 0;
       }
-      if ((j2 == IRTK_S2I) || (j2 == IRTK_I2S)) {
+      if ((j2 == mirtk::BaseImage::OrientationCode::S2I) || (j2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[2] = 1;
       }
-      if ((k2 == IRTK_S2I) || (k2 == IRTK_I2S)) {
+      if ((k2 == mirtk::BaseImage::OrientationCode::S2I) || (k2 == mirtk::BaseImage::OrientationCode::I2S)) {
         axis[2] = 2;
       }
       break;
   }
   // Get attributes of viewer
-  irtkImageAttributes attr = _rview->_targetImage->GetImageAttributes();
+  mirtk::ImageAttributes attr = _rview->_targetImage->GetImageAttributes();
 
   // Compute position of origin in target voxel coordinates
   x1 = attr._xorigin;
@@ -198,7 +199,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
     z1 = z2;
   }
   if ((axis[0] == 1) && (axis[1] == 0)) {
-    irtkImageAttributes tmp;
+    mirtk::ImageAttributes tmp;
     tmp._y = attr._x;
     tmp._x = attr._y;
     tmp._z = attr._z;
@@ -216,7 +217,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
     z1 = z2;
   }
   if ((axis[0] == 0) && (axis[1] == 2)) {
-    irtkImageAttributes tmp;
+    mirtk::ImageAttributes tmp;
     tmp._x = attr._x;
     tmp._z = attr._y;
     tmp._y = attr._z;
@@ -234,7 +235,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
     z1 = y2;
   }
   if ((axis[0] == 2) && (axis[1] == 0)) {
-    irtkImageAttributes tmp;
+    mirtk::ImageAttributes tmp;
     tmp._z = attr._x;
     tmp._x = attr._y;
     tmp._y = attr._z;
@@ -252,7 +253,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
     z1 = y2;
   }
   if ((axis[0] == 1) && (axis[1] == 2)) {
-    irtkImageAttributes tmp;
+    mirtk::ImageAttributes tmp;
     tmp._x = attr._y;
     tmp._y = attr._z;
     tmp._z = attr._x;
@@ -270,7 +271,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
     z1 = x2;
   }
   if ((axis[0] == 2) && (axis[1] == 1)) {
-    irtkImageAttributes tmp;
+    mirtk::ImageAttributes tmp;
     tmp._z = attr._x;
     tmp._y = attr._y;
     tmp._x = attr._z;
@@ -293,7 +294,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, irtkGreyImage* viewer)
 
 }
 
-void irtkVoxelContour::AddPoint(irtkPoint p, int width)
+void irtkVoxelContour::AddPoint(mirtk::Point p, int width)
 {
   int x, y, z;
 
@@ -353,20 +354,20 @@ void irtkVoxelContour::AddPointSet()
   _currentSize = 0;
 }
 
-void irtkVoxelContour::AddPointSet(irtkPoint p, int width)
+void irtkVoxelContour::AddPointSet(mirtk::Point p, int width)
 {
   this->AddPointSet();
   this->AddPoint(p, width);
 }
 
 
-void irtkVoxelContour::Close(irtkPoint p, int width)
+void irtkVoxelContour::Close(mirtk::Point p, int width)
 {
   this->AddPoint(p, width);
   lineBresenham(_firstx, _firsty, _firstz, _lastx, _lasty, _lastz);
 }
 
-void irtkVoxelContour::FillArea(irtkPoint p)
+void irtkVoxelContour::FillArea(mirtk::Point p)
 {
   int x, y, z;
 
@@ -398,7 +399,7 @@ void irtkVoxelContour::FillArea(irtkPoint p)
   Fill(x, y, z);
 }
 
-void irtkVoxelContour::RegionGrowing(irtkPoint p, int thresholdMin, int thresholdMax, irtkRegionGrowingMode mode)
+void irtkVoxelContour::RegionGrowing(mirtk::Point p, int thresholdMin, int thresholdMax, irtkRegionGrowingMode mode)
 {
   int x, y, z;
 
@@ -437,7 +438,7 @@ void irtkVoxelContour::RegionGrowing(irtkPoint p, int thresholdMin, int threshol
 void irtkVoxelContour::Undo()
 {
   int i;
-  irtkGreyPixel *ptr;
+  mirtk::GreyPixel *ptr;
 
   if (_current == 0) return;
 
@@ -453,7 +454,7 @@ void irtkVoxelContour::Undo()
 void irtkVoxelContour::Clear()
 {
   int i;
-  irtkGreyPixel *ptr;
+  mirtk::GreyPixel *ptr;
 
   ptr = _raster->GetPointerToVoxels();
   for (i = 0; i < _raster->GetNumberOfVoxels(); i++) {
@@ -539,7 +540,7 @@ void irtkVoxelContour::Fill(int seedX, int seedY, int seedZ)
   irtkLocation location;
 
   // Create stack
-  stack<irtkLocation> point_stack;
+  std::stack<irtkLocation> point_stack;
 
   // Push seed location on stack
   location.x = seedX;
@@ -603,7 +604,7 @@ void irtkVoxelContour::RegionGrowing2D(int seedX, int seedY, int seedZ, double l
   irtkLocation location;
 
   // Create stack
-  stack<irtkLocation> point_stack;
+  std::stack<irtkLocation> point_stack;
 
   // Push seed location on stack
   location.x = seedX;
@@ -613,7 +614,7 @@ void irtkVoxelContour::RegionGrowing2D(int seedX, int seedY, int seedZ, double l
   _raster->Put(location.x, location.y, location.z, _current);
 
   // Create a temporary image
-  irtkGreyImage tmp(_raster->GetX(), _raster->GetY(), _raster->GetZ());
+  mirtk::GreyImage tmp(_raster->GetX(), _raster->GetY(), _raster->GetZ());
   tmp = *_raster;
 
   while (!point_stack.empty()) {
@@ -677,7 +678,7 @@ void irtkVoxelContour::RegionGrowing3D(int seedX, int seedY, int seedZ, double l
   irtkLocation location;
 
   // Create stack
-  stack<irtkLocation> point_stack;
+  std::stack<irtkLocation> point_stack;
 
   // Push seed location on stack
   location.x = seedX;
@@ -687,7 +688,7 @@ void irtkVoxelContour::RegionGrowing3D(int seedX, int seedY, int seedZ, double l
   _raster->Put(location.x, location.y, location.z, _current);
 
   // Create a temporary image
-  irtkGreyImage tmp(_raster->GetX(), _raster->GetY(), _raster->GetZ());
+  mirtk::GreyImage tmp(_raster->GetX(), _raster->GetY(), _raster->GetZ());
   tmp = *_raster;
 
   while (!point_stack.empty()) {
