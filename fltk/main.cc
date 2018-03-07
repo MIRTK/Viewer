@@ -13,6 +13,7 @@
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
+#include <mirtk/IOConfig.h>
 
 #include <Fl_RViewUI.h>
 
@@ -80,6 +81,8 @@ int main(int argc, char **argv)
   int ok;
   int filename_argc;
   char **filename_argv;
+
+  mirtk::InitializeIOLibrary();
 
   rviewUI = new Fl_RViewUI;
 

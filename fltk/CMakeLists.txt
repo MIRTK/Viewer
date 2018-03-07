@@ -25,6 +25,7 @@ target_link_libraries(rview
 	mirtk::LibRegistration
 	mirtk::LibTransformation
 	mirtk::LibImage
+	mirtk::LibIO
 	${GLU_LIBRARY}
 	${OPENGL_LIBRARY}
 )
