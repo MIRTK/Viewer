@@ -1,5 +1,7 @@
 # MIRTK Viewer
 
+[![Join the chat at https://gitter.im/MIRTK/Viewer](https://badges.gitter.im/MIRTK/Viewer.svg)](https://gitter.im/MIRTK/Viewer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The companion viewer for MIRTK, originally known as `rview` as part of IRTK.
 
 # Status
