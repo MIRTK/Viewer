@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,19 +10,19 @@
 
 =========================================================================*/
 
-#ifndef _IRTKVOXELCONTOUR_H
+#ifndef _VOXELCONTOUR_H
 
-#define _IRTKVOXELCONTOUR_H
+#define _VOXELCONTOUR_H
 
 #include <vector>
 
-typedef enum ContourMode { FirstPoint, NewPoint, LastPoint} irtkVoxelContourMode;
+typedef enum ContourMode { FirstPoint, NewPoint, LastPoint} VoxelContourMode;
 
-class irtkVoxelContour
+class VoxelContour
 {
 
   /// Pointer to rview
-  irtkRView *_rview;
+  RView *_rview;
 
   /// Width of paint brush
   int _width;
@@ -66,10 +66,10 @@ public:
   mirtk::GreyImage *_raster;
 
   /// Constructor
-  irtkVoxelContour();
+  VoxelContour();
 
   /// Initialise contour
-  void Initialise(irtkRView *, mirtk::GreyImage *);
+  void Initialise(RView *, mirtk::GreyImage *);
 
   /// Operator for access
   mirtk::Point &operator()(int);
@@ -96,14 +96,14 @@ public:
   void Clear();
 
   /// Region growing
-  void RegionGrowing(mirtk::Point, int thresholdMin, int thresholdMax, irtkRegionGrowingMode);
+  void RegionGrowing(mirtk::Point, int thresholdMin, int thresholdMax, RegionGrowingMode);
 
   /// Fill area
   void FillArea(mirtk::Point);
 
 };
 
-inline int irtkVoxelContour::Size()
+inline int VoxelContour::Size()
 {
   return _totalSize + _currentSize;
 }

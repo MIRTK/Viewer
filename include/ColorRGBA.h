@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,20 +10,19 @@
 
 =========================================================================*/
 
-#ifndef _IRTKCOLOR_H
+#ifndef _COLORRGBA_H
 
-#define _IRTKCOLOR_H
+#define _COLORRGBA_H
 
 #define HAS_COLOR
 
 #ifndef HAS_COLOR
 
-typedef unsigned char irtkColor;
-typedef unsigned char irtkColorRGBA;
+typedef unsigned char ColorRGBA;
 
 #else
 
-class irtkColor
+class ColorRGBA
 {
 
 public:
@@ -31,24 +30,19 @@ public:
   unsigned char r;
   unsigned char g;
   unsigned char b;
+  float a;
 
   // Constructor (default)
-  irtkColor();
+  ColorRGBA();
 
   // Constructor (copy)
-  irtkColor(const irtkColor &);
-
-  // Constructor (copy)
-  irtkColor(const irtkColorRGBA &);
+  ColorRGBA(const ColorRGBA &);
 
   // Copy operators
-  irtkColor& operator= (const int &);
+  ColorRGBA& operator= (const int &);
 
   // Copy operators
-  irtkColor& operator= (const irtkColor &);
-
-  // Copy operators
-  irtkColor& operator= (const irtkColorRGBA &);
+  ColorRGBA& operator= (const ColorRGBA &);
 
   // Convert HSV color to RGB color
   void HSVtoRGB(double, double, double);
@@ -58,44 +52,32 @@ public:
 
 };
 
-inline irtkColor::irtkColor()
+inline ColorRGBA::ColorRGBA()
 {
   r = 0;
   g = 0;
   b = 0;
+  a = 1;
 }
 
-inline irtkColor::irtkColor(const irtkColor &c)
+inline ColorRGBA::ColorRGBA(const ColorRGBA &c)
 {
   r = c.r;
   g = c.g;
   b = c.b;
+  a = c.a;
 }
 
-inline irtkColor::irtkColor(const irtkColorRGBA &c)
+inline ColorRGBA& ColorRGBA::operator=(const ColorRGBA &c)
 {
   r = c.r;
   g = c.g;
   b = c.b;
-}
-
-inline irtkColor& irtkColor::operator=(const irtkColor &c)
-{
-  r = c.r;
-  g = c.g;
-  b = c.b;
+  a = c.a;
   return *this;
 }
 
-inline irtkColor& irtkColor::operator=(const irtkColorRGBA &c)
-{
-  r = c.r;
-  g = c.g;
-  b = c.b;
-  return *this;
-}
-
-inline irtkColor& irtkColor::operator=(const int &c)
+inline ColorRGBA& ColorRGBA::operator=(const int &c)
 {
   r = c;
   g = c;

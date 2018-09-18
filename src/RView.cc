@@ -23,7 +23,7 @@
 #include <GL/glu.h>
 #endif
 
-#include <irtkRView.h>
+#include <RView.h>
 
 #ifdef HAS_VTK
 #include <vtkPolyDataReader.h>
@@ -31,7 +31,7 @@
 #include <vtkUnstructuredGridReader.h>
 #endif
 
-irtkRView::irtkRView(int x, int y)
+RView::RView(int x, int y)
 {
   _screenX = x;
   _screenY = y;
@@ -173,7 +173,7 @@ irtkRView::irtkRView(int x, int y)
   _segmentationImage = new mirtk::GreyImage;
 
   // Allocate memory for segment Table
-  _segmentTable = new irtkSegmentTable();
+  _segmentTable = new SegmentTable();
 
   // Allocate memory for source and target transformations. Note that in this
   // implementation only the source transformation ever changes. The target
@@ -204,11 +204,11 @@ irtkRView::irtkRView(int x, int y)
   _subtractionDisplayMax = 1;
 
   // Allocate memory for source and target lookup tables
-  _targetLookupTable = new irtkLookupTable;
-  _sourceLookupTable = new irtkLookupTable;
+  _targetLookupTable = new LookupTable;
+  _sourceLookupTable = new LookupTable;
 
   // Allocate memory for subtraction lookup table
-  _subtractionLookupTable = new irtkLookupTable;
+  _subtractionLookupTable = new LookupTable;
 
   // Region growing mode
   _regionGrowingMode = RegionGrowing2D;
@@ -220,7 +220,7 @@ irtkRView::irtkRView(int x, int y)
   this->Configure(View_XY_XZ_YZ);
 }
 
-irtkRView::~irtkRView()
+RView::~RView()
 {
 #ifdef HAS_VTK
   for (int i = 0; i < MAX_NUMBER_OF_OBJECTS; i++) {
@@ -229,13 +229,13 @@ irtkRView::~irtkRView()
 #endif
 }
 
-void irtkRView::Update()
+void RView::Update()
 {
   int i, j, k, l;
   double blendA, blendB;
-  irtkColor *ptr3;
+  Color *ptr3;
   mirtk::GreyPixel *ptr1, *ptr2, *ptr4, *ptr5;
-  irtkLookupTable *lut1, *lut2;
+  LookupTable *lut1, *lut2;
 
   // Check whether target and/or source and/or segmentation need updating
   for (l = 0; l < _NoOfViewers; l++) {
@@ -338,7 +338,7 @@ void irtkRView::Update()
             if (*ptr1 >= 0 && *ptr2 >= 0) {
               *ptr3 = _subtractionLookupTable->At(*ptr1 - *ptr2);
             } else {
-              *ptr3 = irtkColor();
+              *ptr3 = Color();
             }
             ptr1++;
             ptr2++;
@@ -452,7 +452,7 @@ void irtkRView::Update()
   }
 }
 
-void irtkRView::Draw()
+void RView::Draw()
 {
   int k;
 
@@ -468,7 +468,7 @@ void irtkRView::Draw()
   for (k = 0; k < _NoOfViewers; k++) {
 
     // Note: _DisplayLandmarks to enable/disable drawing of unselected
-    //        landmarks is passed on to irtkViewer::DrawLandmarks.
+    //        landmarks is passed on to Viewer::DrawLandmarks.
     bool display_target_contour        = _DisplayTargetContour;
     bool display_source_contour        = _DisplaySourceContour;
     bool display_target_landmarks      = true;
@@ -587,7 +587,7 @@ void irtkRView::Draw()
   }
 }
 
-void irtkRView::SetOrigin(int i, int j)
+void RView::SetOrigin(int i, int j)
 {
   int k;
   double x1, y1, x2, y2;
@@ -629,7 +629,7 @@ void irtkRView::SetOrigin(int i, int j)
   _selectionUpdate = true;
 }
 
-void irtkRView::ResetROI()
+void RView::ResetROI()
 {
   // Find bounding box
   _x1 = 0;
@@ -642,7 +642,7 @@ void irtkRView::ResetROI()
   _targetImage->ImageToWorld(_x2, _y2, _z2);
 }
 
-void irtkRView::UpdateROI1(int i, int j)
+void RView::UpdateROI1(int i, int j)
 {
   int k;
   double x1, y1, x2, y2, roi1_x, roi1_y, roi1_z, roi2_x, roi2_y, roi2_z;
@@ -689,7 +689,7 @@ void irtkRView::UpdateROI1(int i, int j)
   }
 }
 
-void irtkRView::UpdateROI2(int i, int j)
+void RView::UpdateROI2(int i, int j)
 {
   int k;
   double x1, y1, x2, y2, roi1_x, roi1_y, roi1_z, roi2_x, roi2_y, roi2_z;
@@ -736,7 +736,7 @@ void irtkRView::UpdateROI2(int i, int j)
   }
 }
 
-void irtkRView::AddContour(int i, int j, ContourMode mode)
+void RView::AddContour(int i, int j, ContourMode mode)
 {
   int k;
   double x1, y1, x2, y2, x, y, z;
@@ -794,7 +794,7 @@ void irtkRView::AddContour(int i, int j, ContourMode mode)
   _selectionUpdate = true;
 }
 
-void irtkRView::FillArea(int i, int j)
+void RView::FillArea(int i, int j)
 {
   int k;
   double x1, y1, x2, y2, x, y, z;
@@ -834,7 +834,7 @@ void irtkRView::FillArea(int i, int j)
   _selectionUpdate = true;
 }
 
-void irtkRView::RegionGrowContour(int i, int j)
+void RView::RegionGrowContour(int i, int j)
 {
   int k;
   double x1, y1, x2, y2, x, y, z;
@@ -874,19 +874,19 @@ void irtkRView::RegionGrowContour(int i, int j)
   _selectionUpdate = true;
 }
 
-void irtkRView::UndoContour()
+void RView::UndoContour()
 {
   _voxelContour.Undo();
   _selectionUpdate = true;
 }
 
-void irtkRView::ClearContour()
+void RView::ClearContour()
 {
   _voxelContour.Clear();
   _selectionUpdate = true;
 }
 
-void irtkRView::FillContour(int fill, int)
+void RView::FillContour(int fill, int)
 {
   int i, j, k;
   mirtk::Point p;
@@ -946,7 +946,7 @@ static int read_line(istream &in, char *buffer1, char *&buffer2)
     return strlen(buffer1);
 }
 
-void irtkRView::Read(char *name)
+void RView::Read(char *name)
 {
   int ok;
   mirtk::InterpolationMode interpolation;
@@ -955,7 +955,7 @@ void irtkRView::Read(char *name)
   // Open file
   ifstream from(name);
   if (!from) {
-    cerr << "irtkRView::Read: Can't open file " << name << "\n";
+    cerr << "RView::Read: Can't open file " << name << "\n";
     exit(1);
   }
 
@@ -1076,7 +1076,7 @@ void irtkRView::Read(char *name)
         interpolation = mirtk::Interpolation_Sinc;
         ok = true;
       } else {
-        cerr << "irtkRView::Read: Unknown interpolation" << endl;
+        cerr << "RView::Read: Unknown interpolation" << endl;
         exit(1);
       }
     }
@@ -1103,7 +1103,7 @@ void irtkRView::Read(char *name)
         interpolation = mirtk::Interpolation_Sinc;
         ok = true;
       } else {
-        cerr << "irtkRView::Read: Unknown interpolation" << endl;
+        cerr << "RView::Read: Unknown interpolation" << endl;
         exit(1);
       }
     }
@@ -1209,7 +1209,7 @@ void irtkRView::Read(char *name)
     }
 #endif
 
-    // LookupTables - could be replaced by irtkLookupTable stream
+    // LookupTables - could be replaced by LookupTable stream
     // targetLookupTable
     if (strstr(buffer1, "targetLookupTable_min") != NULL) {
       _targetLookupTable->SetMinDisplayIntensity(atoi(buffer2));
@@ -1295,7 +1295,7 @@ void irtkRView::Read(char *name)
     // Check if we parse every line
 #ifdef DEBUG
     if (ok != true) {
-      cerr << "irtkRView::Read() : Ignoring line " << buffer1 << endl;
+      cerr << "RView::Read() : Ignoring line " << buffer1 << endl;
     }
     // Avoid "set but not used" warning
 #else
@@ -1366,16 +1366,16 @@ void irtkRView::Read(char *name)
   from.close();
 }
 
-void irtkRView::Write(char *name)
+void RView::Write(char *name)
 {
   // Open file
   ofstream to(name);
   if (!to) {
-    cerr << "irtkRView::Write: Can't open file " << name << "\n";
+    cerr << "RView::Write: Can't open file " << name << "\n";
     exit(1);
   }
 
-  to << "\n#\n# irtkRView configuration\n#\n\n";
+  to << "\n#\n# RView configuration\n#\n\n";
   // Write out configuration mode (contains number of viewers)
   switch (_configMode) {
     case _View_XY:
@@ -1555,7 +1555,7 @@ void irtkRView::Write(char *name)
   // Flag for display of object grid
   to << "DisplayObjectGrid                 = " << _DisplayObjectGrid << endl;
 #endif
-  // Lookup tables (could be replaced by irtkLookupTable stream)
+  // Lookup tables (could be replaced by LookupTable stream)
   to << "\n#\n# LookupTables\n#\n\n";
 
   // targetLookupTable
@@ -1635,7 +1635,7 @@ void irtkRView::Write(char *name)
   to.close();
 }
 
-void irtkRView::ReadTarget(char *name)
+void RView::ReadTarget(char *name)
 {
   // Read target image
   if (_targetImage != NULL) delete _targetImage;
@@ -1675,7 +1675,7 @@ void irtkRView::ReadTarget(char *name)
   this->Reset();
 }
 
-void irtkRView::ReadTarget(int argc, char **argv)
+void RView::ReadTarget(int argc, char **argv)
 {
   mirtk::Image **nimages;
   int i, n, x, y, z;
@@ -1732,7 +1732,7 @@ void irtkRView::ReadTarget(int argc, char **argv)
   } else if (dynamic_cast<mirtk::GenericImage<double> *> (nimages[0]) != NULL) {
     _targetImage = new mirtk::GenericImage<double> (attr);
   } else {
-    cerr << "irtkRView::ReadTarget: Cannot convert image to desired type"
+    cerr << "RView::ReadTarget: Cannot convert image to desired type"
     << endl;
     exit(1);
   }
@@ -1782,7 +1782,7 @@ void irtkRView::ReadTarget(int argc, char **argv)
   this->Reset();
 }
 
-void irtkRView::ReadSource(char *name)
+void RView::ReadSource(char *name)
 {
   // Read source image
   if (_sourceImage != NULL) delete _sourceImage;
@@ -1810,7 +1810,7 @@ void irtkRView::ReadSource(char *name)
   this->Initialize();
 }
 
-void irtkRView::ReadSource(int argc, char **argv)
+void RView::ReadSource(int argc, char **argv)
 {
   mirtk::Image **nimages;
   int i, n, x, y, z;
@@ -1864,7 +1864,7 @@ void irtkRView::ReadSource(int argc, char **argv)
   } else if (dynamic_cast<mirtk::GenericImage<double> *> (nimages[0]) != NULL) {
     _sourceImage = new mirtk::GenericImage<double> (attr);
   } else {
-    cerr << "irtkRView::ReadSource: Cannot convert image to desired type"
+    cerr << "RView::ReadSource: Cannot convert image to desired type"
     << endl;
     exit(1);
   }
@@ -1902,7 +1902,7 @@ void irtkRView::ReadSource(int argc, char **argv)
   this->Initialize();
 }
 
-void irtkRView::ReadSegmentation(char *name)
+void RView::ReadSegmentation(char *name)
 {
   // Read target image
   _segmentationImage->Read(name);
@@ -1921,12 +1921,12 @@ void irtkRView::ReadSegmentation(char *name)
   _segmentationUpdate = true;
 }
 
-void irtkRView::WriteTarget(char *name)
+void RView::WriteTarget(char *name)
 {
   _targetImage->Write(name);
 }
 
-void irtkRView::WriteSource(char *name)
+void RView::WriteSource(char *name)
 {
   if (_sourceImage != NULL) {
     if ((_sourceTransformApply == true) && (_sourceTransform != NULL)) {
@@ -1947,12 +1947,12 @@ void irtkRView::WriteSource(char *name)
   }
 }
 
-void irtkRView::WriteSegmentation(char *name)
+void RView::WriteSegmentation(char *name)
 {
   _segmentationImage->Write(name);
 }
 
-void irtkRView::ReadTransformation(char *name)
+void RView::ReadTransformation(char *name)
 {
   int i;
 
@@ -1997,7 +1997,7 @@ void irtkRView::ReadTransformation(char *name)
   this->Initialize();
 }
 
-void irtkRView::WriteTransformation(char *name)
+void RView::WriteTransformation(char *name)
 {
   // Write transformation
   if (_sourceTransform != NULL) {
@@ -2005,37 +2005,37 @@ void irtkRView::WriteTransformation(char *name)
   }
 }
 
-void irtkRView::ReadTargetLandmarks(char *name)
+void RView::ReadTargetLandmarks(char *name)
 {
   // Read target landmarks
   _targetLandmarks.ReadVTK(name);
   _selectedTargetLandmarks.clear();
 }
 
-void irtkRView::ReadSourceLandmarks(char *name)
+void RView::ReadSourceLandmarks(char *name)
 {
   // Read source landmarks
   _sourceLandmarks.ReadVTK(name);
   _selectedSourceLandmarks.clear();
 }
 
-void irtkRView::WriteTargetLandmarks(char *name)
+void RView::WriteTargetLandmarks(char *name)
 {
   // Write target landmarks
   _targetLandmarks.WriteVTK(name);
 }
 
-void irtkRView::WriteSourceLandmarks(char *name)
+void RView::WriteSourceLandmarks(char *name)
 {
   // Write source landmarks
   _sourceLandmarks.WriteVTK(name);
 }
 
 #ifdef HAS_VTK
-void irtkRView::ReadObject(const char *name)
+void RView::ReadObject(const char *name)
 {
   if (_NoOfObjects >= MAX_NUMBER_OF_OBJECTS) {
-    cerr << "irtkRView::ReadObject(): maximum number of objects reached!\n";
+    cerr << "RView::ReadObject(): maximum number of objects reached!\n";
     return;
   }
 
@@ -2047,7 +2047,7 @@ void irtkRView::ReadObject(const char *name)
   _NoOfObjects++;
 }
 
-void irtkRView::RemoveObject()
+void RView::RemoveObject()
 {
     int i;
 
@@ -2061,7 +2061,7 @@ void irtkRView::RemoveObject()
 
 #endif
 
-void irtkRView::Reset()
+void RView::Reset()
 {
   mirtk::BaseImage::OrientationCode iaxis, jaxis, kaxis;
   double xaxis[3], yaxis[3], zaxis[3];
@@ -2116,7 +2116,7 @@ void irtkRView::Reset()
           _zaxis[2] = -xaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out x-orientation" << endl;
+          cerr << "RView::ResetTarget: Can't work out x-orientation" << endl;
           break;
       }
       switch (jaxis) {
@@ -2151,7 +2151,7 @@ void irtkRView::Reset()
           _zaxis[2] = -yaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out y-orientation" << endl;
+          cerr << "RView::ResetTarget: Can't work out y-orientation" << endl;
           break;
       }
       switch (kaxis) {
@@ -2186,7 +2186,7 @@ void irtkRView::Reset()
           _zaxis[2] = -zaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out z-orientation" << endl;
+          cerr << "RView::ResetTarget: Can't work out z-orientation" << endl;
           break;
       }
     } else {
@@ -2222,7 +2222,7 @@ void irtkRView::Reset()
           _zaxis[2] = -xaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out x-orientation" << endl;
+          cerr << "RView::ResetTarget: Can't work out x-orientation" << endl;
           break;
       }
       switch (jaxis) {
@@ -2257,7 +2257,7 @@ void irtkRView::Reset()
           _zaxis[2] = -yaxis[2];
           break;
         default:
-	  std::cerr << "irtkRView::ResetTarget: Can't work out y-orientation" << std::endl;
+	  std::cerr << "RView::ResetTarget: Can't work out y-orientation" << std::endl;
           break;
       }
       switch (kaxis) {
@@ -2292,7 +2292,7 @@ void irtkRView::Reset()
           _zaxis[2] = -zaxis[2];
           break;
         default:
-	  std::cerr << "irtkRView::ResetTarget: Can't work out z-orientation" << std::endl;
+	  std::cerr << "RView::ResetTarget: Can't work out z-orientation" << std::endl;
           break;
       }
     }
@@ -2337,7 +2337,7 @@ void irtkRView::Reset()
   _selectionUpdate = true;
 }
 
-void irtkRView::Resize(int w, int h)
+void RView::Resize(int w, int h)
 {
   int i;
 
@@ -2366,13 +2366,13 @@ void irtkRView::Resize(int w, int h)
   // Allocate new drawables
   for (i = 0; i < _NoOfViewers; i++) {
     int n = _targetImageOutput[i]->GetNumberOfVoxels();
-    _drawable[i] = new irtkColor[n];
+    _drawable[i] = new Color[n];
   }
 
   this->Update();
 }
 
-void irtkRView::Configure(irtkRViewConfig config[])
+void RView::Configure(RViewConfig config[])
 {
   int i;
 
@@ -2422,18 +2422,18 @@ void irtkRView::Configure(irtkRViewConfig config[])
   _selectionImageOutput = new mirtk::GreyImage*[_NoOfViewers];
 
   // Allocate array for viewers
-  _viewer = new irtkViewer*[_NoOfViewers];
+  _viewer = new Viewer*[_NoOfViewers];
   _isSourceViewer = new bool[_NoOfViewers];
 
   // Allocate array for drawables
-  _drawable = new irtkColor*[_NoOfViewers];
+  _drawable = new Color*[_NoOfViewers];
 
   // Configure each viewer
   bool source_viewer[4] = {false, false, false, false};
   for (i = 0; i < _NoOfViewers; i++) {
 
     // Allocate _target viewer
-    _viewer[i] = new irtkViewer(this, config[i].mode);
+    _viewer[i] = new Viewer(this, config[i].mode);
     _isSourceViewer[i] = source_viewer[config[i].mode];
     source_viewer[config[i].mode] = !source_viewer[config[i].mode];
 
@@ -2492,7 +2492,7 @@ void irtkRView::Configure(irtkRViewConfig config[])
 
   for (i = 0; i < _NoOfViewers; i++) {
     // Configure OpenGL
-    _drawable[i] = new irtkColor[_targetImageOutput[i]->GetNumberOfVoxels()];
+    _drawable[i] = new Color[_targetImageOutput[i]->GetNumberOfVoxels()];
   }
 
   // Update of target and source is required
@@ -2502,15 +2502,15 @@ void irtkRView::Configure(irtkRViewConfig config[])
   _selectionUpdate = true;
 }
 
-void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
+void RView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
                             char *buffer4, char *buffer5)
 {
   int i, j, k;
   double u, v, w;
 
   // BEGIN of added code -as12312
-  // TODO Move the following code into separate method of irtkRView as it is
-  //      required in more places, e.g., also irtkViewer::Update uses it
+  // TODO Move the following code into separate method of RView as it is
+  //      required in more places, e.g., also Viewer::Update uses it
 
   // Cast input transformation to single-/multi-level FFD
   mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(_sourceTransform);
@@ -2593,7 +2593,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   }
 }
 
-void irtkRView::MouseWheel(int i, int j, int wheel)
+void RView::MouseWheel(int i, int j, int wheel)
 {
   int k;
   double u, v, w, x1, y1, x2, y2;
@@ -2640,7 +2640,7 @@ void irtkRView::MouseWheel(int i, int j, int wheel)
 
 }
 
-void irtkRView::MousePosition(int i, int j)
+void RView::MousePosition(int i, int j)
 {
   int k;
   double u, v, w, x1, y1, x2, y2;
@@ -2675,7 +2675,7 @@ void irtkRView::MousePosition(int i, int j)
   }
 }
 
-void irtkRView::GetTransformationText(std::list<char *> &text)
+void RView::GetTransformationText(std::list<char *> &text)
 {
   int i;
   char *ptr, buffer[256];
@@ -2690,9 +2690,9 @@ void irtkRView::GetTransformationText(std::list<char *> &text)
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "mirtk::MultiLevelFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkMultiLevelStationaryVelocityTransformation") == 0) {
+  } else if (strcmp(name, "MultiLevelStationaryVelocityTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkFluidFreeFormTransformation") == 0) {
+  } else if (strcmp(name, "FluidFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "mirtk::MultiLevelFreeFormTransformation4D") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
@@ -2781,8 +2781,8 @@ void irtkRView::GetTransformationText(std::list<char *> &text)
       
 #ifdef HAVE_EigenFreeFormTransformation     
       
-      else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
-        irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+      else if (strcmp(name, "EigenFreeFormTransformation") == 0) {
+        EigenFreeFormTransformation *ffd = dynamic_cast<EigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
       } 
@@ -2798,7 +2798,7 @@ void irtkRView::GetTransformationText(std::list<char *> &text)
   }
 }
 
-void irtkRView::Initialize(bool initialize_cache)
+void RView::Initialize(bool initialize_cache)
 {
   int i;
   mirtk::ImageAttributes attr;
@@ -2920,7 +2920,7 @@ void irtkRView::Initialize(bool initialize_cache)
   }
 }
 
-void irtkRView::SetTargetFrame(int t)
+void RView::SetTargetFrame(int t)
 {
   int i;
   double xorigin, yorigin, zorigin, torigin;
@@ -2941,12 +2941,12 @@ void irtkRView::SetTargetFrame(int t)
   if (_sourceTransformApply) _sourceUpdate = true;
 }
 
-int irtkRView::GetTargetFrame()
+int RView::GetTargetFrame()
 {
   return _targetFrame;
 }
 
-void irtkRView::SetSourceFrame(int t)
+void RView::SetSourceFrame(int t)
 {
   int i;
   double xorigin, yorigin, zorigin, torigin;
@@ -2968,12 +2968,12 @@ void irtkRView::SetSourceFrame(int t)
   _sourceUpdate = true;
 }
 
-int irtkRView::GetSourceFrame()
+int RView::GetSourceFrame()
 {
   return _sourceFrame;
 }
 
-void irtkRView::SetTargetInterpolationMode(mirtk::InterpolationMode value)
+void RView::SetTargetInterpolationMode(mirtk::InterpolationMode value)
 {
   int i;
 
@@ -2985,32 +2985,32 @@ void irtkRView::SetTargetInterpolationMode(mirtk::InterpolationMode value)
   _targetUpdate = true;
 }
 
-mirtk::InterpolationMode irtkRView::GetTargetInterpolationMode()
+mirtk::InterpolationMode RView::GetTargetInterpolationMode()
 {
   if (strstr(_targetInterpolator->NameOfClass(),
-             "irtkNearestNeighborInterpolateImageFunction") != NULL) {
+             "NearestNeighborInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_NN;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
-             "irtkLinearInterpolateImageFunction") != NULL) {
+             "LinearInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_Linear;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
-             "irtkBSplineInterpolateImageFunction") != NULL) {
+             "BSplineInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_BSpline;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
-             "irtkCSplineInterpolateImageFunction") != NULL) {
+             "CSplineInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_CSpline;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
-             "irtkSincInterpolateImageFunction") != NULL) {
+             "SincInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_Sinc;
   }
   return mirtk::Interpolation_NN;
 }
 
-void irtkRView::SetSourceInterpolationMode(mirtk::InterpolationMode value)
+void RView::SetSourceInterpolationMode(mirtk::InterpolationMode value)
 {
   int i;
 
@@ -3022,32 +3022,32 @@ void irtkRView::SetSourceInterpolationMode(mirtk::InterpolationMode value)
   _sourceUpdate = true;
 }
 
-mirtk::InterpolationMode irtkRView::GetSourceInterpolationMode()
+mirtk::InterpolationMode RView::GetSourceInterpolationMode()
 {
   if (strstr(_sourceInterpolator->NameOfClass(),
-             "irtkNearestNeighborInterpolateImageFunction") != NULL) {
+             "NearestNeighborInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_NN;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
-             "irtkLinearInterpolateImageFunction") != NULL) {
+             "LinearInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_Linear;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
-             "irtkBSplineInterpolateImageFunction") != NULL) {
+             "BSplineInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_BSpline;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
-             "irtkCSplineInterpolateImageFunction") != NULL) {
+             "CSplineInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_CSpline;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
-             "irtkSincInterpolateImageFunction") != NULL) {
+             "SincInterpolateImageFunction") != NULL) {
     return mirtk::Interpolation_Sinc;
   }
   return mirtk::Interpolation_NN;
 }
 
-void irtkRView::SetSourceTransformInvert(bool value)
+void RView::SetSourceTransformInvert(bool value)
 {
   int i;
 
@@ -3058,12 +3058,12 @@ void irtkRView::SetSourceTransformInvert(bool value)
   _sourceUpdate = true;
 }
 
-bool irtkRView::GetSourceTransformInvert()
+bool RView::GetSourceTransformInvert()
 {
   return _sourceTransformInvert;
 }
 
-void irtkRView::SetSourceTransformApply(bool value)
+void RView::SetSourceTransformApply(bool value)
 {
   int i;
 
@@ -3080,12 +3080,12 @@ void irtkRView::SetSourceTransformApply(bool value)
   _sourceUpdate = true;
 }
 
-bool irtkRView::GetSourceTransformApply()
+bool RView::GetSourceTransformApply()
 {
   return _sourceTransformApply;
 }
 
-void irtkRView::DrawOffscreen(char *filename)
+void RView::DrawOffscreen(char *filename)
 {
   int i, n, index;
   unsigned char *buffer, *ptr;
@@ -3125,7 +3125,7 @@ void irtkRView::DrawOffscreen(char *filename)
   delete[] buffer;
 }
 
-double irtkRView::FitLandmarks()
+double RView::FitLandmarks()
 {
   int i, n;
   double error;
@@ -3176,7 +3176,7 @@ double irtkRView::FitLandmarks()
   return error;
 }
 
-void irtkRView::cb_special(int key, int, int, int target_delta,
+void RView::cb_special(int key, int, int, int target_delta,
                            int source_delta)
 {
   switch (key) {
@@ -3237,7 +3237,7 @@ void irtkRView::cb_special(int key, int, int, int target_delta,
   this->Draw();
 }
 
-void irtkRView::cb_special_info()
+void RView::cb_special_info()
 {
   cerr << "\tSpecial function keys:\n";
   cerr << "\tF1                               Increase min target intensity\n";
@@ -3255,7 +3255,7 @@ void irtkRView::cb_special_info()
   return;
 }
 
-void irtkRView::cb_keyboard(unsigned char key)
+void RView::cb_keyboard(unsigned char key)
 {
   double x, y, z, t;
 
@@ -3476,27 +3476,27 @@ void irtkRView::cb_keyboard(unsigned char key)
   return;
 }
 
-void irtkRView::SegmentationMode(int mode)
+void RView::SegmentationMode(int mode)
 {
   _SegmentationMode = mode;
 }
 
-void irtkRView::SetPaintBrushWidth(int width)
+void RView::SetPaintBrushWidth(int width)
 {
   _PaintBrushWidth = width;
 }
 
-void irtkRView::SetRegionGrowingThresholdMinimum(int threshold)
+void RView::SetRegionGrowingThresholdMinimum(int threshold)
 {
   _RegionGrowingThresholdMin = threshold;
 }
 
-void irtkRView::SetRegionGrowingThresholdMaximum(int threshold)
+void RView::SetRegionGrowingThresholdMaximum(int threshold)
 {
   _RegionGrowingThresholdMax = threshold;
 }
 
-void irtkRView::cb_keyboard_info()
+void RView::cb_keyboard_info()
 {
   cerr << "\tControl keys:\n";
   cerr << "\t'q'                              Exit\n";

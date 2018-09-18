@@ -22,7 +22,7 @@
 #include <GL/glu.h>
 #endif
 
-#include <irtkRView.h>
+#include <RView.h>
 
 // Define the maximum number of control points along each axis we can
 // handle here.
@@ -168,7 +168,7 @@ void status_glColor(int status)
 	}
 }
 
-irtkViewer::irtkViewer(irtkRView *rview, irtkViewerMode viewerMode)
+Viewer::Viewer(RView *rview, ViewerMode viewerMode)
 {
 	_screenX1 = 0;
 	_screenY1 = 0;
@@ -186,11 +186,11 @@ irtkViewer::irtkViewer(irtkRView *rview, irtkViewerMode viewerMode)
 	_viewerMode = viewerMode;
 }
 
-irtkViewer::~irtkViewer()
+Viewer::~Viewer()
 {
 }
 
-bool irtkViewer::UpdateTagGrid(mirtk::GreyImage *image, mirtk::Transformation *transformation, mirtk::PointSet landmark)
+bool Viewer::UpdateTagGrid(mirtk::GreyImage *image, mirtk::Transformation *transformation, mirtk::PointSet landmark)
 {
   if (landmark.Size() != 3) return false;
 
@@ -272,7 +272,7 @@ bool irtkViewer::UpdateTagGrid(mirtk::GreyImage *image, mirtk::Transformation *t
   return true;
 }
 
-bool irtkViewer::Update1(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
+bool Viewer::Update1(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
 {
 	double x1, y1, z1, x2, y2, z2;
 	int    i1, j1, k1, i2, j2, k2;
@@ -414,7 +414,7 @@ bool irtkViewer::Update1(mirtk::GreyImage *image, mirtk::MultiLevelTransformatio
 	return true;
 }
 
-bool irtkViewer::Update2(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
+bool Viewer::Update2(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
 {
 	double dx, dy;
 	int    i, j;
@@ -472,7 +472,7 @@ bool irtkViewer::Update2(mirtk::GreyImage *image, mirtk::MultiLevelTransformatio
 	return true;
 }
 
-bool irtkViewer::Update(mirtk::GreyImage *image, mirtk::Transformation *transformation)
+bool Viewer::Update(mirtk::GreyImage *image, mirtk::Transformation *transformation)
 {
   // Cast input transformation to single-/multi-level FFD
   mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(transformation);
@@ -568,7 +568,7 @@ bool irtkViewer::Update(mirtk::GreyImage *image, mirtk::Transformation *transfor
   return true;
 }
 
-void irtkViewer::DrawCursor(irtkCursorMode mode)
+void Viewer::DrawCursor(CursorMode mode)
 {
 	int x, y;
 
@@ -618,7 +618,7 @@ void irtkViewer::DrawCursor(irtkCursorMode mode)
 	}
 }
 
-void irtkViewer::DrawIsolines(mirtk::GreyImage *image, int value)
+void Viewer::DrawIsolines(mirtk::GreyImage *image, int value)
 {
 	int i, j;
 
@@ -648,7 +648,7 @@ void irtkViewer::DrawIsolines(mirtk::GreyImage *image, int value)
 	glLineWidth(1);
 }
 
-void irtkViewer::DrawSegmentationContour(mirtk::GreyImage *image)
+void Viewer::DrawSegmentationContour(mirtk::GreyImage *image)
 {
 	int i, j;
 	unsigned char r, g, b;
@@ -696,7 +696,7 @@ void irtkViewer::DrawSegmentationContour(mirtk::GreyImage *image)
 	glLineWidth(1);
 }
 
-void irtkViewer::DrawTagGrid()
+void Viewer::DrawTagGrid()
 {
   int i, j;
 
@@ -721,7 +721,7 @@ void irtkViewer::DrawTagGrid()
   glLineWidth(1);
 }
 
-void irtkViewer::DrawGrid()
+void Viewer::DrawGrid()
 {
 	int i, j;
 
@@ -748,7 +748,7 @@ void irtkViewer::DrawGrid()
 	glLineWidth(1);
 }
 
-void irtkViewer::DrawArrows()
+void Viewer::DrawArrows()
 {
 	int i, j;
 
@@ -789,7 +789,7 @@ void irtkViewer::DrawArrows()
 	}
 }
 
-void irtkViewer::DrawPoints()
+void Viewer::DrawPoints()
 {
 	int i, j;
 
@@ -809,7 +809,7 @@ void irtkViewer::DrawPoints()
 	glEnd();
 }
 
-void irtkViewer::DrawLandmarks(mirtk::PointSet &landmarks, std::set<int> &ids, mirtk::GreyImage *image, int bTarget, int bAll)
+void Viewer::DrawLandmarks(mirtk::PointSet &landmarks, std::set<int> &ids, mirtk::GreyImage *image, int bTarget, int bAll)
 {
   glLineWidth(1.0);
   // Draw unselected landmarks first
@@ -867,7 +867,7 @@ void irtkViewer::DrawLandmarks(mirtk::PointSet &landmarks, std::set<int> &ids, m
   }
 }
 
-void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, mirtk::GreyImage *image)
+void Viewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, mirtk::GreyImage *image)
 {
   // Adjust colour
   glLineWidth(1.0);
@@ -892,7 +892,7 @@ void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &s
   }
 }
 
-void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, std::set<int> &ids, mirtk::GreyImage *image)
+void Viewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, std::set<int> &ids, mirtk::GreyImage *image)
 {
   // Adjust colour
   glLineWidth(1.0);
@@ -917,7 +917,7 @@ void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &s
   }
 }
 
-void irtkViewer::DrawImage(irtkColor *drawable)
+void Viewer::DrawImage(Color *drawable)
 {
 	// Set raster position
 	glRasterPos2f(_screenX1, _screenY1);
@@ -927,7 +927,7 @@ void irtkViewer::DrawImage(irtkColor *drawable)
 			drawable);
 }
 
-void irtkViewer::DrawROI(mirtk::GreyImage *image, double x1, double y1, double z1,
+void Viewer::DrawROI(mirtk::GreyImage *image, double x1, double y1, double z1,
 		double x2, double y2, double z2)
 {
 	image->WorldToImage(x1, y1, z1);
@@ -960,7 +960,7 @@ void irtkViewer::DrawROI(mirtk::GreyImage *image, double x1, double y1, double z
 
 #ifdef HAS_VTK
 
-void irtkViewer::DrawObject(vtkPointSet **object, mirtk::GreyImage *image,
+void Viewer::DrawObject(vtkPointSet **object, mirtk::GreyImage *image,
 		int _DisplayObjectWarp,
 		int _DisplayObjectGrid,
 		mirtk::Transformation *transformation)
@@ -991,7 +991,7 @@ void irtkViewer::DrawObject(vtkPointSet **object, mirtk::GreyImage *image,
 	}
 }
 
-void irtkViewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int warp, int grid, mirtk::Transformation *transformation)
+void Viewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int warp, int grid, mirtk::Transformation *transformation)
 {
 	int i, j;
 	double p1[3], p2[3], p3[3], v1[3], v2[3], point[3], normal[3];
@@ -1084,7 +1084,7 @@ void irtkViewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int wa
 
 #endif
 
-void irtkViewer::DrawInfo(irtkDisplayMode m)
+void Viewer::DrawInfo(DisplayMode m)
 {
 	int x, y;
 	static int first = true;

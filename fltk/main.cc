@@ -19,7 +19,7 @@
 
 Fl_RViewUI  *rviewUI;
 Fl_RView    *viewer;
-irtkRView    *rview;
+RView    *rview;
 
 void usage()
 {
@@ -33,7 +33,7 @@ void usage()
   cerr << "\t<-object_warp>                   Warp object with vectors\n";
   cerr << "\t<-object_grid>                   Object grid on\n";
 #endif
-  cerr << "\t<-eigen values.irtk vectors.irtk>  Eigen modes\n";
+  cerr << "\t<-eigen values.mirtk vectors.mirtk>  Eigen modes\n";
   cerr << "\t<-xy      | -xz      | -yz>      Single     view\n";
   cerr << "\t<-xy_xz_v | -xy_yz_v | -xz_yz_v> Vertical   view\n";
   cerr << "\t<-xy_xz_h | -xy_yz_h | -xz_yz_h> Horizontal view\n";

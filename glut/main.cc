@@ -27,9 +27,9 @@
 #endif
 #endif
 
-#include <irtkRView.h>
+#include <RView.h>
 
-irtkRView *rview;
+RView *rview;
 
 char *offscreen_file;
 int target_min, target_max, target_delta;
@@ -49,7 +49,7 @@ void usage ()
   cerr << "\t<-object_warp>                   Warp object with vectors\n";
   cerr << "\t<-object_grid>                   Object grid on\n";
 #endif
-  cerr << "\t<-eigen values.irtk vectors.irtk>  Eigen modes\n";
+  cerr << "\t<-eigen values. vectors.>  Eigen modes\n";
   cerr << "\t<-xy      | -xz      | -yz>      Single     view\n";
   cerr << "\t<-xy_xz_v | -xy_yz_v | -xz_yz_v> Vertical   view\n";
   cerr << "\t<-xy_xz_h | -xy_yz_h | -xz_yz_h> Horizontal view\n";
@@ -165,7 +165,7 @@ int main(int argc, char** argv)
   }
 
   // Initialize viewer
-  rview = new irtkRView(x, y);
+  rview = new RView(x, y);
 
   if (argc == 1) {
     usage();

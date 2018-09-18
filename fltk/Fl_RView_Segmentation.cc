@@ -14,7 +14,7 @@
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
 
-#include <irtkSegment.h>
+#include <Segment.h>
 
 #include <FL/Fl_Window.H>
 
@@ -29,7 +29,7 @@
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 char widthStrings[10][10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 

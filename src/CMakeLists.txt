@@ -1,30 +1,30 @@
 project(rview_src)
 
 set(RVIEW_INCLUDES
-	../include/irtkColor.h
-	../include/irtkColorRGBA.h
-	../include/irtkContour.h
-	../include/irtkLookupTable.h
-	../include/irtkRView.h
-	../include/irtkRViewConfig.h
-	../include/irtkViewer.h
-	../include/irtkHistogramWindow.h
-	../include/irtkSegment.h
-	../include/irtkSegmentTable.h
-	../include/irtkVoxelContour.h
+	../include/Color.h
+	../include/ColorRGBA.h
+	../include/Contour.h
+	../include/LookupTable.h
+	../include/RView.h
+	../include/RViewConfig.h
+	../include/Viewer.h
+	../include/HistogramWindow.h
+	../include/Segment.h
+	../include/SegmentTable.h
+	../include/VoxelContour.h
 )
 
 set(RVIEW_SRCS
-	irtkColor.cc
-	irtkColorRGBA.cc
-	irtkLookupTable.cc
-	irtkRView.cc
-	irtkRViewConfig.cc
-	irtkViewer.cc
-	irtkHistogramWindow.cc
-	irtkSegment.cc
-	irtkSegmentTable.cc
-	irtkVoxelContour.cc
+	Color.cc
+	ColorRGBA.cc
+	LookupTable.cc
+	RView.cc
+	RViewConfig.cc
+	Viewer.cc
+	HistogramWindow.cc
+	Segment.cc
+	SegmentTable.cc
+	VoxelContour.cc
 )
 
 add_library(rview++ ${RVIEW_SRCS})

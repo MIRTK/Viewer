@@ -30,7 +30,7 @@
 
 #include <stack>
 
-#include <irtkRView.h>
+#include <RView.h>
 
 typedef struct
 {
@@ -38,9 +38,9 @@ typedef struct
   int y;
   int z;
 }
-irtkLocation;
+Location;
 
-irtkVoxelContour::irtkVoxelContour()
+VoxelContour::VoxelContour()
 {
   _raster = new mirtk::GreyImage;
   _rview  = NULL;
@@ -49,7 +49,7 @@ irtkVoxelContour::irtkVoxelContour()
   _current = 0;
 }
 
-void irtkVoxelContour::Initialise(irtkRView *rview, mirtk::GreyImage* viewer)
+void VoxelContour::Initialise(RView *rview, mirtk::GreyImage* viewer)
 {
   mirtk::BaseImage::OrientationCode i1, j1, k1, i2, j2, k2;
   int i, axis[3];
@@ -294,7 +294,7 @@ void irtkVoxelContour::Initialise(irtkRView *rview, mirtk::GreyImage* viewer)
 
 }
 
-void irtkVoxelContour::AddPoint(mirtk::Point p, int width)
+void VoxelContour::AddPoint(mirtk::Point p, int width)
 {
   int x, y, z;
 
@@ -303,7 +303,7 @@ void irtkVoxelContour::AddPoint(mirtk::Point p, int width)
 
   // Check if contour has been initialised
   if (_raster == NULL) {
-    cerr << "Please, always initialise irtkVoxelContour before adding any points!" << endl;
+    cerr << "Please, always initialise VoxelContour before adding any points!" << endl;
     exit(1);
   }
   _raster->WorldToImage(p);
@@ -330,7 +330,7 @@ void irtkVoxelContour::AddPoint(mirtk::Point p, int width)
 }
 
 
-void irtkVoxelContour::AddPoint(int x, int y, int z)
+void VoxelContour::AddPoint(int x, int y, int z)
 {
   int i, j, k;
 
@@ -347,27 +347,27 @@ void irtkVoxelContour::AddPoint(int x, int y, int z)
   }
 }
 
-void irtkVoxelContour::AddPointSet()
+void VoxelContour::AddPointSet()
 {
   _totalSize += _currentSize;
   _current++;
   _currentSize = 0;
 }
 
-void irtkVoxelContour::AddPointSet(mirtk::Point p, int width)
+void VoxelContour::AddPointSet(mirtk::Point p, int width)
 {
   this->AddPointSet();
   this->AddPoint(p, width);
 }
 
 
-void irtkVoxelContour::Close(mirtk::Point p, int width)
+void VoxelContour::Close(mirtk::Point p, int width)
 {
   this->AddPoint(p, width);
   lineBresenham(_firstx, _firsty, _firstz, _lastx, _lasty, _lastz);
 }
 
-void irtkVoxelContour::FillArea(mirtk::Point p)
+void VoxelContour::FillArea(mirtk::Point p)
 {
   int x, y, z;
 
@@ -399,7 +399,7 @@ void irtkVoxelContour::FillArea(mirtk::Point p)
   Fill(x, y, z);
 }
 
-void irtkVoxelContour::RegionGrowing(mirtk::Point p, int thresholdMin, int thresholdMax, irtkRegionGrowingMode mode)
+void VoxelContour::RegionGrowing(mirtk::Point p, int thresholdMin, int thresholdMax, RegionGrowingMode mode)
 {
   int x, y, z;
 
@@ -435,7 +435,7 @@ void irtkVoxelContour::RegionGrowing(mirtk::Point p, int thresholdMin, int thres
   }
 }
 
-void irtkVoxelContour::Undo()
+void VoxelContour::Undo()
 {
   int i;
   mirtk::GreyPixel *ptr;
@@ -451,7 +451,7 @@ void irtkVoxelContour::Undo()
   _current--;
 }
 
-void irtkVoxelContour::Clear()
+void VoxelContour::Clear()
 {
   int i;
   mirtk::GreyPixel *ptr;
@@ -466,7 +466,7 @@ void irtkVoxelContour::Clear()
   _current = 0;
 }
 
-void irtkVoxelContour::lineBresenham(int x0, int y0, int z0, int x1, int y1, int z1)
+void VoxelContour::lineBresenham(int x0, int y0, int z0, int x1, int y1, int z1)
 {
 
   int dy = y1 - y0;
@@ -519,7 +519,7 @@ void irtkVoxelContour::lineBresenham(int x0, int y0, int z0, int x1, int y1, int
   }
 }
 
-bool inline irtkVoxelContour::RegionGrowingCriteria(int i, int j, int k, double lowT, double highT)
+bool inline VoxelContour::RegionGrowingCriteria(int i, int j, int k, double lowT, double highT)
 {
   double x, y, z;
 
@@ -534,13 +534,13 @@ bool inline irtkVoxelContour::RegionGrowingCriteria(int i, int j, int k, double 
   return ((_rview->_targetImage->GetAsDouble(i, j, k) >= lowT) && (_rview->_targetImage->GetAsDouble(i, j, k) <= highT));
 }
 
-void irtkVoxelContour::Fill(int seedX, int seedY, int seedZ)
+void VoxelContour::Fill(int seedX, int seedY, int seedZ)
 {
   int x, y, z;
-  irtkLocation location;
+  Location location;
 
   // Create stack
-  std::stack<irtkLocation> point_stack;
+  std::stack<Location> point_stack;
 
   // Push seed location on stack
   location.x = seedX;
@@ -598,13 +598,13 @@ void irtkVoxelContour::Fill(int seedX, int seedY, int seedZ)
   }
 }
 
-void irtkVoxelContour::RegionGrowing2D(int seedX, int seedY, int seedZ, double lowT, double highT)
+void VoxelContour::RegionGrowing2D(int seedX, int seedY, int seedZ, double lowT, double highT)
 {
   int x, y, z;
-  irtkLocation location;
+  Location location;
 
   // Create stack
-  std::stack<irtkLocation> point_stack;
+  std::stack<Location> point_stack;
 
   // Push seed location on stack
   location.x = seedX;
@@ -672,13 +672,13 @@ void irtkVoxelContour::RegionGrowing2D(int seedX, int seedY, int seedZ, double l
   }
 }
 
-void irtkVoxelContour::RegionGrowing3D(int seedX, int seedY, int seedZ, double lowT, double highT)
+void VoxelContour::RegionGrowing3D(int seedX, int seedY, int seedZ, double lowT, double highT)
 {
   int x, y, z;
-  irtkLocation location;
+  Location location;
 
   // Create stack
-  std::stack<irtkLocation> point_stack;
+  std::stack<Location> point_stack;
 
   // Push seed location on stack
   location.x = seedX;

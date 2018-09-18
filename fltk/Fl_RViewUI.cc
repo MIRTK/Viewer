@@ -19,7 +19,7 @@
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
-extern irtkRView    *rview;
+extern RView    *rview;
 
 #include <bitmaps/fileopen.xpm>
 #include <bitmaps/filesave.xpm>
@@ -49,7 +49,7 @@ void Fl_RViewUI::cb_saveScreen(Fl_Button *, void *)
 
 void Fl_RViewUI::cb_ViewMode(Fl_Button *, void *v)
 {
-  rview->Configure((irtkRViewConfig *)v);
+  rview->Configure((RViewConfig *)v);
   rview->Update();
   viewer->redraw();
 }

@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,15 +10,15 @@
 
 =========================================================================*/
 
-#ifndef _IRTKHISTOGRAMWINDOW_H
+#ifndef _HISTOGRAMWINDOW_H
 
-#define _IRTKHISTOGRAMWINDOW_H
+#define _HISTOGRAMWINDOW_H
 
-#include <irtkRView.h>
+#include <RView.h>
 
 #define HISTOGRAM_BINS 256
 
-class irtkHistogramWindow
+class HistogramWindow
 {
 
   friend class Fl_HistogramWindow;
@@ -26,7 +26,7 @@ class irtkHistogramWindow
 protected:
 
   /// Pointer to registration viewer
-  irtkRView *_v;
+  RView *_v;
 
   /// Global histogram for entire image
   mirtk::Histogram1D<int> _globalHistogram;
@@ -37,10 +37,10 @@ protected:
 public:
 
   /// Constructor
-  irtkHistogramWindow(irtkRView *);
+  HistogramWindow(RView *);
 
   /// Destructor
-  virtual ~irtkHistogramWindow() {};
+  virtual ~HistogramWindow() {};
 
   /// Compute histograms for everything
   void CalculateHistograms();

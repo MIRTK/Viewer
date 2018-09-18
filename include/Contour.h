@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Library   : Image Registration Toolkit (IRTK)
+  Library   : Image Registration Toolkit ()
   Module    : $Id$
   Copyright : Imperial College, Department of Computing
               Visual Information Processing (VIP), 2008 onwards
@@ -10,41 +10,41 @@
 
 =========================================================================*/
 
-#ifndef _IRTKCONTOUR_H
+#ifndef _CONTOUR_H
 
-#define _IRTKCONTOUR_H
+#define _CONTOUR_H
 
-#include <irtkImage.h>
+#include <Image.h>
 #include <vector>
 
 enum ContourMode { NewContour, NewPoint, CloseContour };
 
 /// Class for storing the contour in viewer coordinates
-class irtkContour
+class Contour
 {
 
 protected:
 
   /// Contour parts
-  vector<irtkPointSet> _pointSets;
-  irtkPointSet _allPoints;
+  vector<PointSet> _pointSets;
+  PointSet _allPoints;
   int _updateAllPoints;
 
 public:
 
   /// Constructor
-  irtkContour();
+  Contour();
 
   /// Destructor
-  virtual ~irtkContour() {};
+  virtual ~Contour() {};
 
-  virtual void Add(irtkPoint p);
+  virtual void Add(Point p);
   int IsEmpty();
   int Size();
   void Clear();
   int IsInside(double x, double y);
-  virtual irtkPoint   &operator()(int);
-  void AddNewSet(irtkPoint p);
+  virtual Point   &operator()(int);
+  void AddNewSet(Point p);
   virtual void DeleteLastSet();
   void Print();
 

@@ -20,11 +20,11 @@
 #include <GL/glu.h>
 #endif
 
-#include <irtkLookupTable.h>
+#include <LookupTable.h>
 
-irtkLookupTable::irtkLookupTable(int minData, int maxData)
+LookupTable::LookupTable(int minData, int maxData)
 {
-	lookupTable = new irtkColorRGBA[maxData - minData + 1] - minData;
+	lookupTable = new ColorRGBA[maxData - minData + 1] - minData;
 	_minData = minData;
 	_maxData = maxData;
   _minDisplay  = minData;
@@ -33,13 +33,13 @@ irtkLookupTable::irtkLookupTable(int minData, int maxData)
   this->Update();
 }
 
-irtkLookupTable::~irtkLookupTable()
+LookupTable::~LookupTable()
 {
   lookupTable += _minData;
   delete [] lookupTable;
 }
 
-void irtkLookupTable::Update()
+void LookupTable::Update()
 {
   switch (_mode) {
   case ColorMode_Red:
@@ -75,16 +75,16 @@ void irtkLookupTable::Update()
   case ColorMode_Custom:
     break;
   default:
-    std::cerr << "irtkLookupTable::Update: Unknown color mode" << std::endl;
+    std::cerr << "LookupTable::Update: Unknown color mode" << std::endl;
     exit(1);
   }
 }
 
-void irtkLookupTable::Initialize(int minData, int maxData)
+void LookupTable::Initialize(int minData, int maxData)
 {
   lookupTable += _minData;
   delete [] lookupTable;
-	lookupTable = new irtkColorRGBA[maxData - minData + 1] - minData;
+	lookupTable = new ColorRGBA[maxData - minData + 1] - minData;
   _minData    = minData;
   _maxData    = maxData;
   _minDisplay = minData;
@@ -92,7 +92,7 @@ void irtkLookupTable::Initialize(int minData, int maxData)
   this->Update();
 }
 
-void irtkLookupTable::SetColorModeToLuminance()
+void LookupTable::SetColorModeToLuminance()
 {
   int i;
 
@@ -112,7 +112,7 @@ void irtkLookupTable::SetColorModeToLuminance()
   }
 }
 
-void irtkLookupTable::SetColorModeToInverseLuminance()
+void LookupTable::SetColorModeToInverseLuminance()
 {
   int i;
 
@@ -134,7 +134,7 @@ void irtkLookupTable::SetColorModeToInverseLuminance()
   }
 }
 
-void irtkLookupTable::SetColorModeToHotMetal()
+void LookupTable::SetColorModeToHotMetal()
 {
 #ifdef HAS_COLOR
   int i;
@@ -165,7 +165,7 @@ void irtkLookupTable::SetColorModeToHotMetal()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToJacobian()
+void LookupTable::SetColorModeToJacobian()
 {
 #ifdef HAS_COLOR
   int i;
@@ -192,7 +192,7 @@ void irtkLookupTable::SetColorModeToJacobian()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToJacobianExpansion()
+void LookupTable::SetColorModeToJacobianExpansion()
 {
 #ifdef HAS_COLOR
   int i, _min, _max;
@@ -219,7 +219,7 @@ void irtkLookupTable::SetColorModeToJacobianExpansion()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToJacobianContraction()
+void LookupTable::SetColorModeToJacobianContraction()
 {
 #ifdef HAS_COLOR
   int i, _min, _max;
@@ -246,7 +246,7 @@ void irtkLookupTable::SetColorModeToJacobianContraction()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToRed()
+void LookupTable::SetColorModeToRed()
 {
 #ifdef HAS_COLOR
   int i;
@@ -276,7 +276,7 @@ void irtkLookupTable::SetColorModeToRed()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToGreen()
+void LookupTable::SetColorModeToGreen()
 {
 #ifdef HAS_COLOR
   int i;
@@ -306,7 +306,7 @@ void irtkLookupTable::SetColorModeToGreen()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToBlue()
+void LookupTable::SetColorModeToBlue()
 {
 #ifdef HAS_COLOR
   int i;
@@ -336,7 +336,7 @@ void irtkLookupTable::SetColorModeToBlue()
 #endif
 }
 
-void irtkLookupTable::SetColorModeToRainbow()
+void LookupTable::SetColorModeToRainbow()
 {
 #ifdef HAS_COLOR
   int i;
@@ -359,7 +359,7 @@ void irtkLookupTable::SetColorModeToRainbow()
 #endif
 }
 
-void irtkLookupTable::Read(char *filename)
+void LookupTable::Read(char *filename)
 {
   float a;
   char buffer[255];
@@ -370,8 +370,8 @@ void irtkLookupTable::Read(char *filename)
 
   // Check file format
   from >> buffer;
-  if (strcmp(buffer, "irtkLookupTable") != 0) {
-    std::cerr << "irtkLookupTable::Read: Can't read lookup table" << std::endl;
+  if (strcmp(buffer, "LookupTable") != 0) {
+    std::cerr << "LookupTable::Read: Can't read lookup table" << std::endl;
     exit(1);
   }
 
@@ -393,9 +393,9 @@ void irtkLookupTable::Read(char *filename)
   _mode = ColorMode_Custom;
 }
 
-void irtkLookupTable::Write(char *)
+void LookupTable::Write(char *)
 {
-  std::cerr << "irtkLookupTable::Write: Not yet implemented" << std::endl;
+  std::cerr << "LookupTable::Write: Not yet implemented" << std::endl;
   exit(1);
 }
 

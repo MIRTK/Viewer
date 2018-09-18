@@ -12,17 +12,17 @@
 
 #include <mirtk/Image.h>
 
-#include <irtkColorRGBA.h>
-#include <irtkColor.h>
+#include <ColorRGBA.h>
+#include <Color.h>
 
-void irtkColor::RGBtoHSV(double cr, double cg, double cb)
+void Color::RGBtoHSV(double cr, double cg, double cb)
 {
   r = round(255*cr);
   g = round(255*cg);
   b = round(255*cb);
 }
 
-void irtkColor::HSVtoRGB(double h, double s, double v)
+void Color::HSVtoRGB(double h, double s, double v)
 {
   int i;
   double f, p, q, t;
@@ -33,7 +33,7 @@ void irtkColor::HSVtoRGB(double h, double s, double v)
       g = round(255*v);
       b = round(255*v);
     } else {
-      std::cerr << "irtkColor::HSV: Undefined HSV color" << std::endl;
+      std::cerr << "Color::HSV: Undefined HSV color" << std::endl;
       exit(1);
     }
   } else {

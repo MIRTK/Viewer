@@ -17,8 +17,6 @@ SET(RVIEW_FLTK_SRCS
 
 add_executable(rview ${RVIEW_FLTK_SRCS})
 
-# mirtk::LibGeometry
-# mirtk::LibRecipes
 target_link_libraries(rview
 	rview++ 
 	mirtk::LibCommon 

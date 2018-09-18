@@ -10,14 +10,14 @@
 
 =========================================================================*/
 
-#include <irtkContour.h>
+#include <Contour.h>
 
-irtkContour::irtkContour()
+Contour::Contour()
 {
   _updateAllPoints=1;
 }
 
-void irtkContour::Add(irtkPoint p)
+void Contour::Add(Point p)
 {
   if (_pointSets.size()==0) {
     AddPointSet();
@@ -26,32 +26,32 @@ void irtkContour::Add(irtkPoint p)
   _updateAllPoints=1;
 }
 
-void irtkContour::AddPointSet()
+void Contour::AddPointSet()
 {
-  irtkPointSet *pset = new irtkPointSet;
+  PointSet *pset = new PointSet;
   _pointSets.push_back(*pset);
 
 }
 
-void irtkContour::AddNewSet(irtkPoint p)
+void Contour::AddNewSet(Point p)
 {
   AddPointSet();
   this->Add(p);
 }
 
-void irtkContour::DeleteLastSet()
+void Contour::DeleteLastSet()
 {
 
   if (_pointSets.size()>0)_pointSets.pop_back();
   _updateAllPoints=1;
 }
 
-int irtkContour::IsEmpty()
+int Contour::IsEmpty()
 {
   return (_pointSets.size() == 0);
 }
 
-int irtkContour::Size()
+int Contour::Size()
 {
   if (_pointSets.size() == 0) return 0;
   else {
@@ -63,12 +63,12 @@ int irtkContour::Size()
   }
 }
 
-void irtkContour::Clear()
+void Contour::Clear()
 {
   _pointSets.clear();
   _updateAllPoints=1;
 }
-int irtkContour::IsInside(double x, double y)
+int Contour::IsInside(double x, double y)
 {
   if (_updateAllPoints) {
     AllPoints();
@@ -77,7 +77,7 @@ int irtkContour::IsInside(double x, double y)
   return _allPoints.IsInside(x,y);
 }
 
-irtkPoint& irtkContour::operator()(int j)
+Point& Contour::operator()(int j)
 {
   int size=0, i=0;
   while ((size+_pointSets[i].Size()) <=j) {
@@ -88,7 +88,7 @@ irtkPoint& irtkContour::operator()(int j)
 }
 
 
-void irtkContour::AllPoints()
+void Contour::AllPoints()
 {
   _allPoints.Clear();
   for (unsigned int i=0; i<_pointSets.size(); i++) {
@@ -96,9 +96,9 @@ void irtkContour::AllPoints()
   }
 }
 
-void irtkContour::Print()
+void Contour::Print()
 {
-  cerr<<"irtkContour:" <<endl;
+  cerr<<"Contour:" <<endl;
   for (int i=0; i<Size();i++) {
     cerr <<"Point " <<i<<": "<<this->operator()(i)._x << " "<<this->operator()(i)._y << " "<<this->operator()(i)._z <<endl;
   }

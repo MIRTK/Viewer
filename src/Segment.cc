@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkSegment.h>
+#include <Segment.h>
 
-irtkSegment::irtkSegment()
+Segment::Segment()
 {
   // Visibility
   _visible = false;
@@ -27,7 +27,7 @@ irtkSegment::irtkSegment()
   _trans = 0.0;
 }
 
-irtkSegment::irtkSegment(char* label, unsigned char cr, unsigned char cg, unsigned char cb, double t, int v)
+Segment::Segment(char* label, unsigned char cr, unsigned char cg, unsigned char cb, double t, int v)
 {
   // Visibility
   _visible = v;
@@ -42,12 +42,12 @@ irtkSegment::irtkSegment(char* label, unsigned char cr, unsigned char cg, unsign
   _trans = t;
 }
 
-irtkSegment::~irtkSegment()
+Segment::~Segment()
 {
   if (_label != NULL) free(_label);
 }
 
-irtkSegment& irtkSegment::operator =(const irtkSegment& s)
+Segment& Segment::operator =(const Segment& s)
 {
   strncpy(_hexColor, s._hexColor, HEX_LENGTH);
   _color = s._color;
@@ -56,7 +56,7 @@ irtkSegment& irtkSegment::operator =(const irtkSegment& s)
   return *this;
 }
 
-void irtkSegment::setLabel(char* label)
+void Segment::setLabel(char* label)
 {
   if (_label != NULL) free(_label);
   if (label != NULL) {
@@ -66,7 +66,7 @@ void irtkSegment::setLabel(char* label)
   }
 }
 
-void irtkSegment::setColor(unsigned char r, unsigned char g, unsigned char b)
+void Segment::setColor(unsigned char r, unsigned char g, unsigned char b)
 {
   _color.r = r;
   _color.g = g;
@@ -74,50 +74,50 @@ void irtkSegment::setColor(unsigned char r, unsigned char g, unsigned char b)
   this->setHexColor();
 }
 
-void irtkSegment::setHexColor(void)
+void Segment::setHexColor(void)
 {
   this->rgb2Hex(_color.r, _color.g, _color.b, _hexColor);
 }
 
-void irtkSegment::setTrans(double t)
+void Segment::setTrans(double t)
 {
   _trans = t;
 }
 
-void irtkSegment::setVisibility(int vis)
+void Segment::setVisibility(int vis)
 {
   _visible = vis;
 }
 
-void irtkSegment::getColor(unsigned char *r, unsigned char *g, unsigned char *b) const
+void Segment::getColor(unsigned char *r, unsigned char *g, unsigned char *b) const
 {
   *r = _color.r;
   *g = _color.g;
   *b = _color.b;
 }
 
-void irtkSegment::getHex(char *hexColor) const
+void Segment::getHex(char *hexColor) const
 {
   strncpy(hexColor, _hexColor, HEX_LENGTH);
 }
 
-double irtkSegment::getTrans() const
+double Segment::getTrans() const
 {
   return _trans;
 }
 
-char *irtkSegment::getLabel() const
+char *Segment::getLabel() const
 {
   return _label;
 }
 
-int irtkSegment::getVisibility() const
+int Segment::getVisibility() const
 {
   return _visible;
 }
 
 
-void irtkSegment::rgb2Hex(int r, int g, int b, char* h)
+void Segment::rgb2Hex(int r, int g, int b, char* h)
 {
   char* hr = int2Hex(r, 2);
   char* hg = int2Hex(g, 2);
@@ -136,7 +136,7 @@ void irtkSegment::rgb2Hex(int r, int g, int b, char* h)
   delete [] hb;
 }
 
-char* irtkSegment::int2Hex(int n, unsigned char round)
+char* Segment::int2Hex(int n, unsigned char round)
 {
   unsigned char size = round;
   char i, *hex;

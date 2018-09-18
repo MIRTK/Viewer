@@ -10,17 +10,17 @@
 
 =========================================================================*/
 
-#include <irtkSegmentTable.h>
+#include <SegmentTable.h>
 
-irtkSegmentTable::irtkSegmentTable()
+SegmentTable::SegmentTable()
 {
 }
 
-irtkSegmentTable::~irtkSegmentTable()
+SegmentTable::~SegmentTable()
 {
 }
 
-void irtkSegmentTable::Set(int id, char* label, unsigned char r, unsigned char g, unsigned char b, double trans, int vis)
+void SegmentTable::Set(int id, char* label, unsigned char r, unsigned char g, unsigned char b, double trans, int vis)
 {
   _entry[id].setLabel(label);
   _entry[id].setColor(r, g, b);
@@ -28,27 +28,27 @@ void irtkSegmentTable::Set(int id, char* label, unsigned char r, unsigned char g
   _entry[id].setVisibility(vis);
 }
 
-void irtkSegmentTable::SetLabel(int id, char* label)
+void SegmentTable::SetLabel(int id, char* label)
 {
   _entry[id].setLabel(label);
 }
 
-void irtkSegmentTable::SetColor(int id, unsigned char red, unsigned char green, unsigned char blue)
+void SegmentTable::SetColor(int id, unsigned char red, unsigned char green, unsigned char blue)
 {
   _entry[id].setColor(red, green, blue);
 }
 
-void irtkSegmentTable::SetTrans(int id, double t)
+void SegmentTable::SetTrans(int id, double t)
 {
   _entry[id].setTrans(t);
 }
 
-void irtkSegmentTable::SetVisibility(int id, int vis)
+void SegmentTable::SetVisibility(int id, int vis)
 {
   _entry[id].setVisibility(vis);
 }
 
-char *irtkSegmentTable::Get(int id, unsigned char* r, unsigned char* g, unsigned char* b, double* trans, int* v) const
+char *SegmentTable::Get(int id, unsigned char* r, unsigned char* g, unsigned char* b, double* trans, int* v) const
 {
   // Get r,g,b
   _entry[id].getColor(r, g, b);
@@ -62,7 +62,7 @@ char *irtkSegmentTable::Get(int id, unsigned char* r, unsigned char* g, unsigned
   return _entry[id].getLabel();
 }
 
-void irtkSegmentTable::Clear()
+void SegmentTable::Clear()
 {
   int i;
 
@@ -71,14 +71,14 @@ void irtkSegmentTable::Clear()
   }
 }
 
-void irtkSegmentTable::Clear(int id)
+void SegmentTable::Clear(int id)
 {
   _entry[id].setLabel(NULL);
   _entry[id].setColor(0, 0, 0);
   _entry[id].setTrans(0);
 }
 
-void irtkSegmentTable::Read(char *name)
+void SegmentTable::Read(char *name)
 {
   double trans;
   char c, buffer[256];
@@ -89,14 +89,14 @@ void irtkSegmentTable::Read(char *name)
 
   std::ifstream from(name);
   if (!from) {
-    std::cerr << "irtkSegmentTable::Read: Can't open file " << name << "\n";
+    std::cerr << "SegmentTable::Read: Can't open file " << name << "\n";
     exit(1);
   }
 
   // Read keyword
   from >> buffer;
-  if ((strcmp(buffer, "irtkSegmentTable:") != 0) && (strcmp(buffer, "itkSegmentTable:") != 0)) {
-    std::cerr << "irtkSegmentTable::Read: Not a valid segment table" << std::endl;
+  if ((strcmp(buffer, "SegmentTable:") != 0) && (strcmp(buffer, "itkSegmentTable:") != 0)) {
+    std::cerr << "SegmentTable::Read: Not a valid segment table" << std::endl;
     exit(1);
   }
 
@@ -122,7 +122,7 @@ void irtkSegmentTable::Read(char *name)
   }
 }
 
-void irtkSegmentTable::Write(char *name)
+void SegmentTable::Write(char *name)
 {
   int id, n;
   unsigned char r, g, b;
@@ -131,7 +131,7 @@ void irtkSegmentTable::Write(char *name)
   std::ofstream to(name);
 
   if (!to) {
-    std::cerr << "irtkSegmentTable::Write: Can't open file " << name << "\n";
+    std::cerr << "SegmentTable::Write: Can't open file " << name << "\n";
     exit(1);
   }
 
@@ -142,7 +142,7 @@ void irtkSegmentTable::Write(char *name)
   }
 
   // Write header
-  to << "irtkSegmentTable: " << n << std::endl;
+  to << "SegmentTable: " << n << std::endl;
 
   // Write entries
   for (id = 0; id < this->Size(); id++) {
