@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 // Local includes
 #include <Fl_RViewUI.h>

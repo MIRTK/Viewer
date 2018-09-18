@@ -10,10 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 // Local includes
 #include <Fl_RViewUI.h>
@@ -170,8 +169,8 @@ void Fl_RViewUI::cb_startRegistration(Fl_Button* o, void* v)
     rview->GetTarget()->WorldToImage(x2, y2, z2);
 
     // Copy images
-    irtkGreyImage target = rview->GetTarget()->GetRegion(round(x1), round(y1), round(z1), round(x2)+1, round(y2)+1, round(z2)+1);
-    irtkGreyImage source = *rview->GetSource();
+    mirtk::GreyImage target = rview->GetTarget()->GetRegion(round(x1), round(y1), round(z1), round(x2)+1, round(y2)+1, round(z2)+1);
+    mirtk::GreyImage source = *rview->GetSource();
 
     // Run registration
     registration->SetInput(&target, &source);

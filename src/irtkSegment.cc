@@ -139,7 +139,8 @@ void irtkSegment::rgb2Hex(int r, int g, int b, char* h)
 char* irtkSegment::int2Hex(int n, unsigned char round)
 {
   unsigned char size = round;
-  char i, *hex, *hexLookup = "0123456789ABCDEF";
+  char i, *hex;
+  const char *hexLookup = "0123456789ABCDEF";
   int temp = n;
 
   hex = new char[size+2];

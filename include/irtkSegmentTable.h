@@ -15,6 +15,7 @@
 #define _IRTKSEGMENTTABLE_H
 
 #include <irtkSegment.h>
+#include <limits.h>
 
 class irtkSegmentTable
 {

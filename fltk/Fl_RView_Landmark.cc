@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -75,7 +75,7 @@ void Fl_RViewUI::cb_loadTargetLandmarks(Fl_Button *, void *)
     // Update browser
     for (i = 1; i <= rview->GetNumberOfTargetLandmarks(); i++) {
       char buffer[256], *label = NULL;
-      irtkPoint point;
+      mirtk::Point point;
 
       // Get landmark
       rview->GetTargetLandmark(point, i, label);
@@ -114,7 +114,7 @@ void Fl_RViewUI::cb_loadSourceLandmarks(Fl_Button *, void *)
     // Update browser
     for (i = 1; i <= rview->GetNumberOfSourceLandmarks(); i++) {
       char buffer[256], *label = NULL;
-      irtkPoint point;
+      mirtk::Point point;
 
       // Get landmark
       rview->GetSourceLandmark(point, i, label);
@@ -168,7 +168,7 @@ void Fl_RViewUI::cb_saveSourceLandmarks(Fl_Button *, void *)
 void Fl_RViewUI::cb_addLandmark(Fl_Button *, void* v)
 {
   char buffer[256], *label = NULL;
-  irtkPoint point;
+  mirtk::Point point;
 
   // Set landmark at cursor origin
   rview->GetOrigin(point._x, point._y, point._z);
@@ -178,14 +178,14 @@ void Fl_RViewUI::cb_addLandmark(Fl_Button *, void* v)
   sprintf(label, "%s", ""); // To avoid zero-length format string warning
   if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
     if (rview->GetTrackTAG()){
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetTarget()))->GetMaxPosition(point,1);
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetTarget()))->GravityCenter(point,2);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetTarget()))->GetMaxPosition(point,1);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetTarget()))->GravityCenter(point,2);
     }
     rview->AddTargetLandmark(point, label);
   } else {
     if (rview->GetTrackTAG()){
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetSource()))->GetMaxPosition(point,1);
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetSource()))->GravityCenter(point,2);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetSource()))->GetMaxPosition(point,1);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetSource()))->GravityCenter(point,2);
     }
     rview->AddSourceLandmark(point, label);
   }
@@ -228,7 +228,7 @@ void Fl_RViewUI::cb_deleteLandmark(Fl_Button *, void* v)
   // Update all remaining browser entries
   for (i = id; i <= ((Fl_Browser *)v)->size(); i++) {
     char buffer[256], *label = NULL;
-    irtkPoint point;
+    mirtk::Point point;
 
     // Get landmark
     if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
@@ -261,7 +261,7 @@ void Fl_RViewUI::cb_toggleLandmark(Fl_Input *, void* v)
 
   int id;
   char *label = NULL;
-  irtkPoint point;
+  mirtk::Point point;
 
   // Go to next landmark position
   id = ((Fl_Browser *)v)->value();   // get current landmark id
@@ -288,7 +288,7 @@ void Fl_RViewUI::cb_insertLandmark(Fl_Button *, void* v)
 {
   int id, i;
   char buffer[256], *label = NULL;
-  irtkPoint point;
+  mirtk::Point point;
 
   // Get landmark id
   id = ((Fl_Browser *)v)->value();
@@ -306,14 +306,14 @@ void Fl_RViewUI::cb_insertLandmark(Fl_Button *, void* v)
   sprintf(label, "%s", ""); // To avoid zero-length format string warning
   if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
     if (rview->GetTrackTAG()){
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetTarget()))->GetMaxPosition(point,1);
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetTarget()))->GravityCenter(point,2);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetTarget()))->GetMaxPosition(point,1);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetTarget()))->GravityCenter(point,2);
     }
     rview->InsertTargetLandmark(point, id, label);
   } else {
     if (rview->GetTrackTAG()){
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetSource()))->GetMaxPosition(point,1);
-	  ((irtkGenericImage<irtkGreyPixel>*)(rview->GetSource()))->GravityCenter(point,2);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetSource()))->GetMaxPosition(point,1);
+	  ((mirtk::GenericImage<mirtk::GreyPixel>*)(rview->GetSource()))->GravityCenter(point,2);
     }
     rview->InsertSourceLandmark(point, id, label);
   }
@@ -354,7 +354,7 @@ void Fl_RViewUI::cb_replaceLandmark(Fl_Button *, void* v)
 {
   int id;
   char buffer[256], *label = NULL;
-  irtkPoint point;
+  mirtk::Point point;
 
   // Get landmark id
   id = ((Fl_Browser *)v)->value();
@@ -395,7 +395,7 @@ void Fl_RViewUI::cb_editLandmark(Fl_Button *, void* v)
   int id;
   const char *buffer = NULL;
   char *label = NULL;
-  irtkPoint point;
+  mirtk::Point point;
 
   // Get landmark id
   id = ((Fl_Browser *)v)->value();
@@ -503,7 +503,7 @@ void Fl_RViewUI::cb_browseLandmark(Fl_Browser* o, void* v)
   // Go to last selected landmark position, if mouse button was pressed twice
   if (Fl::event_clicks() != 0) {
     char *label = NULL;
-    irtkPoint point;
+    mirtk::Point point;
 
     // Get landmark
     if ((Fl_Browser *)v == rviewUI->targetLandmarkBrowser) {
@@ -640,7 +640,7 @@ void Fl_RViewUI::ShowObjectControlWindow()
   for (i = 1; i <= rview->GetNumberOfTargetLandmarks(); i++) {
     // Get landmark
     char *label = NULL;
-    irtkPoint point;
+    mirtk::Point point;
     rview->GetTargetLandmark(point, i, label);
     if (label == NULL) {
       label = new char [256];
@@ -655,7 +655,7 @@ void Fl_RViewUI::ShowObjectControlWindow()
   for (i = 1; i <= rview->GetNumberOfSourceLandmarks(); i++) {
     // Get landmark
     char *label = NULL;
-    irtkPoint point;
+    mirtk::Point point;
     rview->GetSourceLandmark(point, i, label);
     if (label == NULL) {
       label = new char [256];

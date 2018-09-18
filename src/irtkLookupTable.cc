@@ -10,7 +10,7 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
+#include <mirtk/Image.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -75,7 +75,7 @@ void irtkLookupTable::Update()
   case ColorMode_Custom:
     break;
   default:
-    cerr << "irtkLookupTable::Update: Unknown color mode" << endl;
+    std::cerr << "irtkLookupTable::Update: Unknown color mode" << std::endl;
     exit(1);
   }
 }
@@ -366,12 +366,12 @@ void irtkLookupTable::Read(char *filename)
   int i, r, g, b, value1, value2;
 
   // Open file
-  ifstream from(filename);
+  std::ifstream from(filename);
 
   // Check file format
   from >> buffer;
   if (strcmp(buffer, "irtkLookupTable") != 0) {
-    cerr << "irtkLookupTable::Read: Can't read lookup table" << endl;
+    std::cerr << "irtkLookupTable::Read: Can't read lookup table" << std::endl;
     exit(1);
   }
 
@@ -395,7 +395,7 @@ void irtkLookupTable::Read(char *filename)
 
 void irtkLookupTable::Write(char *)
 {
-  cerr << "irtkLookupTable::Write: Not yet implemented" << endl;
+  std::cerr << "irtkLookupTable::Write: Not yet implemented" << std::endl;
   exit(1);
 }
 

@@ -10,9 +10,9 @@
 
 =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -266,19 +266,19 @@ void Fl_RViewUI::cb_SourceIsolines(Fl_Check_Button* o, void*)
 void Fl_RViewUI::cb_TargetInterpolation(Fl_Menu_*, void* v)
 {
   if (strcmp((char *)v, "nn") == 0) {
-    rview->SetTargetInterpolationMode(Interpolation_NN);
+    rview->SetTargetInterpolationMode(mirtk::Interpolation_NN);
   }
   if (strcmp((char *)v, "linear") == 0) {
-    rview->SetTargetInterpolationMode(Interpolation_Linear);
+    rview->SetTargetInterpolationMode(mirtk::Interpolation_Linear);
   }
   if (strcmp((char *)v, "c1spline") == 0) {
-    rview->SetTargetInterpolationMode(Interpolation_CSpline);
+    rview->SetTargetInterpolationMode(mirtk::Interpolation_CSpline);
   }
   if (strcmp((char *)v, "bspline") == 0) {
-    rview->SetTargetInterpolationMode(Interpolation_BSpline);
+    rview->SetTargetInterpolationMode(mirtk::Interpolation_BSpline);
   }
   if (strcmp((char *)v, "sinc") == 0) {
-    rview->SetTargetInterpolationMode(Interpolation_Sinc);
+    rview->SetTargetInterpolationMode(mirtk::Interpolation_Sinc);
   }
   rview->Update();
   viewer->redraw();
@@ -287,19 +287,19 @@ void Fl_RViewUI::cb_TargetInterpolation(Fl_Menu_*, void* v)
 void Fl_RViewUI::cb_SourceInterpolation(Fl_Menu_*, void* v)
 {
   if (strcmp((char *)v, "nn") == 0) {
-    rview->SetSourceInterpolationMode(Interpolation_NN);
+    rview->SetSourceInterpolationMode(mirtk::Interpolation_NN);
   }
   if (strcmp((char *)v, "linear") == 0) {
-    rview->SetSourceInterpolationMode(Interpolation_Linear);
+    rview->SetSourceInterpolationMode(mirtk::Interpolation_Linear);
   }
   if (strcmp((char *)v, "c1spline") == 0) {
-    rview->SetSourceInterpolationMode(Interpolation_CSpline);
+    rview->SetSourceInterpolationMode(mirtk::Interpolation_CSpline);
   }
   if (strcmp((char *)v, "bspline") == 0) {
-    rview->SetSourceInterpolationMode(Interpolation_BSpline);
+    rview->SetSourceInterpolationMode(mirtk::Interpolation_BSpline);
   }
   if (strcmp((char *)v, "sinc") == 0) {
-    rview->SetSourceInterpolationMode(Interpolation_Sinc);
+    rview->SetSourceInterpolationMode(mirtk::Interpolation_Sinc);
   }
   rview->Update();
   viewer->redraw();
@@ -592,38 +592,38 @@ void Fl_RViewUI::UpdateImageControlWindow()
 {
   // Update interpolation menus
   switch (rview->GetTargetInterpolationMode()) {
-  case Interpolation_NN:
+  case mirtk::Interpolation_NN:
     targetInterpolationMode->value(0);
     break;
-  case Interpolation_Linear:
+  case mirtk::Interpolation_Linear:
     targetInterpolationMode->value(1);
     break;
-  case Interpolation_CSpline:
+  case mirtk::Interpolation_CSpline:
     targetInterpolationMode->value(2);
     break;
-  case Interpolation_BSpline:
+  case mirtk::Interpolation_BSpline:
     targetInterpolationMode->value(3);
     break;
-  case Interpolation_Sinc:
+  case mirtk::Interpolation_Sinc:
     targetInterpolationMode->value(4);
     break;
   default:
     break;
   }
   switch (rview->GetSourceInterpolationMode()) {
-  case Interpolation_NN:
+  case mirtk::Interpolation_NN:
     sourceInterpolationMode->value(0);
     break;
-  case Interpolation_Linear:
+  case mirtk::Interpolation_Linear:
     sourceInterpolationMode->value(1);
     break;
-  case Interpolation_CSpline:
+  case mirtk::Interpolation_CSpline:
     sourceInterpolationMode->value(2);
     break;
-  case Interpolation_BSpline:
+  case mirtk::Interpolation_BSpline:
     sourceInterpolationMode->value(3);
     break;
-  case Interpolation_Sinc:
+  case mirtk::Interpolation_Sinc:
     sourceInterpolationMode->value(4);
     break;
   default:

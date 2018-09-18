@@ -14,8 +14,6 @@
 
 #define _IRTKHISTOGRAMWINDOW_H
 
-#include <irtkHistogram_1D.h>
-
 #include <irtkRView.h>
 
 #define HISTOGRAM_BINS 256
@@ -31,10 +29,10 @@ protected:
   irtkRView *_v;
 
   /// Global histogram for entire image
-  irtkHistogram _globalHistogram;
+  mirtk::Histogram1D<int> _globalHistogram;
 
   /// Global histogram for single segmentation
-  irtkHistogram _localHistogram[SHRT_MAX+1];
+  mirtk::Histogram1D<int> _localHistogram[SHRT_MAX+1];
 
 public:
 

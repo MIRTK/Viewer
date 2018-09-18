@@ -87,16 +87,16 @@ void irtkSegmentTable::Read(char *name)
   // Clear entries
   Clear();
 
-  ifstream from(name);
+  std::ifstream from(name);
   if (!from) {
-    cerr << "irtkSegmentTable::Read: Can't open file " << name << "\n";
+    std::cerr << "irtkSegmentTable::Read: Can't open file " << name << "\n";
     exit(1);
   }
 
   // Read keyword
   from >> buffer;
   if ((strcmp(buffer, "irtkSegmentTable:") != 0) && (strcmp(buffer, "itkSegmentTable:") != 0)) {
-    cerr << "irtkSegmentTable::Read: Not a valid segment table" << endl;
+    std::cerr << "irtkSegmentTable::Read: Not a valid segment table" << std::endl;
     exit(1);
   }
 
@@ -128,10 +128,10 @@ void irtkSegmentTable::Write(char *name)
   unsigned char r, g, b;
 
   // Open file
-  ofstream to(name);
+  std::ofstream to(name);
 
   if (!to) {
-    cerr << "irtkSegmentTable::Write: Can't open file " << name << "\n";
+    std::cerr << "irtkSegmentTable::Write: Can't open file " << name << "\n";
     exit(1);
   }
 
@@ -142,13 +142,13 @@ void irtkSegmentTable::Write(char *name)
   }
 
   // Write header
-  to << "irtkSegmentTable: " << n << endl;
+  to << "irtkSegmentTable: " << n << std::endl;
 
   // Write entries
   for (id = 0; id < this->Size(); id++) {
     if (IsValid(id) == true) {
       _entry[id].getColor(&r, &g, &b);
-      to << id << "\t" << int(r) << "\t" << int(g) << "\t" << int(b) << "\t" << _entry[id].getTrans()<< "\t" << _entry[id].getVisibility() << "\t" << _entry[id].getLabel() << endl;
+      to << id << "\t" << int(r) << "\t" << int(g) << "\t" << int(b) << "\t" << _entry[id].getTrans()<< "\t" << _entry[id].getVisibility() << "\t" << _entry[id].getLabel() << std::endl;
     }
   }
 }

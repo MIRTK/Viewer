@@ -10,9 +10,9 @@
 
  =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -43,7 +43,7 @@ static double _AfterZ[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridX[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridY[MaxNumberOfCP][MaxNumberOfCP];
 static double _AfterGridZ[MaxNumberOfCP][MaxNumberOfCP];
-static DOFStatus _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
+static mirtk::Transformation::DOFStatus _CPStatus[MaxNumberOfCP][MaxNumberOfCP];
 
 static int _NumberOfTagGridX;
 static int _NumberOfTagGridY;
@@ -156,16 +156,14 @@ void status_glColor(int status)
 {
 	switch (status)
 	{
-	case Active:
+	case mirtk::Status::Active:
 		COLOR_POINTS_ACTIVE;
 		break;
-	case Passive:
+	case mirtk::Status::Passive:
 		COLOR_POINTS_PASSIVE;
 		break;
-	case _Unknown:
-		COLOR_POINTS_UNKNOWN;
-		break;
 	default:
+		COLOR_POINTS_UNKNOWN;
 		break;
 	}
 }
@@ -192,13 +190,13 @@ irtkViewer::~irtkViewer()
 {
 }
 
-bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transformation, irtkPointSet landmark)
+bool irtkViewer::UpdateTagGrid(mirtk::GreyImage *image, mirtk::Transformation *transformation, mirtk::PointSet landmark)
 {
   if (landmark.Size() != 3) return false;
 
-  irtkFreeFormTransformation   *affd = NULL;
-  irtkMultiLevelTransformation *mffd = NULL;
-  irtkPoint p1, p2;
+  mirtk::FreeFormTransformation   *affd = NULL;
+  mirtk::MultiLevelTransformation *mffd = NULL;
+  mirtk::Point p1, p2;
   double dx1, dy1, dx2, dy2, dz, x, y, tt, ts;
   int i, k, k1, k2, m, n;
 
@@ -206,11 +204,11 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   for (i = 0; i < landmark.Size(); i++) image->WorldToImage(landmark(i));
 
   // Check transformation
-  mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
+  mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(transformation);
 
   if (mffd == NULL) {
     // Not a multi-level FFD, so let's try a single-level FFD
-    affd = dynamic_cast<irtkFreeFormTransformation *>(transformation);
+    affd = dynamic_cast<mirtk::FreeFormTransformation *>(transformation);
   } else {
     affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
   }
@@ -274,7 +272,7 @@ bool irtkViewer::UpdateTagGrid(irtkGreyImage *image, irtkTransformation *transfo
   return true;
 }
 
-bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mffd, irtkFreeFormTransformation *affd, double ts, double tt)
+bool irtkViewer::Update1(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
 {
 	double x1, y1, z1, x2, y2, z2;
 	int    i1, j1, k1, i2, j2, k2;
@@ -321,9 +319,9 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 	else if (k2 > affd->GetZ() - 1) k2 = affd->GetZ() - 1;
 
 	// Swap if necessary
-	if (i1 > i2) swap(i1, i2);
-	if (j1 > j2) swap(j1, j2);
-	if (k1 > k2) swap(k1, k2);
+	if (i1 > i2) std::swap(i1, i2);
+	if (j1 > j2) std::swap(j1, j2);
+	if (k1 > k2) std::swap(k1, k2);
 
 	switch (_viewerMode)
 	{
@@ -401,8 +399,9 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 				image->WorldToImage(_AfterX[m][n], _AfterY[m][n], _AfterZ[m][n]);
 
 				index = affd->LatticeToIndex(i, j, k);
-        _CPStatus[m][n] = affd->IsActive(index) ? Active : Passive;
-#ifndef IMPERIAL
+        _CPStatus[m][n] = affd->IsActive(index) ? mirtk::Status::Active : mirtk::Status::Passive;
+
+#ifdef HAVE__CPLABEL
 				_CPLabel[m][n] = affd->GetLabel(index);
 				if (_CPLabel[m][n] > _CPMaxLabel) _CPMaxLabel = _CPLabel[m][n];
 				if (_CPLabel[m][n] < _CPMinLabel) _CPMinLabel = _CPLabel[m][n];
@@ -415,7 +414,7 @@ bool irtkViewer::Update1(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 	return true;
 }
 
-bool irtkViewer::Update2(irtkGreyImage *image, irtkMultiLevelTransformation *mffd, irtkFreeFormTransformation *affd, double ts, double tt)
+bool irtkViewer::Update2(mirtk::GreyImage *image, mirtk::MultiLevelTransformation *mffd, mirtk::FreeFormTransformation *affd, double ts, double tt)
 {
 	double dx, dy;
 	int    i, j;
@@ -462,18 +461,22 @@ bool irtkViewer::Update2(irtkGreyImage *image, irtkMultiLevelTransformation *mff
 
 			image->WorldToImage(_AfterX[i][j], _AfterY[i][j], _AfterZ[i][j]);
 
-			_CPStatus[i][j] = _Unknown;
+			//
+			// FIXME was 
+			// _CPStatus[i][j] = _Unknown;
+			//
+			_CPStatus[i][j] = mirtk::Status::Passive;
 		}
 	}
 
 	return true;
 }
 
-bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation)
+bool irtkViewer::Update(mirtk::GreyImage *image, mirtk::Transformation *transformation)
 {
   // Cast input transformation to single-/multi-level FFD
-  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(transformation);
-  irtkFreeFormTransformation   *affd = dynamic_cast<irtkFreeFormTransformation *>  (transformation);
+  mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(transformation);
+  mirtk::FreeFormTransformation   *affd = dynamic_cast<mirtk::FreeFormTransformation *>  (transformation);
 
   // Give up if no FFD given as input
   if (mffd == NULL && affd == NULL) {
@@ -499,7 +502,7 @@ bool irtkViewer::Update(irtkGreyImage *image, irtkTransformation *transformation
   }
 
   // Compute (control) points before and after transformation
-  // (application of irtkTransformation::Transform or irtkTransformation::Inverse)
+  // (application of mirtk::Transformation::Transform or mirtk::Transformation::Inverse)
   bool ok = false;
   if (_rview->_DisplayDeformationGridResolution == 0) {
     ok = this->Update1(image, mffd, affd, ts, tt);
@@ -615,7 +618,7 @@ void irtkViewer::DrawCursor(irtkCursorMode mode)
 	}
 }
 
-void irtkViewer::DrawIsolines(irtkGreyImage *image, int value)
+void irtkViewer::DrawIsolines(mirtk::GreyImage *image, int value)
 {
 	int i, j;
 
@@ -645,7 +648,7 @@ void irtkViewer::DrawIsolines(irtkGreyImage *image, int value)
 	glLineWidth(1);
 }
 
-void irtkViewer::DrawSegmentationContour(irtkGreyImage *image)
+void irtkViewer::DrawSegmentationContour(mirtk::GreyImage *image)
 {
 	int i, j;
 	unsigned char r, g, b;
@@ -769,7 +772,7 @@ void irtkViewer::DrawArrows()
 				float add1dy = (dy * factor);
 				float add2dx = (dy * factor / (2 * fat_factor));
 				float add2dy = (-dx * factor / (2 * fat_factor));
-				irtkPoint point[3];
+				mirtk::Point point[3];
 				point[0]._x = _screenX1 + _AfterX[i][j];
 				point[0]._y = _screenY1 + _AfterY[i][j];
 				point[1]._x = point[0]._x - add1dx + add2dx;
@@ -806,7 +809,7 @@ void irtkViewer::DrawPoints()
 	glEnd();
 }
 
-void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyImage *image, int bTarget, int bAll)
+void irtkViewer::DrawLandmarks(mirtk::PointSet &landmarks, std::set<int> &ids, mirtk::GreyImage *image, int bTarget, int bAll)
 {
   glLineWidth(1.0);
   // Draw unselected landmarks first
@@ -818,7 +821,7 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
       if (bTarget) COLOR_TARGET_LANDMARKS;
       else         COLOR_SOURCE_LANDMARKS;
       // Get landmark point
-      irtkPoint p = landmarks(i);
+      mirtk::Point p = landmarks(i);
       // Transform point
       if (!bTarget && _rview->GetSourceTransformApply()) {
         const bool inv = !_rview->GetSourceTransformInvert();
@@ -838,13 +841,13 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
     }
   }
   // Draw selected landmarks on top
-  for (set<int>::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+  for (std::set<int>::const_iterator i = ids.begin(); i != ids.end(); ++i) {
     if (*i < 0 || *i >= landmarks.Size()) continue;
     // Adjust colour
     if (bTarget) COLOR_SELECTED_TARGET_LANDMARKS;
     else         COLOR_SELECTED_SOURCE_LANDMARKS;
     // Get landmark point
-    irtkPoint p = landmarks(*i);
+    mirtk::Point p = landmarks(*i);
     // Transform point
     if (!bTarget && _rview->GetSourceTransformApply()) {
       const bool inv = !_rview->GetSourceTransformInvert();
@@ -864,14 +867,14 @@ void irtkViewer::DrawLandmarks(irtkPointSet &landmarks, set<int> &ids, irtkGreyI
   }
 }
 
-void irtkViewer::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source, irtkGreyImage *image)
+void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, mirtk::GreyImage *image)
 {
   // Adjust colour
   glLineWidth(1.0);
   glColor3f(0, 1, 0);
 
   // Draw lines connecting corresponding landmarks
-  irtkPoint p1, p2;
+  mirtk::Point p1, p2;
   for (int i = 0; i < target.Size(); ++i) {
     if (i >= source.Size()) continue;
     p1 = target(i);
@@ -889,15 +892,15 @@ void irtkViewer::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source,
   }
 }
 
-void irtkViewer::DrawCorrespondences(irtkPointSet &target, irtkPointSet &source, set<int> &ids, irtkGreyImage *image)
+void irtkViewer::DrawCorrespondences(mirtk::PointSet &target, mirtk::PointSet &source, std::set<int> &ids, mirtk::GreyImage *image)
 {
   // Adjust colour
   glLineWidth(1.0);
   glColor3f(0, 1, 0);
 
   // Draw lines connecting corresponding landmarks
-  irtkPoint p1, p2;
-  for (set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
+  mirtk::Point p1, p2;
+  for (std::set<int>::const_iterator id = ids.begin(); id != ids.end(); ++id) {
     if (*id < 0 || *id >= target.Size() || *id >= source.Size()) continue;
     p1 = target(*id);
     p2 = source(*id);
@@ -924,7 +927,7 @@ void irtkViewer::DrawImage(irtkColor *drawable)
 			drawable);
 }
 
-void irtkViewer::DrawROI(irtkGreyImage *image, double x1, double y1, double z1,
+void irtkViewer::DrawROI(mirtk::GreyImage *image, double x1, double y1, double z1,
 		double x2, double y2, double z2)
 {
 	image->WorldToImage(x1, y1, z1);
@@ -957,10 +960,10 @@ void irtkViewer::DrawROI(irtkGreyImage *image, double x1, double y1, double z1,
 
 #ifdef HAS_VTK
 
-void irtkViewer::DrawObject(vtkPointSet **object, irtkGreyImage *image,
+void irtkViewer::DrawObject(vtkPointSet **object, mirtk::GreyImage *image,
 		int _DisplayObjectWarp,
 		int _DisplayObjectGrid,
-		irtkTransformation *transformation)
+		mirtk::Transformation *transformation)
 {
 	int i;
 
@@ -988,11 +991,11 @@ void irtkViewer::DrawObject(vtkPointSet **object, irtkGreyImage *image,
 	}
 }
 
-void irtkViewer::DrawObject(vtkPointSet *points, irtkGreyImage *image, int warp, int grid, irtkTransformation *transformation)
+void irtkViewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int warp, int grid, mirtk::Transformation *transformation)
 {
 	int i, j;
 	double p1[3], p2[3], p3[3], v1[3], v2[3], point[3], normal[3];
-	irtkPoint p;
+	mirtk::Point p;
 	static vtkPlane *plane = vtkPlane::New();
 	static vtkCutter *cutter = vtkCutter::New();
 
@@ -1037,7 +1040,7 @@ void irtkViewer::DrawObject(vtkPointSet *points, irtkGreyImage *image, int warp,
 		for (i = 0; i < cutter->GetOutput()->GetNumberOfCells(); i++) {
 			// Get pointIds from cell
 			vtkIdList *ids = cutter->GetOutput()->GetCell(i)->GetPointIds();
-			irtkPointSet pset;
+			mirtk::PointSet pset;
 			for (j = 0; j < ids->GetNumberOfIds(); j++) {
 
 				// Get point from cell
@@ -1052,13 +1055,13 @@ void irtkViewer::DrawObject(vtkPointSet *points, irtkGreyImage *image, int warp,
 				image->WorldToImage(point[0], point[1], point[2]);
 				switch (_viewerMode) {
 					case Viewer_XY:
-					p = irtkPoint(point[0], point[1], 0);
+					p = mirtk::Point(point[0], point[1], 0);
 					break;
 					case Viewer_YZ:
-					p = irtkPoint(point[0], point[1], 0);
+					p = mirtk::Point(point[0], point[1], 0);
 					break;
 					case Viewer_XZ:
-					p = irtkPoint(point[0], point[1], 0);
+					p = mirtk::Point(point[0], point[1], 0);
 					break;
 					default:
 					break;

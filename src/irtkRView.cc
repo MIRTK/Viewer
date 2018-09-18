@@ -9,10 +9,11 @@
  
  =========================================================================*/
 
-#include <irtkImage.h>
-#include <irtkTransformation.h>
-#include <irtkRegistration.h>
-#include <irtkPointRegistration.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
+//#include <mirtk/PointRegistration.h>
+#include <mirtk/Transformations.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -66,10 +67,10 @@ irtkRView::irtkRView(int x, int y)
   _viewMix = 0.5;
 
   // Default: Interpolation is nearest neighbor
-  _targetInterpolator       = irtkInterpolateImageFunction::New(Interpolation_NN);
-  _sourceInterpolator       = irtkInterpolateImageFunction::New(Interpolation_NN);
-  _segmentationInterpolator = irtkInterpolateImageFunction::New(Interpolation_NN);
-  _selectionInterpolator    = irtkInterpolateImageFunction::New(Interpolation_NN);
+  _targetInterpolator       = mirtk::InterpolateImageFunction::New(mirtk::Interpolation_NN);
+  _sourceInterpolator       = mirtk::InterpolateImageFunction::New(mirtk::Interpolation_NN);
+  _segmentationInterpolator = mirtk::InterpolateImageFunction::New(mirtk::Interpolation_NN);
+  _selectionInterpolator    = mirtk::InterpolateImageFunction::New(mirtk::Interpolation_NN);
 
   // Default time frame
   _targetFrame = 0;
@@ -165,11 +166,11 @@ irtkRView::irtkRView(int x, int y)
 #endif
 
   // Allocate memory for source and target image
-  _targetImage = new irtkGreyImage;
-  _sourceImage = new irtkGreyImage;
+  _targetImage = new mirtk::GreyImage;
+  _sourceImage = new mirtk::GreyImage;
 
   // Allocate memory for segmentation
-  _segmentationImage = new irtkGreyImage;
+  _segmentationImage = new mirtk::GreyImage;
 
   // Allocate memory for segment Table
   _segmentTable = new irtkSegmentTable();
@@ -177,10 +178,10 @@ irtkRView::irtkRView(int x, int y)
   // Allocate memory for source and target transformations. Note that in this
   // implementation only the source transformation ever changes. The target
   // transformation should always be an identity transformation.
-  _targetTransform = new irtkAffineTransformation;
-  _sourceTransform = new irtkAffineTransformation;
-  _segmentationTransform = new irtkAffineTransformation;
-  _selectionTransform = new irtkAffineTransformation;
+  _targetTransform = new mirtk::AffineTransformation;
+  _sourceTransform = new mirtk::AffineTransformation;
+  _segmentationTransform = new mirtk::AffineTransformation;
+  _selectionTransform = new mirtk::AffineTransformation;
 
   // Flag whether transform shoule be applied
   _sourceTransformApply = true;
@@ -233,17 +234,17 @@ void irtkRView::Update()
   int i, j, k, l;
   double blendA, blendB;
   irtkColor *ptr3;
-  irtkGreyPixel *ptr1, *ptr2, *ptr4, *ptr5;
+  mirtk::GreyPixel *ptr1, *ptr2, *ptr4, *ptr5;
   irtkLookupTable *lut1, *lut2;
 
   // Check whether target and/or source and/or segmentation need updating
   for (l = 0; l < _NoOfViewers; l++) {
     if ((_targetUpdate == true) && (_targetImage->IsEmpty() != true)) {
-      _targetTransformFilter[l]->PutSourcePaddingValue(-1);
+      _targetTransformFilter[l]->SourcePaddingValue(-1);
       _targetTransformFilter[l]->Run();
     }
     if ((_sourceUpdate == true) && (_sourceImage->IsEmpty() != true)) {
-      _sourceTransformFilter[l]->PutSourcePaddingValue(-1);
+      _sourceTransformFilter[l]->SourcePaddingValue(-1);
       _sourceTransformFilter[l]->Run();
     }
     if ((_segmentationUpdate == true) && (_segmentationImage->IsEmpty() != true)) {
@@ -270,8 +271,8 @@ void irtkRView::Update()
     ptr4 = _segmentationImageOutput[k]->GetPointerToVoxels();
 
     if (_isSourceViewer[k]) {
-      swap(ptr1, ptr2);
-      swap(lut1, lut2);
+      std::swap(ptr1, ptr2);
+      std::swap(lut1, lut2);
     }
 
     switch (_viewMode) {
@@ -776,16 +777,16 @@ void irtkRView::AddContour(int i, int j, ContourMode mode)
   // Add point
   switch (mode) {
     case FirstPoint:
-      _voxelContour.AddPointSet(irtkPoint(x, y, z), GetPaintBrushWidth());
+      _voxelContour.AddPointSet(mirtk::Point(x, y, z), GetPaintBrushWidth());
       break;
     case NewPoint:
-      _voxelContour.AddPoint(irtkPoint(x, y, z), GetPaintBrushWidth());
+      _voxelContour.AddPoint(mirtk::Point(x, y, z), GetPaintBrushWidth());
       break;
     case LastPoint:
       if (_SegmentationMode == 0) {
-        _voxelContour.Close(irtkPoint(x, y, z), GetPaintBrushWidth());
+        _voxelContour.Close(mirtk::Point(x, y, z), GetPaintBrushWidth());
       } else {
-        _voxelContour.AddPoint(irtkPoint(x, y, z), GetPaintBrushWidth());
+        _voxelContour.AddPoint(mirtk::Point(x, y, z), GetPaintBrushWidth());
       }
       break;
   }
@@ -828,7 +829,7 @@ void irtkRView::FillArea(int i, int j)
   if (_voxelContour.Size() == 0) {
     _voxelContour.Initialise(this, _targetImageOutput[_contourViewer]);
   }
-  _voxelContour.FillArea(irtkPoint(x, y, z));
+  _voxelContour.FillArea(mirtk::Point(x, y, z));
 
   _selectionUpdate = true;
 }
@@ -868,7 +869,7 @@ void irtkRView::RegionGrowContour(int i, int j)
   if (_voxelContour.Size() == 0) {
     _voxelContour.Initialise(this, _targetImageOutput[_contourViewer]);
   }
-  _voxelContour.RegionGrowing(irtkPoint(x, y, z), _RegionGrowingThresholdMin,
+  _voxelContour.RegionGrowing(mirtk::Point(x, y, z), _RegionGrowingThresholdMin,
                               _RegionGrowingThresholdMax, _regionGrowingMode);
   _selectionUpdate = true;
 }
@@ -888,14 +889,14 @@ void irtkRView::ClearContour()
 void irtkRView::FillContour(int fill, int)
 {
   int i, j, k;
-  irtkPoint p;
+  mirtk::Point p;
 
   if (_segmentationImage->IsEmpty() == true) {
     // Create image
     _segmentationImage->Initialize(_targetImage->GetImageAttributes());
 
     // Fill image with zeros
-    irtkGreyPixel *ptr = _segmentationImage->GetPointerToVoxels();
+    mirtk::GreyPixel *ptr = _segmentationImage->GetPointerToVoxels();
     for (i = 0; i < _segmentationImage->GetNumberOfVoxels(); i++) {
       *ptr = 0;
       ptr++;
@@ -923,10 +924,32 @@ void irtkRView::FillContour(int fill, int)
   _selectionUpdate = true;
 }
 
+// part of IRTK, but dropped for MIRTK
+static int read_line(istream &in, char *buffer1, char *&buffer2)
+{
+    char c;
+
+    do {
+        if (in.eof() == true) return 0;
+        in.getline(buffer1, 255);
+        c = buffer1[0];
+    } while ((strlen(buffer1) == 0) || (c == '#') || (c == 13));
+
+    if ((buffer2 = strchr(buffer1, '=')) == NULL) {
+        cerr << "No valid line format\n";
+        exit(1);
+    }
+    do {
+        buffer2++;
+    } while ((*buffer2 == ' ') || (*buffer2 == '\t'));
+
+    return strlen(buffer1);
+}
+
 void irtkRView::Read(char *name)
 {
   int ok;
-  irtkInterpolationMode interpolation;
+  mirtk::InterpolationMode interpolation;
   char buffer1[255], *buffer2 = NULL;
 
   // Open file
@@ -1031,26 +1054,26 @@ void irtkRView::Read(char *name)
       ok = true;
     }
 
-    interpolation = Interpolation_NN;
+    interpolation = mirtk::Interpolation_NN;
 
     // Delete old interpolator
     delete _targetInterpolator;
     // Interpolation mode for target image
     if (strstr(buffer1, "targetInterpolationMode") != NULL) {
-      if (strcmp(buffer2, "Interpolation_NN") == 0) {
-        interpolation = Interpolation_NN;
+      if (strcmp(buffer2, "mirtk::Interpolation_NN") == 0) {
+        interpolation = mirtk::Interpolation_NN;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_Linear") == 0) {
-        interpolation = Interpolation_Linear;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_Linear") == 0) {
+        interpolation = mirtk::Interpolation_Linear;
         ok = true;
       } else if (strcmp(buffer2, "Interpolation_C1Spline") == 0) {
-        interpolation = Interpolation_CSpline;
+        interpolation = mirtk::Interpolation_CSpline;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_BSpline") == 0) {
-        interpolation = Interpolation_BSpline;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_BSpline") == 0) {
+        interpolation = mirtk::Interpolation_BSpline;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_Sinc") == 0) {
-        interpolation = Interpolation_Sinc;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_Sinc") == 0) {
+        interpolation = mirtk::Interpolation_Sinc;
         ok = true;
       } else {
         cerr << "irtkRView::Read: Unknown interpolation" << endl;
@@ -1058,26 +1081,26 @@ void irtkRView::Read(char *name)
       }
     }
     // Create new interpolator
-    _targetInterpolator = irtkInterpolateImageFunction::New(interpolation, _targetImage);
+    _targetInterpolator = mirtk::InterpolateImageFunction::New(interpolation, _targetImage);
 
     // Delete old interpolator
     delete _sourceInterpolator;
     // Interpolation mode for source image
     if (strstr(buffer1, "sourceInterpolationMode") != NULL) {
-      if (strcmp(buffer2, "Interpolation_NN") == 0) {
-        interpolation = Interpolation_NN;
+      if (strcmp(buffer2, "mirtk::Interpolation_NN") == 0) {
+        interpolation = mirtk::Interpolation_NN;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_Linear") == 0) {
-        interpolation = Interpolation_Linear;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_Linear") == 0) {
+        interpolation = mirtk::Interpolation_Linear;
         ok = true;
       } else if (strcmp(buffer2, "Interpolation_C1Spline") == 0) {
-        interpolation = Interpolation_CSpline;
+        interpolation = mirtk::Interpolation_CSpline;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_BSpline") == 0) {
-        interpolation = Interpolation_BSpline;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_BSpline") == 0) {
+        interpolation = mirtk::Interpolation_BSpline;
         ok = true;
-      } else if (strcmp(buffer2, "Interpolation_Sinc") == 0) {
-        interpolation = Interpolation_Sinc;
+      } else if (strcmp(buffer2, "mirtk::Interpolation_Sinc") == 0) {
+        interpolation = mirtk::Interpolation_Sinc;
         ok = true;
       } else {
         cerr << "irtkRView::Read: Unknown interpolation" << endl;
@@ -1085,7 +1108,7 @@ void irtkRView::Read(char *name)
       }
     }
     // Create new interpolator
-    _sourceInterpolator = irtkInterpolateImageFunction::New(interpolation, _sourceImage);
+    _sourceInterpolator = mirtk::InterpolateImageFunction::New(interpolation, _sourceImage);
 
     // Flag for rview mode
     if (strstr(buffer1, "viewMode") != NULL) {
@@ -1425,40 +1448,40 @@ void irtkRView::Write(char *name)
 
   // Interpolation mode for target image
   switch (this->GetTargetInterpolationMode()) {
-    case Interpolation_NN:
-      to << "targetInterpolationMode           = Interpolation_NN\n";
+    case mirtk::Interpolation_NN:
+      to << "targetInterpolationMode           = mirtk::Interpolation_NN\n";
       break;
-    case Interpolation_Linear:
-      to << "targetInterpolationMode           = Interpolation_Linear\n";
+    case mirtk::Interpolation_Linear:
+      to << "targetInterpolationMode           = mirtk::Interpolation_Linear\n";
       break;
-    case Interpolation_CSpline:
+    case mirtk::Interpolation_CSpline:
       to << "targetInterpolationMode           = Interpolation_C1Spline\n";
       break;
-    case Interpolation_BSpline:
-      to << "targetInterpolationMode           = Interpolation_BSpline\n";
+    case mirtk::Interpolation_BSpline:
+      to << "targetInterpolationMode           = mirtk::Interpolation_BSpline\n";
       break;
-    case Interpolation_Sinc:
-      to << "targetInterpolationMode           = Interpolation_Sinc\n";
+    case mirtk::Interpolation_Sinc:
+      to << "targetInterpolationMode           = mirtk::Interpolation_Sinc\n";
       break;
     default:
       break;
   }
   // Interpolation mode for source image
   switch (this->GetSourceInterpolationMode()) {
-    case Interpolation_NN:
-      to << "sourceInterpolationMode           = Interpolation_NN\n";
+    case mirtk::Interpolation_NN:
+      to << "sourceInterpolationMode           = mirtk::Interpolation_NN\n";
       break;
-    case Interpolation_Linear:
-      to << "sourceInterpolationMode           = Interpolation_Linear\n";
+    case mirtk::Interpolation_Linear:
+      to << "sourceInterpolationMode           = mirtk::Interpolation_Linear\n";
       break;
-    case Interpolation_CSpline:
+    case mirtk::Interpolation_CSpline:
       to << "sourceInterpolationMode           = Interpolation_C1Spline\n";
       break;
-    case Interpolation_BSpline:
-      to << "sourceInterpolationMode           = Interpolation_BSpline\n";
+    case mirtk::Interpolation_BSpline:
+      to << "sourceInterpolationMode           = mirtk::Interpolation_BSpline\n";
       break;
-    case Interpolation_Sinc:
-      to << "sourceInterpolationMode           = Interpolation_Sinc\n";
+    case mirtk::Interpolation_Sinc:
+      to << "sourceInterpolationMode           = mirtk::Interpolation_Sinc\n";
       break;
     default:
       break;
@@ -1616,7 +1639,7 @@ void irtkRView::ReadTarget(char *name)
 {
   // Read target image
   if (_targetImage != NULL) delete _targetImage;
-  _targetImage = irtkImage::New(name);
+  _targetImage = mirtk::Image::New(name);
   if (!_targetImage->GetTSize()) _targetImage->PutTSize(1.0);
 
   // Find min and max values and initialize lookup table
@@ -1654,26 +1677,26 @@ void irtkRView::ReadTarget(char *name)
 
 void irtkRView::ReadTarget(int argc, char **argv)
 {
-  irtkImage **nimages;
+  mirtk::Image **nimages;
   int i, n, x, y, z;
 
   // Determine how many volumes we have
   n = argc;
 
   // Allocate memory
-  nimages = new irtkImage *[n];
+  nimages = new mirtk::Image *[n];
 
   // Read images
   cout << "Reading " << argv[0] << endl;
-  nimages[0] = irtkImage::New(argv[0]);
+  nimages[0] = mirtk::Image::New(argv[0]);
 
-  irtkImageAttributes refattr = nimages[0]->GetImageAttributes();
+  mirtk::ImageAttributes refattr = nimages[0]->GetImageAttributes();
   refattr._torigin = 0;
   refattr._dt      = 1;
   for (i = 1; i < n; i++) {
     cout << "Reading " << argv[i] << endl;
-    nimages[i] = irtkImage::New(argv[i]);
-    irtkImageAttributes attr = nimages[i]->GetImageAttributes();
+    nimages[i] = mirtk::Image::New(argv[i]);
+    mirtk::ImageAttributes attr = nimages[i]->GetImageAttributes();
     attr._torigin = 0;
     attr._dt      = 1;
     if (attr != refattr) {
@@ -1689,25 +1712,25 @@ void irtkRView::ReadTarget(int argc, char **argv)
     delete _targetImage;
 
   // Initialize image attributes
-  irtkImageAttributes attr = nimages[0]->GetImageAttributes();
+  mirtk::ImageAttributes attr = nimages[0]->GetImageAttributes();
   attr._t = n;
   attr._dt = 1;
 
   // Allocate new image
-  if (dynamic_cast<irtkGenericImage<char> *> (nimages[0]) != NULL) {
-    _targetImage = new irtkGenericImage<char> (attr);
-  } else if (dynamic_cast<irtkGenericImage<unsigned char> *> (nimages[0])
+  if (dynamic_cast<mirtk::GenericImage<char> *> (nimages[0]) != NULL) {
+    _targetImage = new mirtk::GenericImage<char> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<unsigned char> *> (nimages[0])
              != NULL) {
-    _targetImage = new irtkGenericImage<unsigned char> (attr);
-  } else if (dynamic_cast<irtkGenericImage<short> *> (nimages[0]) != NULL) {
-    _targetImage = new irtkGenericImage<short> (attr);
-  } else if (dynamic_cast<irtkGenericImage<unsigned short> *> (nimages[0])
+    _targetImage = new mirtk::GenericImage<unsigned char> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<short> *> (nimages[0]) != NULL) {
+    _targetImage = new mirtk::GenericImage<short> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<unsigned short> *> (nimages[0])
              != NULL) {
-    _targetImage = new irtkGenericImage<unsigned short> (attr);
-  } else if (dynamic_cast<irtkGenericImage<float> *> (nimages[0]) != NULL) {
-    _targetImage = new irtkGenericImage<float> (attr);
-  } else if (dynamic_cast<irtkGenericImage<double> *> (nimages[0]) != NULL) {
-    _targetImage = new irtkGenericImage<double> (attr);
+    _targetImage = new mirtk::GenericImage<unsigned short> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<float> *> (nimages[0]) != NULL) {
+    _targetImage = new mirtk::GenericImage<float> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<double> *> (nimages[0]) != NULL) {
+    _targetImage = new mirtk::GenericImage<double> (attr);
   } else {
     cerr << "irtkRView::ReadTarget: Cannot convert image to desired type"
     << endl;
@@ -1763,7 +1786,7 @@ void irtkRView::ReadSource(char *name)
 {
   // Read source image
   if (_sourceImage != NULL) delete _sourceImage;
-  _sourceImage = irtkImage::New(name);
+  _sourceImage = mirtk::Image::New(name);
   if (!_sourceImage->GetTSize()) _sourceImage->PutTSize(1.0);
 
   // Find min and max values and initialize lookup table
@@ -1789,25 +1812,25 @@ void irtkRView::ReadSource(char *name)
 
 void irtkRView::ReadSource(int argc, char **argv)
 {
-  irtkImage **nimages;
+  mirtk::Image **nimages;
   int i, n, x, y, z;
 
   // Determine how many volumes we have
   n = argc;
 
   // Allocate memory
-  nimages = new irtkImage *[n];
+  nimages = new mirtk::Image *[n];
 
   cout << "Reading " << argv[0] << endl;
-  nimages[0] = irtkImage::New(argv[0]);
-  irtkImageAttributes refattr = nimages[0]->GetImageAttributes();
+  nimages[0] = mirtk::Image::New(argv[0]);
+  mirtk::ImageAttributes refattr = nimages[0]->GetImageAttributes();
   refattr._torigin = 0;
   refattr._dt      = 1;
 
   for (i = 1; i < n; i++) {
     cout << "Reading " << argv[i] << endl;
-    nimages[i] = irtkImage::New(argv[i]);
-    irtkImageAttributes attr = nimages[i]->GetImageAttributes();
+    nimages[i] = mirtk::Image::New(argv[i]);
+    mirtk::ImageAttributes attr = nimages[i]->GetImageAttributes();
     attr._torigin = 0;
     attr._dt      = 1;
     if (attr != refattr) {
@@ -1821,25 +1844,25 @@ void irtkRView::ReadSource(int argc, char **argv)
     delete _sourceImage;
 
   // Initialize image attributes
-  irtkImageAttributes attr = nimages[0]->GetImageAttributes();
+  mirtk::ImageAttributes attr = nimages[0]->GetImageAttributes();
   attr._t = n;
   attr._dt = 1;
 
   // Allocate new image
-  if (dynamic_cast<irtkGenericImage<char> *> (nimages[0]) != NULL) {
-    _sourceImage = new irtkGenericImage<char> (attr);
-  } else if (dynamic_cast<irtkGenericImage<unsigned char> *> (nimages[0])
+  if (dynamic_cast<mirtk::GenericImage<char> *> (nimages[0]) != NULL) {
+    _sourceImage = new mirtk::GenericImage<char> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<unsigned char> *> (nimages[0])
              != NULL) {
-    _sourceImage = new irtkGenericImage<unsigned char> (attr);
-  } else if (dynamic_cast<irtkGenericImage<short> *> (nimages[0]) != NULL) {
-    _sourceImage = new irtkGenericImage<short> (attr);
-  } else if (dynamic_cast<irtkGenericImage<unsigned short> *> (nimages[0])
+    _sourceImage = new mirtk::GenericImage<unsigned char> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<short> *> (nimages[0]) != NULL) {
+    _sourceImage = new mirtk::GenericImage<short> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<unsigned short> *> (nimages[0])
              != NULL) {
-    _sourceImage = new irtkGenericImage<unsigned short> (attr);
-  } else if (dynamic_cast<irtkGenericImage<float> *> (nimages[0]) != NULL) {
-    _sourceImage = new irtkGenericImage<float> (attr);
-  } else if (dynamic_cast<irtkGenericImage<double> *> (nimages[0]) != NULL) {
-    _sourceImage = new irtkGenericImage<double> (attr);
+    _sourceImage = new mirtk::GenericImage<unsigned short> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<float> *> (nimages[0]) != NULL) {
+    _sourceImage = new mirtk::GenericImage<float> (attr);
+  } else if (dynamic_cast<mirtk::GenericImage<double> *> (nimages[0]) != NULL) {
+    _sourceImage = new mirtk::GenericImage<double> (attr);
   } else {
     cerr << "irtkRView::ReadSource: Cannot convert image to desired type"
     << endl;
@@ -1908,12 +1931,13 @@ void irtkRView::WriteSource(char *name)
   if (_sourceImage != NULL) {
     if ((_sourceTransformApply == true) && (_sourceTransform != NULL)) {
       // Allocate transformed source image
-      irtkGreyImage transformedSource(_targetImage->GetImageAttributes());
+      mirtk::GreyImage transformedSource(_targetImage->GetImageAttributes());
       // Transform source image
-      irtkImageTransformation transformFilter;
-      transformFilter.SetInput(_sourceImage, _sourceTransform);
-      transformFilter.SetOutput(&transformedSource);
-      transformFilter.PutInterpolator(_sourceInterpolator);
+      mirtk::ImageTransformation transformFilter;
+      transformFilter.Input(_sourceImage);
+      transformFilter.Transformation(_sourceTransform);
+      transformFilter.Output(&transformedSource);
+      transformFilter.Interpolator(_sourceInterpolator);
       transformFilter.Run();
       // Write transformed source image
       transformedSource.Write(name);
@@ -1936,11 +1960,11 @@ void irtkRView::ReadTransformation(char *name)
   if (_sourceTransform != NULL) delete _sourceTransform;
 
   // Allocate and read the new transformation
-  _sourceTransform = irtkTransformation::New(name);
+  _sourceTransform = mirtk::Transformation::New(name);
 
   // If transformation is rigid convert it to affine
-  if (strcmp(_sourceTransform->NameOfClass(), "irtkRigidTransformation") == 0) {
-    irtkAffineTransformation *tmpTransform = new irtkAffineTransformation;
+  if (strcmp(_sourceTransform->NameOfClass(), "mirtk::RigidTransformation") == 0) {
+    mirtk::AffineTransformation *tmpTransform = new mirtk::AffineTransformation;
     for (i = 0; i < _sourceTransform->NumberOfDOFs(); i++) {
       tmpTransform->Put(i, _sourceTransform->Get(i));
     }
@@ -1955,24 +1979,20 @@ void irtkRView::ReadTransformation(char *name)
     delete _sourceTransformFilter[i];
 
     // Allocate the new transformation filter
-    _sourceTransformFilter[i] = irtkImageTransformation::New(_sourceTransform);
+    _sourceTransformFilter[i] = new mirtk::ImageTransformation;
 
     // Set inputs and outputs for the transformation filter
-    _sourceTransformFilter[i]->SetInput (_sourceImage);
-    _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
-    _sourceTransformFilter[i]->SetCache (&_sourceTransformCache);
+    _sourceTransformFilter[i]->Input (_sourceImage);
+    _sourceTransformFilter[i]->Output(_sourceImageOutput[i]);
+    _sourceTransformFilter[i]->Cache (&_sourceTransformCache);
     if (_sourceTransformApply == true) {
-      _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      _sourceTransformFilter[i]->Transformation(_sourceTransform);
     } else {
-      _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      _sourceTransformFilter[i]->Transformation(_targetTransform);
     }
-    _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
-    _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
-    if (_sourceTransformInvert == true) {
-      _sourceTransformFilter[i]->InvertOn();
-    } else {
-      _sourceTransformFilter[i]->InvertOff();
-    }
+    _sourceTransformFilter[i]->Interpolator(_sourceInterpolator);
+    _sourceTransformFilter[i]->SourcePaddingValue(_sourceMin - 1);
+    _sourceTransformFilter[i]->Invert(_sourceTransformInvert);
   }
   this->Initialize();
 }
@@ -2043,7 +2063,7 @@ void irtkRView::RemoveObject()
 
 void irtkRView::Reset()
 {
-  int iaxis, jaxis, kaxis;
+  mirtk::BaseImage::OrientationCode iaxis, jaxis, kaxis;
   double xaxis[3], yaxis[3], zaxis[3];
 
   // Get orientation of target image
@@ -2065,32 +2085,32 @@ void irtkRView::Reset()
   } else {
     if (_DisplayMode == Neurological) {
       switch (iaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = -xaxis[0];
           _xaxis[1] = -xaxis[1];
           _xaxis[2] = -xaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = xaxis[0];
           _xaxis[1] = xaxis[1];
           _xaxis[2] = xaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = xaxis[0];
           _yaxis[1] = xaxis[1];
           _yaxis[2] = xaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -xaxis[0];
           _yaxis[1] = -xaxis[1];
           _yaxis[2] = -xaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = xaxis[0];
           _zaxis[1] = xaxis[1];
           _zaxis[2] = xaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -xaxis[0];
           _zaxis[1] = -xaxis[1];
           _zaxis[2] = -xaxis[2];
@@ -2100,32 +2120,32 @@ void irtkRView::Reset()
           break;
       }
       switch (jaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = -yaxis[0];
           _xaxis[1] = -yaxis[1];
           _xaxis[2] = -yaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = yaxis[0];
           _xaxis[1] = yaxis[1];
           _xaxis[2] = yaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = yaxis[0];
           _yaxis[1] = yaxis[1];
           _yaxis[2] = yaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -yaxis[0];
           _yaxis[1] = -yaxis[1];
           _yaxis[2] = -yaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = yaxis[0];
           _zaxis[1] = yaxis[1];
           _zaxis[2] = yaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -yaxis[0];
           _zaxis[1] = -yaxis[1];
           _zaxis[2] = -yaxis[2];
@@ -2135,32 +2155,32 @@ void irtkRView::Reset()
           break;
       }
       switch (kaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = -zaxis[0];
           _xaxis[1] = -zaxis[1];
           _xaxis[2] = -zaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = zaxis[0];
           _xaxis[1] = zaxis[1];
           _xaxis[2] = zaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = zaxis[0];
           _yaxis[1] = zaxis[1];
           _yaxis[2] = zaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -zaxis[0];
           _yaxis[1] = -zaxis[1];
           _yaxis[2] = -zaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = zaxis[0];
           _zaxis[1] = zaxis[1];
           _zaxis[2] = zaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -zaxis[0];
           _zaxis[1] = -zaxis[1];
           _zaxis[2] = -zaxis[2];
@@ -2171,32 +2191,32 @@ void irtkRView::Reset()
       }
     } else {
       switch (iaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = xaxis[0];
           _xaxis[1] = xaxis[1];
           _xaxis[2] = xaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = -xaxis[0];
           _xaxis[1] = -xaxis[1];
           _xaxis[2] = -xaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = xaxis[0];
           _yaxis[1] = xaxis[1];
           _yaxis[2] = xaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -xaxis[0];
           _yaxis[1] = -xaxis[1];
           _yaxis[2] = -xaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = xaxis[0];
           _zaxis[1] = xaxis[1];
           _zaxis[2] = xaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -xaxis[0];
           _zaxis[1] = -xaxis[1];
           _zaxis[2] = -xaxis[2];
@@ -2206,73 +2226,73 @@ void irtkRView::Reset()
           break;
       }
       switch (jaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = yaxis[0];
           _xaxis[1] = yaxis[1];
           _xaxis[2] = yaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = -yaxis[0];
           _xaxis[1] = -yaxis[1];
           _xaxis[2] = -yaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = yaxis[0];
           _yaxis[1] = yaxis[1];
           _yaxis[2] = yaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -yaxis[0];
           _yaxis[1] = -yaxis[1];
           _yaxis[2] = -yaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = yaxis[0];
           _zaxis[1] = yaxis[1];
           _zaxis[2] = yaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -yaxis[0];
           _zaxis[1] = -yaxis[1];
           _zaxis[2] = -yaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out y-orientation" << endl;
+	  std::cerr << "irtkRView::ResetTarget: Can't work out y-orientation" << std::endl;
           break;
       }
       switch (kaxis) {
-        case IRTK_L2R:
+        case mirtk::BaseImage::OrientationCode::L2R:
           _xaxis[0] = zaxis[0];
           _xaxis[1] = zaxis[1];
           _xaxis[2] = zaxis[2];
           break;
-        case IRTK_R2L:
+        case mirtk::BaseImage::OrientationCode::R2L:
           _xaxis[0] = -zaxis[0];
           _xaxis[1] = -zaxis[1];
           _xaxis[2] = -zaxis[2];
           break;
-        case IRTK_P2A:
+        case mirtk::BaseImage::OrientationCode::P2A:
           _yaxis[0] = zaxis[0];
           _yaxis[1] = zaxis[1];
           _yaxis[2] = zaxis[2];
           break;
-        case IRTK_A2P:
+        case mirtk::BaseImage::OrientationCode::A2P:
           _yaxis[0] = -zaxis[0];
           _yaxis[1] = -zaxis[1];
           _yaxis[2] = -zaxis[2];
           break;
-        case IRTK_I2S:
+        case mirtk::BaseImage::OrientationCode::I2S:
           _zaxis[0] = zaxis[0];
           _zaxis[1] = zaxis[1];
           _zaxis[2] = zaxis[2];
           break;
-        case IRTK_S2I:
+        case mirtk::BaseImage::OrientationCode::S2I:
           _zaxis[0] = -zaxis[0];
           _zaxis[1] = -zaxis[1];
           _zaxis[2] = -zaxis[2];
           break;
         default:
-          cerr << "irtkRView::ResetTarget: Can't work out z-orientation" << endl;
+	  std::cerr << "irtkRView::ResetTarget: Can't work out z-orientation" << std::endl;
           break;
       }
     }
@@ -2390,16 +2410,16 @@ void irtkRView::Configure(irtkRViewConfig config[])
   _NoOfViewers = i;
 
   // Allocate array for transformation filters
-  _targetTransformFilter = new irtkImageTransformation*[_NoOfViewers];
-  _sourceTransformFilter = new irtkImageTransformation*[_NoOfViewers];
-  _segmentationTransformFilter = new irtkImageTransformation*[_NoOfViewers];
-  _selectionTransformFilter = new irtkImageTransformation*[_NoOfViewers];
+  _targetTransformFilter = new mirtk::ImageTransformation*[_NoOfViewers];
+  _sourceTransformFilter = new mirtk::ImageTransformation*[_NoOfViewers];
+  _segmentationTransformFilter = new mirtk::ImageTransformation*[_NoOfViewers];
+  _selectionTransformFilter = new mirtk::ImageTransformation*[_NoOfViewers];
 
   // Allocate array for images
-  _targetImageOutput = new irtkGreyImage*[_NoOfViewers];
-  _sourceImageOutput = new irtkGreyImage*[_NoOfViewers];
-  _segmentationImageOutput = new irtkGreyImage*[_NoOfViewers];
-  _selectionImageOutput = new irtkGreyImage*[_NoOfViewers];
+  _targetImageOutput = new mirtk::GreyImage*[_NoOfViewers];
+  _sourceImageOutput = new mirtk::GreyImage*[_NoOfViewers];
+  _segmentationImageOutput = new mirtk::GreyImage*[_NoOfViewers];
+  _selectionImageOutput = new mirtk::GreyImage*[_NoOfViewers];
 
   // Allocate array for viewers
   _viewer = new irtkViewer*[_NoOfViewers];
@@ -2423,47 +2443,41 @@ void irtkRView::Configure(irtkRViewConfig config[])
 
     _viewer[i]->SetScreen(_screenX, _screenY);
 
-    _targetImageOutput[i] = new irtkGreyImage;
-    _targetTransformFilter[i] = irtkImageTransformation::New(_targetTransform);
-    _targetTransformFilter[i]->SetInput(_targetImage);
-    _targetTransformFilter[i]->SetOutput(_targetImageOutput[i]);
-    _targetTransformFilter[i]->SetTransformation(_targetTransform);
-    _targetTransformFilter[i]->PutInterpolator(_targetInterpolator);
-    _targetTransformFilter[i]->PutSourcePaddingValue(0);
+    _targetImageOutput[i] = new mirtk::GreyImage;
+    _targetTransformFilter[i] = new mirtk::ImageTransformation;
+    _targetTransformFilter[i]->Input(_targetImage);
+    _targetTransformFilter[i]->Output(_targetImageOutput[i]);
+    _targetTransformFilter[i]->Transformation(_targetTransform);
+    _targetTransformFilter[i]->Interpolator(_targetInterpolator);
+    _targetTransformFilter[i]->SourcePaddingValue(0);
 
-    _sourceImageOutput[i] = new irtkGreyImage;
-    _sourceTransformFilter[i] = irtkImageTransformation::New(_sourceTransform);
-    _sourceTransformFilter[i]->SetInput(_sourceImage);
-    _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
-    _sourceTransformFilter[i]->SetCache(&_sourceTransformCache);
+    _sourceImageOutput[i] = new mirtk::GreyImage;
+    _sourceTransformFilter[i] = new mirtk::ImageTransformation;
+    _sourceTransformFilter[i]->Input(_sourceImage);
+    _sourceTransformFilter[i]->Output(_sourceImageOutput[i]);
+    _sourceTransformFilter[i]->Cache(&_sourceTransformCache);
     if (_sourceTransformApply == true) {
-      _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
+      _sourceTransformFilter[i]->Transformation(_sourceTransform);
     } else {
-      _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      _sourceTransformFilter[i]->Transformation(_targetTransform);
     }
-    _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
-    _sourceTransformFilter[i]->PutSourcePaddingValue(_sourceMin - 1);
-    if (_sourceTransformInvert == true) {
-      _sourceTransformFilter[i]->InvertOn();
-    } else {
-      _sourceTransformFilter[i]->InvertOff();
-    }
+    _sourceTransformFilter[i]->Interpolator(_sourceInterpolator);
+    _sourceTransformFilter[i]->SourcePaddingValue(_sourceMin - 1);
+    _sourceTransformFilter[i]->Invert(_sourceTransformInvert);
 
-    _segmentationImageOutput[i] = new irtkGreyImage;
-    _segmentationTransformFilter[i] = irtkImageTransformation::New(
-                                        _segmentationTransform);
-    _segmentationTransformFilter[i]->SetInput(_segmentationImage);
-    _segmentationTransformFilter[i]->SetOutput(_segmentationImageOutput[i]);
-    _segmentationTransformFilter[i]->SetTransformation(_segmentationTransform);
-    _segmentationTransformFilter[i]->PutInterpolator(_segmentationInterpolator);
+    _segmentationImageOutput[i] = new mirtk::GreyImage;
+    _segmentationTransformFilter[i] = new mirtk::ImageTransformation;
+    _segmentationTransformFilter[i]->Input(_segmentationImage);
+    _segmentationTransformFilter[i]->Output(_segmentationImageOutput[i]);
+    _segmentationTransformFilter[i]->Transformation(_segmentationTransform);
+    _segmentationTransformFilter[i]->Interpolator(_segmentationInterpolator);
 
-    _selectionImageOutput[i] = new irtkGreyImage;
-    _selectionTransformFilter[i] = irtkImageTransformation::New(
-                                     _selectionTransform);
-    _selectionTransformFilter[i]->SetInput(_voxelContour._raster);
-    _selectionTransformFilter[i]->SetOutput(_selectionImageOutput[i]);
-    _selectionTransformFilter[i]->SetTransformation(_selectionTransform);
-    _selectionTransformFilter[i]->PutInterpolator(_selectionInterpolator);
+    _selectionImageOutput[i] = new mirtk::GreyImage;
+    _selectionTransformFilter[i] = new mirtk::ImageTransformation;
+    _selectionTransformFilter[i]->Input(_voxelContour._raster);
+    _selectionTransformFilter[i]->Output(_selectionImageOutput[i]);
+    _selectionTransformFilter[i]->Transformation(_selectionTransform);
+    _selectionTransformFilter[i]->Interpolator(_selectionInterpolator);
   }
   this->Initialize();
 
@@ -2499,8 +2513,8 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   //      required in more places, e.g., also irtkViewer::Update uses it
 
   // Cast input transformation to single-/multi-level FFD
-  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
-  irtkFreeFormTransformation   *affd = dynamic_cast<irtkFreeFormTransformation *>  (_sourceTransform);
+  mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(_sourceTransform);
+  mirtk::FreeFormTransformation   *affd = dynamic_cast<mirtk::FreeFormTransformation *>  (_sourceTransform);
 
   // If multi-level FFD, set affd to FFD of final level
   if (mffd != NULL) affd = mffd->GetLocalTransformation(mffd->NumberOfLevels() - 1);
@@ -2523,7 +2537,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   u = _origin_x;
   v = _origin_y;
   w = _origin_z;
-  irtkPoint point(u, v, w);
+  mirtk::Point point(u, v, w);
   _targetImage->WorldToImage(u, v, w);
   i = round(u);
   j = round(v);
@@ -2543,7 +2557,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   v = _origin_y;
   w = _origin_z;
   _sourceTransform->Transform(u, v, w, ts, tt);
-  point = irtkPoint(u, v, w);
+  point = mirtk::Point(u, v, w);
   _sourceImage->WorldToImage(u, v, w);
   i = round(u);
   j = round(v);
@@ -2559,7 +2573,7 @@ void irtkRView::GetInfoText(char *buffer1, char *buffer2, char *buffer3,
   v = _origin_y;
   w = _origin_z;
   _segmentationTransform->Transform(u, v, w, ts, tt);
-  point = irtkPoint(u, v, w);
+  point = mirtk::Point(u, v, w);
   _segmentationImage->WorldToImage(u, v, w);
   i = round(u);
   j = round(v);
@@ -2645,7 +2659,7 @@ void irtkRView::MousePosition(int i, int j)
       _mouseViewer = k;
     }
   }
-  irtkPoint point(u, v, w);
+  mirtk::Point point(u, v, w);
   _targetImage->WorldToImage(u, v, w);
   i = round(u);
   j = round(v);
@@ -2661,7 +2675,7 @@ void irtkRView::MousePosition(int i, int j)
   }
 }
 
-void irtkRView::GetTransformationText(list<char *> &text)
+void irtkRView::GetTransformationText(std::list<char *> &text)
 {
   int i;
   char *ptr, buffer[256];
@@ -2670,35 +2684,47 @@ void irtkRView::GetTransformationText(list<char *> &text)
 
   ptr  = NULL;
   name = _sourceTransform->NameOfClass();
-  if (strcmp(name, "irtkRigidTransformation") == 0) {
+  if (strcmp(name, "mirtk::RigidTransformation") == 0) {
     ptr = strdup("Rigid transformation (6 DOF)");
-  } else if (strcmp(name, "irtkAffineTransformation") == 0) {
+  } else if (strcmp(name, "mirtk::AffineTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation") == 0) {
+  } else if (strcmp(name, "mirtk::MultiLevelFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkMultiLevelStationaryVelocityTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
   } else if (strcmp(name, "irtkFluidFreeFormTransformation") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkMultiLevelFreeFormTransformation4D") == 0) {
+  } else if (strcmp(name, "mirtk::MultiLevelFreeFormTransformation4D") == 0) {
     ptr = strdup("Affine transformation (12 DOF)");
-  } else if (strcmp(name, "irtkBSplineFreeFormTransformationSV") == 0) {
-    irtkBSplineFreeFormTransformationSV *ffd = dynamic_cast<irtkBSplineFreeFormTransformationSV *> (_sourceTransform);
+  } 
+
+/* 
+ * Can't find BSplineFreeFormTransformationSV anywhere in 
+ * IRTK or MIRTK, how odd.
+ */
+#ifdef HAVE_BSplineFreeFormTransformationSV
+	  
+  else if (strcmp(name, "mirtk::BSplineFreeFormTransformationSV") == 0) {
+    mirtk::BSplineFreeFormTransformationSV *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationSV *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz);
     sprintf(buffer, "SV B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
     ptr = strdup(buffer);
-  } else if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
-    irtkBSplineFreeFormTransformation4D *ffd = dynamic_cast<irtkBSplineFreeFormTransformation4D *> (_sourceTransform);
+  } 
+
+#endif
+  
+  else if (strcmp(name, "mirtk::BSplineFreeFormTransformation4D") == 0) {
+    mirtk::BSplineFreeFormTransformation4D *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformation4D *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz, dt);
     sprintf(buffer, "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
     ptr = strdup(buffer);
-  } else if (strcmp(name, "irtkBSplineFreeFormTransformationTD") == 0) {
-    irtkBSplineFreeFormTransformationTD *ffd = dynamic_cast<irtkBSplineFreeFormTransformationTD *> (_sourceTransform);
+  } else if (strcmp(name, "mirtk::BSplineFreeFormTransformationTD") == 0) {
+    mirtk::BSplineFreeFormTransformationTD *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationTD *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz, dt);
     sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
     ptr = strdup(buffer);
-  } else if (strcmp(name, "irtkBSplineFreeFormTransformationStatistical") == 0) {
-    irtkBSplineFreeFormTransformationStatistical *ffd = dynamic_cast<irtkBSplineFreeFormTransformationStatistical *> (_sourceTransform);
+  } else if (strcmp(name, "mirtk::BSplineFreeFormTransformationStatistical") == 0) {
+    mirtk::BSplineFreeFormTransformationStatistical *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationStatistical *> (_sourceTransform);
     ffd->GetSpacing(dx, dy, dz, dt);
     sprintf(buffer, "3D Statistical B-Spline FFD: (%.2f mm X %.2f mm X %.2f mm)", dx, dy, dz);
     ptr = strdup(buffer);
@@ -2709,45 +2735,61 @@ void irtkRView::GetTransformationText(list<char *> &text)
   text.push_back(ptr);
 
   // Convert transformation
-  irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
+  mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(_sourceTransform);
 
   if (mffd != NULL) {
     for (i = 0; i < mffd->NumberOfLevels(); i++) {
       name = mffd->GetLocalTransformation(i)->NameOfClass();
-      if (strcmp(name, "irtkBSplineFreeFormTransformation4D") == 0) {
-        irtkBSplineFreeFormTransformation4D *ffd = dynamic_cast<irtkBSplineFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
+      if (strcmp(name, "mirtk::BSplineFreeFormTransformation4D") == 0) {
+        mirtk::BSplineFreeFormTransformation4D *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz, dt);
         sprintf(buffer, "4D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
-      } else if (strcmp(name, "irtkBSplineFreeFormTransformationTD") == 0) {
-        irtkBSplineFreeFormTransformationTD *ffd = dynamic_cast<irtkBSplineFreeFormTransformationTD *> (mffd->GetLocalTransformation(i));
+      } else if (strcmp(name, "mirtk::BSplineFreeFormTransformationTD") == 0) {
+        mirtk::BSplineFreeFormTransformationTD *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationTD *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz, dt);
         sprintf(buffer, "TD B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
-      } else if (strcmp(name, "irtkBSplineFreeFormTransformationSV") == 0) {
-        irtkBSplineFreeFormTransformationSV *ffd = dynamic_cast<irtkBSplineFreeFormTransformationSV *> (mffd->GetLocalTransformation(i));
+      }
+
+#ifdef HAVE_BSplineFreeFormTransformationSV
+     
+      else if (strcmp(name, "mirtk::BSplineFreeFormTransformationSV") == 0) {
+        mirtk::BSplineFreeFormTransformationSV *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationSV *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "SV B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else if (strcmp(name, "irtkBSplineFreeFormTransformation3D") == 0) {
-        irtkBSplineFreeFormTransformation *ffd = dynamic_cast<irtkBSplineFreeFormTransformation *> (mffd->GetLocalTransformation(i));
+      } 
+
+#endif
+      
+      else if (strcmp(name, "mirtk::BSplineFreeFormTransformation3D") == 0) {
+        mirtk::BSplineFreeFormTransformation3D *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformation3D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D B-Spline FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else if (strcmp(name, "irtkBSplineFreeFormTransformationStatistical") == 0) {
-        irtkBSplineFreeFormTransformationStatistical *ffd = dynamic_cast<irtkBSplineFreeFormTransformationStatistical *> (_sourceTransform);
+      } else if (strcmp(name, "mirtk::BSplineFreeFormTransformationStatistical") == 0) {
+        mirtk::BSplineFreeFormTransformationStatistical *ffd = dynamic_cast<mirtk::BSplineFreeFormTransformationStatistical *> (_sourceTransform);
         ffd->GetSpacing(dx, dy, dz, dt);
         sprintf(buffer, "3D Statistical B-Spline FFD: (%.2f mm X %.2f mm X %.2f mm)", dx, dy, dz);
         ptr = strdup(buffer);
-      } else if (strcmp(name, "irtkLinearFreeFormTransformation3D") == 0) {
-        irtkLinearFreeFormTransformation3D *ffd = dynamic_cast<irtkLinearFreeFormTransformation3D *> (mffd->GetLocalTransformation(i));
+      } else if (strcmp(name, "mirtk::LinearFreeFormTransformation3D") == 0) {
+        mirtk::LinearFreeFormTransformation3D *ffd = dynamic_cast<mirtk::LinearFreeFormTransformation3D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else if (strcmp(name, "irtkLinearFreeFormTransformation4D") == 0) {
-        irtkLinearFreeFormTransformation4D *ffd = dynamic_cast<irtkLinearFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
+      } else if (strcmp(name, "mirtk::LinearFreeFormTransformation4D") == 0) {
+        mirtk::LinearFreeFormTransformation4D *ffd = dynamic_cast<mirtk::LinearFreeFormTransformation4D *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz, dt);
         sprintf(buffer, "4D Linear FFD: %d (%.2f mm X %.2f mm X %.2f mm X %.2f ms)", ffd->NumberOfDOFs(), dx, dy, dz, dt);
-      } else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
+      } 
+      
+#ifdef HAVE_EigenFreeFormTransformation     
+      
+      else if (strcmp(name, "irtkEigenFreeFormTransformation") == 0) {
         irtkEigenFreeFormTransformation *ffd = dynamic_cast<irtkEigenFreeFormTransformation *> (mffd->GetLocalTransformation(i));
         ffd->GetSpacing(dx, dy, dz);
         sprintf(buffer, "3D Eigen FFD: %d (%.2f mm X %.2f mm X %.2f mm)", ffd->NumberOfDOFs(), dx, dy, dz);
-      } else {
+      } 
+      
+#endif
+      
+      else {
         sprintf(buffer, "Unknown transformation type (%s)", name);
       }
       ptr = strdup(buffer);
@@ -2759,7 +2801,7 @@ void irtkRView::GetTransformationText(list<char *> &text)
 void irtkRView::Initialize(bool initialize_cache)
 {
   int i;
-  irtkImageAttributes attr;
+  mirtk::ImageAttributes attr;
 
   for (i = 0; i < _NoOfViewers; i++) {
     attr._x = _viewer[i]->GetWidth();
@@ -2816,15 +2858,15 @@ void irtkRView::Initialize(bool initialize_cache)
         exit(1);
         break;
     }
-    _targetTransformFilter[i]->SetInput(_targetImage);
-    _targetTransformFilter[i]->SetOutput(_targetImageOutput[i]);
-    _targetTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_targetMax - _targetMin),
-                                                       -_targetMin * 10000.0 / (_targetMax - _targetMin));
-    _sourceTransformFilter[i]->SetInput(_sourceImage);
-    _sourceTransformFilter[i]->SetOutput(_sourceImageOutput[i]);
-    _sourceTransformFilter[i]->PutScaleFactorAndOffset(10000.0 / (_sourceMax - _sourceMin),
-                                                       -_sourceMin * 10000.0 / (_sourceMax - _sourceMin));
-    _sourceTransformFilter[i]->PutOutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - _sourceImage->ImageToTime(_sourceFrame));
+    _targetTransformFilter[i]->Input(_targetImage);
+    _targetTransformFilter[i]->Output(_targetImageOutput[i]);
+    _targetTransformFilter[i]->ScaleFactor(10000.0 / (_targetMax - _targetMin));
+    _targetTransformFilter[i]->Offset(-_targetMin * 10000.0 / (_targetMax - _targetMin));
+    _sourceTransformFilter[i]->Input(_sourceImage);
+    _sourceTransformFilter[i]->Output(_sourceImageOutput[i]);
+    _sourceTransformFilter[i]->ScaleFactor(10000.0 / (_sourceMax - _sourceMin));
+    _sourceTransformFilter[i]->Offset(-_sourceMin * 10000.0 / (_sourceMax - _sourceMin));
+    _sourceTransformFilter[i]->OutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - _sourceImage->ImageToTime(_sourceFrame));
     attr._torigin = _targetImage->ImageToTime(_targetFrame);
     _targetImageOutput[i]->Initialize(attr);
     attr._torigin = _sourceImage->ImageToTime(_sourceFrame);
@@ -2843,10 +2885,10 @@ void irtkRView::Initialize(bool initialize_cache)
   // Use source transformation cache if required and enabled
   if (initialize_cache) {
     if (_sourceImage && _sourceTransform && _sourceTransform->RequiresCachingOfDisplacements() && _CacheDisplacements) {
-//      irtkMultiLevelTransformation *mffd = dynamic_cast<irtkMultiLevelTransformation *>(_sourceTransform);
-//      irtkFreeFormTransformation   *ffd  = dynamic_cast<irtkFreeFormTransformation   *>(_sourceTransform);
+//      mirtk::MultiLevelTransformation *mffd = dynamic_cast<mirtk::MultiLevelTransformation *>(_sourceTransform);
+//      mirtk::FreeFormTransformation   *ffd  = dynamic_cast<mirtk::FreeFormTransformation   *>(_sourceTransform);
 //      if (mffd && mffd->NumberOfLevels() > 0) ffd = mffd->GetLocalTransformation(mffd->NumberOfLevels()-1);
-//      irtkImageAttributes attr;
+//      mirtk::ImageAttributes attr;
 //      if (ffd) {
 //        attr = ffd->Attributes();
 //        if (_targetImage) {
@@ -2891,7 +2933,7 @@ void irtkRView::SetTargetFrame(int t)
   for (i = 0; i < _NoOfViewers; i++) {
     _targetImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
     _targetImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
-    _sourceTransformFilter[i]->PutOutputTimeOffset(torigin - _sourceImage->ImageToTime(_sourceFrame));
+    _sourceTransformFilter[i]->OutputTimeOffset(torigin - _sourceImage->ImageToTime(_sourceFrame));
   }
 
   // Update of target is required
@@ -2919,7 +2961,7 @@ void irtkRView::SetSourceFrame(int t)
   for (i = 0; i < _NoOfViewers; i++) {
     _sourceImageOutput[i]->GetOrigin(xorigin, yorigin, zorigin);
     _sourceImageOutput[i]->PutOrigin(xorigin, yorigin, zorigin, torigin);
-    _sourceTransformFilter[i]->PutOutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - torigin);
+    _sourceTransformFilter[i]->OutputTimeOffset(_targetImage->ImageToTime(_targetFrame) - torigin);
   }
 
   // Update of source is required
@@ -2931,78 +2973,78 @@ int irtkRView::GetSourceFrame()
   return _sourceFrame;
 }
 
-void irtkRView::SetTargetInterpolationMode(irtkInterpolationMode value)
+void irtkRView::SetTargetInterpolationMode(mirtk::InterpolationMode value)
 {
   int i;
 
   delete _targetInterpolator;
-  _targetInterpolator = irtkInterpolateImageFunction::New(value, _targetImage);
+  _targetInterpolator = mirtk::InterpolateImageFunction::New(value, _targetImage);
   for (i = 0; i < _NoOfViewers; i++) {
-    _targetTransformFilter[i]->PutInterpolator(_targetInterpolator);
+    _targetTransformFilter[i]->Interpolator(_targetInterpolator);
   }
   _targetUpdate = true;
 }
 
-irtkInterpolationMode irtkRView::GetTargetInterpolationMode()
+mirtk::InterpolationMode irtkRView::GetTargetInterpolationMode()
 {
   if (strstr(_targetInterpolator->NameOfClass(),
              "irtkNearestNeighborInterpolateImageFunction") != NULL) {
-    return Interpolation_NN;
+    return mirtk::Interpolation_NN;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
              "irtkLinearInterpolateImageFunction") != NULL) {
-    return Interpolation_Linear;
+    return mirtk::Interpolation_Linear;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
              "irtkBSplineInterpolateImageFunction") != NULL) {
-    return Interpolation_BSpline;
+    return mirtk::Interpolation_BSpline;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
              "irtkCSplineInterpolateImageFunction") != NULL) {
-    return Interpolation_CSpline;
+    return mirtk::Interpolation_CSpline;
   }
   if (strstr(_targetInterpolator->NameOfClass(),
              "irtkSincInterpolateImageFunction") != NULL) {
-    return Interpolation_Sinc;
+    return mirtk::Interpolation_Sinc;
   }
-  return Interpolation_NN;
+  return mirtk::Interpolation_NN;
 }
 
-void irtkRView::SetSourceInterpolationMode(irtkInterpolationMode value)
+void irtkRView::SetSourceInterpolationMode(mirtk::InterpolationMode value)
 {
   int i;
 
   delete _sourceInterpolator;
-  _sourceInterpolator = irtkInterpolateImageFunction::New(value, _sourceImage);
+  _sourceInterpolator = mirtk::InterpolateImageFunction::New(value, _sourceImage);
   for (i = 0; i < _NoOfViewers; i++) {
-    _sourceTransformFilter[i]->PutInterpolator(_sourceInterpolator);
+    _sourceTransformFilter[i]->Interpolator(_sourceInterpolator);
   }
   _sourceUpdate = true;
 }
 
-irtkInterpolationMode irtkRView::GetSourceInterpolationMode()
+mirtk::InterpolationMode irtkRView::GetSourceInterpolationMode()
 {
   if (strstr(_sourceInterpolator->NameOfClass(),
              "irtkNearestNeighborInterpolateImageFunction") != NULL) {
-    return Interpolation_NN;
+    return mirtk::Interpolation_NN;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
              "irtkLinearInterpolateImageFunction") != NULL) {
-    return Interpolation_Linear;
+    return mirtk::Interpolation_Linear;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
              "irtkBSplineInterpolateImageFunction") != NULL) {
-    return Interpolation_BSpline;
+    return mirtk::Interpolation_BSpline;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
              "irtkCSplineInterpolateImageFunction") != NULL) {
-    return Interpolation_CSpline;
+    return mirtk::Interpolation_CSpline;
   }
   if (strstr(_sourceInterpolator->NameOfClass(),
              "irtkSincInterpolateImageFunction") != NULL) {
-    return Interpolation_Sinc;
+    return mirtk::Interpolation_Sinc;
   }
-  return Interpolation_NN;
+  return mirtk::Interpolation_NN;
 }
 
 void irtkRView::SetSourceTransformInvert(bool value)
@@ -3011,11 +3053,7 @@ void irtkRView::SetSourceTransformInvert(bool value)
 
   _sourceTransformInvert = value;
   for (i = 0; i < _NoOfViewers; i++) {
-    if (_sourceTransformInvert == true) {
-      _sourceTransformFilter[i]->InvertOn();
-    } else {
-      _sourceTransformFilter[i]->InvertOff();
-    }
+    _sourceTransformFilter[i]->Invert(_sourceTransformInvert);
   }
   _sourceUpdate = true;
 }
@@ -3032,11 +3070,11 @@ void irtkRView::SetSourceTransformApply(bool value)
   _sourceTransformApply = value;
   for (i = 0; i < _NoOfViewers; i++) {
     if (_sourceTransformApply == true) {
-      _sourceTransformFilter[i]->SetTransformation(_sourceTransform);
-      _sourceTransformFilter[i]->SetCache(&_sourceTransformCache);
+      _sourceTransformFilter[i]->Transformation(_sourceTransform);
+      _sourceTransformFilter[i]->Cache(&_sourceTransformCache);
     } else {
-      _sourceTransformFilter[i]->SetCache(NULL);
-      _sourceTransformFilter[i]->SetTransformation(_targetTransform);
+      _sourceTransformFilter[i]->Cache(NULL);
+      _sourceTransformFilter[i]->Transformation(_targetTransform);
     }
   }
   _sourceUpdate = true;
@@ -3064,7 +3102,7 @@ void irtkRView::DrawOffscreen(char *filename)
   glFlush();
 
   // Allocate RGB image
-  irtkGenericImage<unsigned char> image(this->GetWidth(), this->GetHeight(), 3, 1);
+  mirtk::GenericImage<unsigned char> image(this->GetWidth(), this->GetHeight(), 3, 1);
 
   // Read pixels from framebuffer
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -3091,7 +3129,7 @@ double irtkRView::FitLandmarks()
 {
   int i, n;
   double error;
-  irtkPointSet target_pts, source_pts;
+  mirtk::PointSet target_pts, source_pts;
 
   // Check whether landmarks numbers agree
   if (this->GetNumberOfTargetLandmarks() != this->GetNumberOfSourceLandmarks()) {
@@ -3106,11 +3144,11 @@ double irtkRView::FitLandmarks()
   }
 
   // Set transformation
-  irtkRigidTransformation transformation;
+  mirtk::RigidTransformation transformation;
 
 #ifdef HAS_VTK
   // Set input and output for the registration filter
-  irtkPointRigidRegistration registration;
+  mirtk::PointRigidRegistration registration;
   registration.SetInput (&target_pts, &source_pts);
   registration.SetOutput(&transformation);
 
@@ -3123,8 +3161,8 @@ double irtkRView::FitLandmarks()
 
   error = 0;
   for (i = 0; i < target_pts.Size(); i++) {
-    irtkPoint p1 = target_pts(i);
-    irtkPoint p2 = source_pts(i);
+    mirtk::Point p1 = target_pts(i);
+    mirtk::Point p2 = source_pts(i);
     error += sqrt(pow(p1._x - p2._x, 2.0) + pow(p1._y - p2._y, 2.0) + pow(p1._z
                   - p2._z, 2.0));
   }
@@ -3235,24 +3273,24 @@ void irtkRView::cb_keyboard(unsigned char key)
       this->ResetROI();
       break;
     case 'l':
-      this->SetTargetInterpolationMode(Interpolation_Linear);
-      this->SetSourceInterpolationMode(Interpolation_Linear);
+      this->SetTargetInterpolationMode(mirtk::Interpolation_Linear);
+      this->SetSourceInterpolationMode(mirtk::Interpolation_Linear);
       break;
     case 'n':
-      this->SetTargetInterpolationMode(Interpolation_NN);
-      this->SetSourceInterpolationMode(Interpolation_NN);
+      this->SetTargetInterpolationMode(mirtk::Interpolation_NN);
+      this->SetSourceInterpolationMode(mirtk::Interpolation_NN);
       break;
     case 'c':
-      this->SetTargetInterpolationMode(Interpolation_CSpline);
-      this->SetSourceInterpolationMode(Interpolation_CSpline);
+      this->SetTargetInterpolationMode(mirtk::Interpolation_CSpline);
+      this->SetSourceInterpolationMode(mirtk::Interpolation_CSpline);
       break;
     case 'b':
-      this->SetTargetInterpolationMode(Interpolation_BSpline);
-      this->SetSourceInterpolationMode(Interpolation_BSpline);
+      this->SetTargetInterpolationMode(mirtk::Interpolation_BSpline);
+      this->SetSourceInterpolationMode(mirtk::Interpolation_BSpline);
       break;
     case 'S':
-      this->SetTargetInterpolationMode(Interpolation_Sinc);
-      this->SetSourceInterpolationMode(Interpolation_Sinc);
+      this->SetTargetInterpolationMode(mirtk::Interpolation_Sinc);
+      this->SetSourceInterpolationMode(mirtk::Interpolation_Sinc);
       break;
     case 't':
       this->SetViewMode(View_A);
