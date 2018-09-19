@@ -1,8 +1,8 @@
 # ============================================================================
 # Medical Image Registration ToolKit (MIRTK)
 #
-# Copyright Imperial College London
-# Copyright 2018 Andreas Schuh
+# Copyright 2008-2017 Imperial College London
+# Copyright 2016-2018 Andreas Schuh
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,11 +17,26 @@
 # limitations under the License.
 # ============================================================================
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+##############################################################################
+# @file  CMakeLists.txt
+# @brief Build configuration of MIRTK Viewer tools.
+##############################################################################
 
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/config")
-if (NOT COMMAND mirtk_configure_module)
-  find_package(MIRTK REQUIRED COMPONENTS CMake)
-endif ()
+mirtk_add_executable(
+  display
+  DEPENDS
+    LibCommon
+    LibNumerics
+    LibImage
+    LibIO
+    LibPointSet
+    LibTransformation
+    LibViewer
+    ${VTK_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${GLUT_LIBRARIES}
+)
 
-mirtk_configure_module()
+if(FLTK_FOUND)
+  add_subdirectory(view)
+endif()

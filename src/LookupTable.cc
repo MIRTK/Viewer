@@ -10,8 +10,6 @@
 
 =========================================================================*/
 
-#include <mirtk/Image.h>
-
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
 #include <OpenGl/glu.h>
@@ -20,7 +18,8 @@
 #include <GL/glu.h>
 #endif
 
-#include <LookupTable.h>
+#include <mirtk/Image.h>
+#include <mirtk/LookupTable.h>
 
 LookupTable::LookupTable(int minData, int maxData)
 {

@@ -1,8 +1,8 @@
 # ============================================================================
 # Medical Image Registration ToolKit (MIRTK)
 #
-# Copyright Imperial College London
-# Copyright 2018 Andreas Schuh
+# Copyright 2008-2017 Imperial College London
+# Copyright 2016-2018 Andreas Schuh
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,47 +19,44 @@
 
 ##############################################################################
 # @file  CMakeLists.txt
-# @brief Build configuration of MIRTK Viewer library.
+# @brief Build configuration of MIRTK Viewer GUI.
 ##############################################################################
 
-set(HEADERS
-  ${BINARY_INCLUDE_DIR}/mirtk/ViewerExport.h
-  Color.h
-  ColorRGBA.h
-  Contour.h
-  LookupTable.h
-  RView.h
-  RViewConfig.h
-  Viewer.h
-  HistogramWindow.h
-  Segment.h
-  SegmentTable.h
-  VoxelContour.h
+mirtk_add_executable(
+  view
+  SOURCES
+    Fl_RView.cc
+    Fl_RView.h
+    Fl_RViewUI.cc
+    Fl_RViewUI.h
+    Fl_RView_Histogram.cc
+    Fl_RView_Histogram.h
+    Fl_RView_Landmark.cc
+    Fl_RView_Landmark.h
+    Fl_RView_Registration.cc
+    Fl_RView_Registration.h
+    Fl_RView_Segmentation.cc
+    Fl_RView_Segmentation.h
+    Fl_RView_Transformation.cc
+    Fl_RView_Transformation.h
+    Fl_RView_Visualisation.cc
+    Fl_RView_Visualisation.h
+    Fl_Simple_Browser.cc
+    Fl_Simple_Browser.h
+    Fl_Simple_Group.cc
+    Fl_Simple_Group.h
+    Fl_Value_Slider2.cc
+    Fl_Value_Slider2.h
+  DEPENDS
+    LibCommon
+    LibNumerics
+    LibImage
+    LibIO
+    LibPointSet
+    LibTransformation
+    LibViewer
+    ${OPENGL_LIBRARIES}
+    ${GLUT_LIBRARIES}
+    ${FLTK_LIBRARIES}
+    ${VTK_LIBRARIES}
 )
-
-set(SOURCES
-  Color.cc
-  ColorRGBA.cc
-  LookupTable.cc
-  RView.cc
-  RViewConfig.cc
-  Viewer.cc
-  HistogramWindow.cc
-  Segment.cc
-  SegmentTable.cc
-  VoxelContour.cc
-)
-
-set(DEPENDS
-  LibCommon
-  LibNumerics
-  LibImage
-  LibPointSet
-  LibIO
-  LibTransformation
-  ${OPENGL_LIBRARIES}
-  ${GLUT_LIBRARIES}
-  ${VTK_LIBRARIES}
-)
-
-mirtk_add_library()

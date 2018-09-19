@@ -10,6 +10,7 @@
 
  =========================================================================*/
 
+#include <mirtk/RView.h>
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
@@ -22,7 +23,6 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
 
 // Define the maximum number of control points along each axis we can
 // handle here.
@@ -73,7 +73,7 @@ static double _BeforeTagGridZ[MaxNumberOfCP][MaxNumberOfCP];
 #define COLOR_SELECTED_TARGET_LANDMARKS   glColor3f(1, 1, 0)
 #define COLOR_SELECTED_SOURCE_LANDMARKS   glColor3f(0, 1, 1)
 
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
 
 // vtk includes
 #include <vtkPlane.h>
@@ -958,7 +958,7 @@ void Viewer::DrawROI(mirtk::GreyImage *image, double x1, double y1, double z1,
 	glDisable(GL_BLEND);
 }
 
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
 
 void Viewer::DrawObject(vtkPointSet **object, mirtk::GreyImage *image,
 		int _DisplayObjectWarp,

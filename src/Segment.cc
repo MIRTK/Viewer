@@ -10,7 +10,8 @@
 
 =========================================================================*/
 
-#include <Segment.h>
+#include <mirtk/Segment.h>
+
 
 Segment::Segment()
 {

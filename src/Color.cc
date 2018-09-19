@@ -12,8 +12,8 @@
 
 #include <mirtk/Image.h>
 
-#include <ColorRGBA.h>
-#include <Color.h>
+#include <mirtk/ColorRGBA.h>
+#include <mirtk/Color.h>
 
 void Color::RGBtoHSV(double cr, double cg, double cb)
 {

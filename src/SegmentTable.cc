@@ -10,7 +10,8 @@
 
 =========================================================================*/
 
-#include <SegmentTable.h>
+#include <mirtk/SegmentTable.h>
+
 
 SegmentTable::SegmentTable()
 {

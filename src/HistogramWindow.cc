@@ -22,15 +22,8 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
-
-#ifdef HAS_VTK
-#include <vtkPolyDataReader.h>
-#include <vtkStructuredGridReader.h>
-#include <vtkUnstructuredGridReader.h>
-#endif
-
-#include <HistogramWindow.h>
+#include <mirtk/RView.h>
+#include <mirtk/HistogramWindow.h>
 
 HistogramWindow::HistogramWindow(RView  *viewer)
 {

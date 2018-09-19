@@ -9,11 +9,7 @@
  
  =========================================================================*/
 
-#include <mirtk/Image.h>
-#include <mirtk/Transformation.h>
-#include <mirtk/Registration.h>
-//#include <mirtk/PointRegistration.h>
-#include <mirtk/Transformations.h>
+#include <mirtk/RView.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -23,13 +19,13 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
-
-#ifdef HAS_VTK
-#include <vtkPolyDataReader.h>
-#include <vtkStructuredGridReader.h>
-#include <vtkUnstructuredGridReader.h>
+#include <mirtk/Image.h>
+#include <mirtk/Transformations.h>
+#include <mirtk/IOConfig.h>
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
+#include <mirtk/PointSetIO.h>
 #endif
+
 
 RView::RView(int x, int y)
 {
@@ -153,7 +149,7 @@ RView::RView(int x, int y)
   // Initialize landmark display
   _DisplayLandmarks = false;
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   // Initialize object and display
   _NoOfObjects = 0;
   for (int i = 0; i < MAX_NUMBER_OF_OBJECTS; i++) {
@@ -222,7 +218,7 @@ RView::RView(int x, int y)
 
 RView::~RView()
 {
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   for (int i = 0; i < MAX_NUMBER_OF_OBJECTS; i++) {
     if (_Object[i] != NULL) _Object[i]->Delete();
   }
@@ -555,7 +551,7 @@ void RView::Draw()
       _viewer[k]->DrawROI(_targetImageOutput[k], _x1, _y1, _z1, _x2, _y2, _z2);
     }
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
     // Draw  object if needed
     if (_DisplayObject) {
         if(_ObjectMovie) {
@@ -1191,7 +1187,7 @@ void RView::Read(char *name)
       _DisplayLandmarks = atoi(buffer2);
       ok = true;
     }
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
     // Flag for display of object
     if (strstr(buffer1, "DisplayObject") != NULL) {
       _DisplayObject = atoi(buffer2);
@@ -1547,7 +1543,7 @@ void RView::Write(char *name)
   << endl;
   // Flag for display of landmarks
   to << "DisplayLandmarks                  = " << _DisplayLandmarks << endl;
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   // Flag for display of object
   to << "DisplayObject                     = " << _DisplayObject << endl;
   // Flag for warping of object
@@ -2031,7 +2027,7 @@ void RView::WriteSourceLandmarks(char *name)
   _sourceLandmarks.WriteVTK(name);
 }
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
 void RView::ReadObject(const char *name)
 {
   if (_NoOfObjects >= MAX_NUMBER_OF_OBJECTS) {
@@ -2039,7 +2035,7 @@ void RView::ReadObject(const char *name)
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> object = ReadPolyData(name);
+  vtkSmartPointer<vtkPolyData> object = mirtk::ReadPolyData(name);
   _Object[_NoOfObjects] = object.GetPointer();
   _Object[_NoOfObjects]->Register(_Object[_NoOfObjects]);
 
@@ -3146,7 +3142,7 @@ double RView::FitLandmarks()
   // Set transformation
   mirtk::RigidTransformation transformation;
 
-#ifdef HAS_VTK
+#if 0
   // Set input and output for the registration filter
   mirtk::PointRigidRegistration registration;
   registration.SetInput (&target_pts, &source_pts);
@@ -3432,7 +3428,7 @@ void RView::cb_keyboard(unsigned char key)
         this->DisplayLandmarksOn();
       }
       break;
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
     case 'O':
       if (this->GetDisplayObject()) {
         this->DisplayObjectOff();
@@ -3519,7 +3515,7 @@ void RView::cb_keyboard_info()
   cerr << "\t'B'                              Display cursor as bar\n";
   cerr << "\t'g'                              Deformation grid     on/off\n";
   cerr << "\t'p'                              Deformation points   on/off\n";
-#ifndef HAS_VTK
+#ifndef HAVE_VTK
   cerr << "\t'@'                              Deformation labels   on/off\n";
 #endif
   cerr << "\t'a'                              Deformation arrows   on/off\n";
@@ -3527,7 +3523,7 @@ void RView::cb_keyboard_info()
   cerr << "\t'+'                              Increase deformation level\n";
   cerr << "\t'-'                              Decrease deformation level\n";
   cerr << "\t'L'                              Landmarks on/off\n";
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   cerr << "\t'O'                              Object display on/off\n";
   cerr << "\t'W'                              Object vectors warp on/off\n";
   cerr << "\t'G'                              Object grid on/off\n";
