@@ -788,7 +788,7 @@ void Fl_RViewUI::InitializeObjectControlWindow()
         }
         {
             Fl_Button* o = new Fl_Button(110+160, 15+585, 32, 32, "Del");
-            o->type(FL_BUTTON1);
+            o->type(FL_NORMAL_BUTTON);
             o->callback((Fl_Callback*)cb_removeObject);
             o->tooltip("Remove objects");
         }
