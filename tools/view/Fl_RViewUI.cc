@@ -15,24 +15,24 @@
 #include <mirtk/Registration.h>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;
 extern RView    *rview;
 
-#include <bitmaps/fileopen.xpm>
-#include <bitmaps/filesave.xpm>
-#include <bitmaps/camera.xpm>
-#include <bitmaps/axial.xpm>
-#include <bitmaps/coronal.xpm>
-#include <bitmaps/sagital.xpm>
-#include <bitmaps/multiview.xpm>
-//#include <bitmaps/messagebox_info.xpm>
-//#include <bitmaps/messagebox_noinfo.xpm>
-#include <bitmaps/player_play.xpm>
-#include <bitmaps/player_pause.xpm>
-#include <bitmaps/moviecapture.xpm>
+#include "bitmaps/fileopen.xpm"
+#include "bitmaps/filesave.xpm"
+#include "bitmaps/camera.xpm"
+#include "bitmaps/axial.xpm"
+#include "bitmaps/coronal.xpm"
+#include "bitmaps/sagital.xpm"
+#include "bitmaps/multiview.xpm"
+//#include "bitmaps/messagebox_info.xpm"
+//#include "bitmaps/messagebox_noinfo.xpm"
+#include "bitmaps/player_play.xpm"
+#include "bitmaps/player_pause.xpm"
+#include "bitmaps/moviecapture.xpm"
 
 void quit(Fl_Widget*, void*)
 {

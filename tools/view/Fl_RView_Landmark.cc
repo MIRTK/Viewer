@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 #ifdef HAS_LANDMARK_PANEL
 
@@ -48,9 +48,9 @@ bitmap_array<sizeof...(A)> make_bitmap_array(A... v)
 { return bitmap_array<sizeof...(A)>{{static_cast<char>(v)...}}; }
 #endif
 
-#include <bitmaps/landmarks.xbm>
-#ifdef HAS_VTK
-#  include <bitmaps/fileopen.xpm>
+#include "bitmaps/landmarks.xbm"
+#ifdef HAVE_VTK
+#  include "bitmaps/fileopen.xpm"
 #endif
 
 extern Fl_RViewUI  *rviewUI;
@@ -577,7 +577,7 @@ void Fl_RViewUI::cb_viewTagGrid(Fl_Button* o, void*)
   rview->Update();
   viewer->redraw();
 }
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
 void Fl_RViewUI::cb_viewObjectMovie(Fl_Button* o, void*)
 {
     if (o->value() == 0) rview->ObjectMovieOff();
@@ -674,7 +674,7 @@ void Fl_RViewUI::UpdateObjectControlWindow()
   rviewUI->viewLandmarks->value(rview->GetDisplayLandmarks());
   rviewUI->refineTags->value(rview->GetTrackTAG());
   rviewUI->viewTagGrid->value(rview->GetViewTAG());
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
   rviewUI->viewObjectMovie->value(rview->GetObjectMovie());
   rviewUI->warpObject->value(rview->GetDisplayObjectWarp());
 #endif
@@ -765,7 +765,7 @@ void Fl_RViewUI::InitializeObjectControlWindow()
       Fl_Check_Button *o  = viewTagGrid = new Fl_Check_Button(39, 580, 100, 20, "Tag grid");
       o->callback((Fl_Callback*)cb_viewTagGrid);
     }
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
     {
         Fl_Check_Button *o  = viewObjectMovie = new Fl_Check_Button(39, 620, 120, 20, "Object movie");
         o->callback((Fl_Callback*)cb_viewObjectMovie);

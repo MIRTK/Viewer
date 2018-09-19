@@ -14,11 +14,9 @@
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
 
-#include <Fl_RView.h>
-
-#include <Fl_RViewUI.h>
-
-#include <Fl_RView_Histogram.h>
+#include "Fl_RView.h"
+#include "Fl_RViewUI.h"
+#include "Fl_RView_Histogram.h"
 
 extern Fl_RViewUI *rviewUI;
 

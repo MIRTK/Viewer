@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 #ifdef HAS_TRANSFORMATION_PANEL
 

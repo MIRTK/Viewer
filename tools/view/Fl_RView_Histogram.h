@@ -10,41 +10,47 @@
 
 =========================================================================*/
 
-#ifndef _FL_RVIEW_H
+#ifndef _FL_HISTOGRAMWINDOW_H
 
-#define _FL_RVIEW_H
-
-#ifdef __APPLE__
-#include <OpenGl/gl.h>
-#include <OpenGl/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+#define _FL_HISTOGRAMWINDOW_H
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Gl_Window.H>
+#include <FL/fl_draw.H>
 
-#include <RView.h>
+#include <mirtk/RView.h>
 
-
-class Fl_RView : public Fl_Gl_Window
+class Fl_HistogramWindow : public Fl_Window
 {
+
+protected:
+
+  /// Pointer to histogram window
+  HistogramWindow _histogramWindow;
+
+  /// Maximum in histogram
+  int _maxHistogram;
 
 public:
 
   /// Pointer to the registration viewer
-  RView *v;
+  RView *_v;
 
   /// Constructor
-  Fl_RView(int, int, int, int, const char *);
+  Fl_HistogramWindow(int, int, int, int, const char *, RView *);
+
+  /// Destructor
+  ~Fl_HistogramWindow();
 
   /// Default draw function
   void draw();
 
-  /// Default function to handle events
-  int  handle(int);
+  /// Compute position
+  void position(int, int, double& , double&);
+
+  /// Recalculate histogram
+  void recalculate();
 
 };
 

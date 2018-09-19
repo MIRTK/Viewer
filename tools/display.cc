@@ -44,7 +44,7 @@ void usage ()
   cerr << "\t<-source_landmarks file.vtk>     Source Landmarks (vtkPolyData)\n";
   cerr << "\t<-target_isolines>               Target isolines\n";
   cerr << "\t<-source_isolines>               Source isolines\n";
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
   cerr << "\t<-object           file.vtk>     Object           (vtkPointSet)\n";
   cerr << "\t<-object_warp>                   Warp object with vectors\n";
   cerr << "\t<-object_grid>                   Object grid on\n";
@@ -270,7 +270,7 @@ int main(int argc, char** argv)
       rview->DisplaySourceContoursOn();
       ok = true;
     }
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
     if ((ok == false) && (strcmp(argv[1], "-object") == 0)) {
       argc--;
       argv++;

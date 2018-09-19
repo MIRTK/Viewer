@@ -18,16 +18,16 @@
 #include <sys/stat.h>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
-#include <bitmaps/target.xbm>
-#include <bitmaps/source.xbm>
-#include <bitmaps/AoverB.xbm>
-#include <bitmaps/BoverA.xbm>
-#include <bitmaps/hshutter.xbm>
-#include <bitmaps/vshutter.xbm>
-#include <bitmaps/subtraction.xbm>
-#include <bitmaps/checkerboard.xbm>
+#include "bitmaps/target.xbm"
+#include "bitmaps/source.xbm"
+#include "bitmaps/AoverB.xbm"
+#include "bitmaps/BoverA.xbm"
+#include "bitmaps/hshutter.xbm"
+#include "bitmaps/vshutter.xbm"
+#include "bitmaps/subtraction.xbm"
+#include "bitmaps/checkerboard.xbm"
 
 #ifdef HAS_VISUALISATION_PANEL
 

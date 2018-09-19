@@ -15,6 +15,8 @@
 
 #include <iostream>
 
+#include <mirtk/IOConfig.h>
+
 typedef enum { View_A,
                View_B,
                View_Checkerboard,
@@ -91,12 +93,8 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } RegionGrowingMode;
 
 #include <list>
 
-#ifdef HAS_VTK
-
-#include <vtkPolyData.h>
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
 #include <vtkPointSet.h>
-#include <vtkStructuredGrid.h>
-#include <vtkUnstructuredGrid.h>
 #endif
 
 #include <mirtk/ImageTransformation.h>
@@ -208,7 +206,7 @@ protected:
   /// Contour viewer mode
   ViewerMode _contourViewerMode;
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   /// Number of vtk objects
   int _NoOfObjects;
 
@@ -425,7 +423,7 @@ protected:
   /// Region growing mode
   RegionGrowingMode _regionGrowingMode;
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   /// Flag for display of object
   int _DisplayObject;
 
@@ -516,7 +514,7 @@ public:
   /// Write sourcelandmarks
   virtual void WriteSourceLandmarks(char *);
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   /// Read object
   virtual void ReadObject(const char *);
 
@@ -872,7 +870,7 @@ public:
   /// Clear selection of target landmarks to display
   void ClearSourceLandmarkSelection();
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
   /// Turn display of object on
   void DisplayObjectOn();
 
@@ -1552,7 +1550,7 @@ inline int RView::GetViewTAG()
   return _ViewTAG;
 }
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
 
 inline vtkPointSet *RView::GetObject(int i)
 {

@@ -1,6 +1,9 @@
+
+#include "Fl_Value_Slider2.h"
+
 #include <FL/Fl.H>
-#include <Fl_Value_Slider2.h>
 #include <FL/fl_draw.H>
+
 #include <math.h>
 
 Fl_Value_Slider2::Fl_Value_Slider2(int X, int Y, int W, int H, const char*l)

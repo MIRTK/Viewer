@@ -22,12 +22,6 @@
 #include <GL/glu.h>
 #endif
 
-#ifdef HAS_VTK
-#include <vtkPolyDataReader.h>
-#include <vtkStructuredGridReader.h>
-#include <vtkUnstructuredGridReader.h>
-#endif
-
 #include <mirtk/RView.h>
 #include <mirtk/HistogramWindow.h>
 

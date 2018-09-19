@@ -57,10 +57,9 @@ set(DEPENDS
   LibPointSet
   LibIO
   LibTransformation
-  LibRegistration
-  ${VTK_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${GLUT_LIBRARIES}
+  ${VTK_LIBRARIES}
 )
 
 mirtk_add_library()

@@ -15,7 +15,7 @@
 #include <mirtk/Registration.h>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 #ifdef HAS_REGISTRATION_PANEL
 

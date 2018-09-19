@@ -15,7 +15,7 @@
 #include <mirtk/Registration.h>
 #include <mirtk/IOConfig.h>
 
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 Fl_RViewUI  *rviewUI;
 Fl_RView    *viewer;
@@ -28,7 +28,7 @@ void usage()
   cerr << "\t<-config           file.cnf>     Rview configuration file\n";
   cerr << "\t<-target_landmarks file.vtk>     Target landmarks (vtkPolyData)\n";
   cerr << "\t<-source_landmarks file.vtk>     Source landmarks (vtkPolyData)\n";
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
   cerr << "\t<-object           file.vtk>     Object           (vtkPointSet)\n";
   cerr << "\t<-object_warp>                   Warp object with vectors\n";
   cerr << "\t<-object_grid>                   Object grid on\n";
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
       argv++;
       ok = true;
     }
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
     if ( (ok == false) && (strcmp(argv[1], "-object") == 0)) {
       argc--;
       argv++;

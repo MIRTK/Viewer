@@ -21,6 +21,8 @@
 #include <GL/glu.h>
 #endif
 
+#include <mirtk/IOConfig.h>
+
 class RView;
 class VoxelContour;
 class MultiLevelTransformation;
@@ -86,7 +88,7 @@ public:
   void DrawROI(mirtk::GreyImage *image, double, double, double, double,
                double, double);
 
-#ifdef HAS_VTK
+#if MIRTK_IO_WITH_VTK
   /// Draw multiple objects
   void DrawObject(vtkPointSet **, mirtk::GreyImage *, int = false, int = false, mirtk::Transformation* = NULL);
 

@@ -52,13 +52,13 @@
 #include <FL/forms.H>
 
 // FLU
-#include <Fl_Simple_Group.h>
-#include <Fl_Simple_Browser.h>
-#include <Fl_Value_Slider2.h>
+#include "Fl_Simple_Group.h"
+#include "Fl_Simple_Browser.h"
+#include "Fl_Value_Slider2.h"
 
 // Local includes
-#include <Fl_RView.h>
-#include <Fl_RView_Histogram.h>
+#include "Fl_RView.h"
+#include "Fl_RView_Histogram.h"
 
 // Slider ranges for affine DOFs
 #define _GLOBAL_TRANSLATION_MIN  -80
@@ -134,23 +134,23 @@ public:
   void InitializeCursorControlWindow();
 
 #ifdef HAS_VISUALISATION_PANEL
-#include <Fl_RView_Visualisation.h>
+#include "Fl_RView_Visualisation.h"
 #endif
 
 #ifdef HAS_TRANSFORMATION_PANEL
-#include <Fl_RView_Transformation.h>
+#include "Fl_RView_Transformation.h"
 #endif
 
 #ifdef HAS_REGISTRATION_PANEL
-#include <Fl_RView_Registration.h>
+#include "Fl_RView_Registration.h"
 #endif
 
 #ifdef HAS_LANDMARK_PANEL
-#include <Fl_RView_Landmark.h>
+#include "Fl_RView_Landmark.h"
 #endif
 
 #ifdef HAS_SEGMENTATION_PANEL
-#include <Fl_RView_Segmentation.h>
+#include "Fl_RView_Segmentation.h"
 #endif
 
 };

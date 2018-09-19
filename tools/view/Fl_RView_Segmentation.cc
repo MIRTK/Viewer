@@ -19,13 +19,13 @@
 #include <FL/Fl_Window.H>
 
 // Local includes
-#include <Fl_RViewUI.h>
+#include "Fl_RViewUI.h"
 
 #ifdef HAS_SEGMENTATION_PANEL
 
-#include <bitmaps/kchart.xpm>
-#include <bitmaps/color_line_closed.xpm>
-#include <bitmaps/color_line_open.xpm>
+#include "bitmaps/kchart.xpm"
+#include "bitmaps/color_line_closed.xpm"
+#include "bitmaps/color_line_open.xpm"
 
 extern Fl_RViewUI  *rviewUI;
 extern Fl_RView    *viewer;

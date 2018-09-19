@@ -34,7 +34,7 @@ Fl_Button *viewROI;
 static void cb_viewROI(Fl_Button*, void*);
 static void cb_trackTAG(Fl_Button*, void*);
 static void cb_viewTagGrid(Fl_Button*, void*);
-#ifdef HAS_VTK
+#ifdef HAVE_VTK
 Fl_Check_Button *viewObjectMovie;
 Fl_Button *warpObject;
 static void cb_viewObjectMovie(Fl_Button*, void*);

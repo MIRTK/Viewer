@@ -19,11 +19,34 @@
 
 ##############################################################################
 # @file  CMakeLists.txt
-# @brief Build configuration of MIRTK Viewer tools.
+# @brief Build configuration of MIRTK Viewer GUI.
 ##############################################################################
 
 mirtk_add_executable(
-  display
+  view
+  SOURCES
+    Fl_RView.cc
+    Fl_RView.h
+    Fl_RViewUI.cc
+    Fl_RViewUI.h
+    Fl_RView_Histogram.cc
+    Fl_RView_Histogram.h
+    Fl_RView_Landmark.cc
+    Fl_RView_Landmark.h
+    Fl_RView_Registration.cc
+    Fl_RView_Registration.h
+    Fl_RView_Segmentation.cc
+    Fl_RView_Segmentation.h
+    Fl_RView_Transformation.cc
+    Fl_RView_Transformation.h
+    Fl_RView_Visualisation.cc
+    Fl_RView_Visualisation.h
+    Fl_Simple_Browser.cc
+    Fl_Simple_Browser.h
+    Fl_Simple_Group.cc
+    Fl_Simple_Group.h
+    Fl_Value_Slider2.cc
+    Fl_Value_Slider2.h
   DEPENDS
     LibCommon
     LibNumerics
@@ -32,11 +55,8 @@ mirtk_add_executable(
     LibPointSet
     LibTransformation
     LibViewer
-    ${VTK_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARIES}
+    ${FLTK_LIBRARIES}
+    ${VTK_LIBRARIES}
 )
-
-if(FLTK_FOUND)
-  add_subdirectory(view)
-endif()
