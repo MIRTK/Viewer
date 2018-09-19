@@ -14,7 +14,7 @@
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
 
-#include <Segment.h>
+#include <mirtk/Segment.h>
 
 #include <FL/Fl_Window.H>
 
