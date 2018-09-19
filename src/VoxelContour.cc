@@ -10,6 +10,7 @@
  
 =========================================================================*/
 
+#include <mirtk/RView.h>
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
@@ -30,7 +31,6 @@
 
 #include <stack>
 
-#include <RView.h>
 
 typedef struct
 {

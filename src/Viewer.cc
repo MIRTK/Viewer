@@ -10,6 +10,7 @@
 
  =========================================================================*/
 
+#include <mirtk/RView.h>
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
@@ -22,7 +23,6 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
 
 // Define the maximum number of control points along each axis we can
 // handle here.

@@ -11,8 +11,9 @@
 =========================================================================*/
 
 #ifndef _RVIEW_H
-
 #define _RVIEW_H
+
+#include <iostream>
 
 typedef enum { View_A,
                View_B,
@@ -76,7 +77,7 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } RegionGrowingMode;
 
 #ifndef IMPERIAL
 
-//#include <mirtk::TransformationCollection.h>
+//#include <mirtk/TransformationCollection.h>
 
 #define AFFDTransformation "AdaptiveFreeFormTransformation"
 #define MFFDTransformation "mirtk::TransformationCollection"
@@ -105,13 +106,13 @@ typedef enum { RegionGrowing2D, RegionGrowing3D } RegionGrowingMode;
 
 #define MAX_NUMBER_OF_OBJECTS 40
 
-#include <SegmentTable.h>
+#include <mirtk/SegmentTable.h>
 
-#include <LookupTable.h>
-#include <Viewer.h>
-#include <RViewConfig.h>
-#include <HistogramWindow.h>
-#include <VoxelContour.h>
+#include <mirtk/LookupTable.h>
+#include <mirtk/Viewer.h>
+#include <mirtk/RViewConfig.h>
+#include <mirtk/HistogramWindow.h>
+#include <mirtk/VoxelContour.h>
 
 class VoxelContour;
 
@@ -1556,7 +1557,7 @@ inline int RView::GetViewTAG()
 inline vtkPointSet *RView::GetObject(int i)
 {
   if ((i < 0) || (i > _NoOfObjects-1)) {
-    cerr << "RView::GetObject: Invalid object: " << i << endl;
+    std::cerr << "RView::GetObject: Invalid object: " << i << std::endl;
     return NULL;
   }
   return _Object[i];
@@ -1894,7 +1895,7 @@ inline void RView::InsertTargetLandmark(mirtk::Point &point, int id, char *)
       _targetLandmarks.Add(pset(i-1));
     }
   } else {
-    cerr << "RView::InsertTargetLandmark : invalid position " << id << endl;
+    std::cerr << "RView::InsertTargetLandmark : invalid position " << id << std::endl;
   }
 }
 
@@ -1916,7 +1917,7 @@ inline void RView::InsertSourceLandmark(mirtk::Point &point, int id, char *)
       _sourceLandmarks.Add(pset(i-1));
     }
   } else {
-    cerr << "RView::InsertSourceLandmark : invalid position " << id << endl;
+    std::cerr << "RView::InsertSourceLandmark : invalid position " << id << std::endl;
   }
 }
 

@@ -12,7 +12,7 @@
 
 #include <mirtk/Image.h>
 
-#include <ColorRGBA.h>
+#include <mirtk/ColorRGBA.h>
 
 void ColorRGBA::RGBtoHSV(double cr, double cg, double cb)
 {

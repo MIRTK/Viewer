@@ -1,36 +1,66 @@
-project(rview_src)
+# ============================================================================
+# Medical Image Registration ToolKit (MIRTK)
+#
+# Copyright Imperial College London
+# Copyright 2018 Andreas Schuh
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============================================================================
 
-set(RVIEW_INCLUDES
-	../include/Color.h
-	../include/ColorRGBA.h
-	../include/Contour.h
-	../include/LookupTable.h
-	../include/RView.h
-	../include/RViewConfig.h
-	../include/Viewer.h
-	../include/HistogramWindow.h
-	../include/Segment.h
-	../include/SegmentTable.h
-	../include/VoxelContour.h
+##############################################################################
+# @file  CMakeLists.txt
+# @brief Build configuration of MIRTK Viewer library.
+##############################################################################
+
+set(HEADERS
+  ${BINARY_INCLUDE_DIR}/mirtk/ViewerExport.h
+  Color.h
+  ColorRGBA.h
+  Contour.h
+  LookupTable.h
+  RView.h
+  RViewConfig.h
+  Viewer.h
+  HistogramWindow.h
+  Segment.h
+  SegmentTable.h
+  VoxelContour.h
 )
 
-set(RVIEW_SRCS
-	Color.cc
-	ColorRGBA.cc
-	LookupTable.cc
-	RView.cc
-	RViewConfig.cc
-	Viewer.cc
-	HistogramWindow.cc
-	Segment.cc
-	SegmentTable.cc
-	VoxelContour.cc
+set(SOURCES
+  Color.cc
+  ColorRGBA.cc
+  LookupTable.cc
+  RView.cc
+  RViewConfig.cc
+  Viewer.cc
+  HistogramWindow.cc
+  Segment.cc
+  SegmentTable.cc
+  VoxelContour.cc
 )
 
-add_library(rview++ ${RVIEW_SRCS})
-target_include_directories(rview++ 
-	PUBLIC "${MIRTK_INCLUDE_DIRS}" "${VTK_INCLUDE_DIRS}"
+set(DEPENDS
+  LibCommon
+  LibNumerics
+  LibImage
+  LibPointSet
+  LibIO
+  LibTransformation
+  LibRegistration
+  ${VTK_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${GLUT_LIBRARIES}
 )
-target_link_libraries(rview++ fltk fltk_gl)
 
-install_files(/include FILES ${RVIEW_INCLUDES})
+mirtk_add_library()

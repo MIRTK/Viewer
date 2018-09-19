@@ -27,7 +27,7 @@
 #endif
 #endif
 
-#include <RView.h>
+#include <mirtk/RView.h>
 
 RView *rview;
 

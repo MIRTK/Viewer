@@ -11,11 +11,10 @@
 =========================================================================*/
 
 #ifndef _LOOKUPTABLE_H
-
 #define _LOOKUPTABLE_H
 
-#include <ColorRGBA.h>
-#include <Color.h>
+#include <mirtk/ColorRGBA.h>
+#include <mirtk/Color.h>
 
 typedef enum { ColorMode_Custom,
                ColorMode_HotMetal,

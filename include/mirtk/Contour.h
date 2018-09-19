@@ -11,11 +11,12 @@
 =========================================================================*/
 
 #ifndef _CONTOUR_H
-
 #define _CONTOUR_H
 
-#include <Image.h>
 #include <vector>
+
+#include <mirtk/Image.h>
+
 
 enum ContourMode { NewContour, NewPoint, CloseContour };
 

@@ -10,7 +10,7 @@
 
 =========================================================================*/
 
-#include <Contour.h>
+#include <mirtk/Contour.h>
 
 Contour::Contour()
 {

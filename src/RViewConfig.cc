@@ -10,6 +10,8 @@
 
 =========================================================================*/
 
+#include <mirtk/RView.h>
+
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
@@ -22,7 +24,7 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
+
 
 RViewConfig View_XY[] = {
   {  0.0, 0.0, 1.0, 1.0, Viewer_XY },

@@ -11,7 +11,6 @@
 =========================================================================*/
 
 #ifndef _VOXELCONTOUR_H
-
 #define _VOXELCONTOUR_H
 
 #include <vector>

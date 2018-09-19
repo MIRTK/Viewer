@@ -11,10 +11,10 @@
 =========================================================================*/
 
 #ifndef _HISTOGRAMWINDOW_H
-
 #define _HISTOGRAMWINDOW_H
 
-#include <RView.h>
+#include <mirtk/Histogram1D.h>
+#include <mirtk/RView.h>
 
 #define HISTOGRAM_BINS 256
 

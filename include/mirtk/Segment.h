@@ -11,15 +11,13 @@
 =========================================================================*/
 
 #ifndef _SEGMENT_H
-
 #define _SEGMENT_H
 
 #define HEX_LENGTH 7
 
 #include <mirtk/Image.h>
-
-#include <ColorRGBA.h>
-#include <Color.h>
+#include <mirtk/ColorRGBA.h>
+#include <mirtk/Color.h>
 
 class Segment
 {

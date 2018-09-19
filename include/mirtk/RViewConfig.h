@@ -11,7 +11,6 @@
 =========================================================================*/
 
 #ifndef _RVIEWCONFIG_H
-
 #define _RVIEWCONFIG_H
 
 typedef struct {

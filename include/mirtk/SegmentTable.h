@@ -11,11 +11,11 @@
 =========================================================================*/
 
 #ifndef _SEGMENTTABLE_H
-
 #define _SEGMENTTABLE_H
 
-#include <Segment.h>
-#include <limits.h>
+#include <limits>
+#include <mirtk/Segment.h>
+
 
 class SegmentTable
 {
@@ -26,7 +26,7 @@ class SegmentTable
 protected:
 
   /// Segment Table
-  Segment _entry[SHRT_MAX+1];
+  Segment _entry[std::numeric_limits<short>::max() + 1];
 
 public:
 
@@ -127,7 +127,7 @@ inline int SegmentTable::IsValid(int id)
 
 inline int SegmentTable::Size()
 {
-  return SHRT_MAX+1;
+  return std::numeric_limits<short>::max() + 1;
 }
 
 #endif

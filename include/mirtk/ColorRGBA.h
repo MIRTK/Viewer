@@ -10,20 +10,18 @@
 
 =========================================================================*/
 
-#ifndef _COLOR_H
-
-#define _COLOR_H
+#ifndef _COLORRGBA_H
+#define _COLORRGBA_H
 
 #define HAS_COLOR
 
 #ifndef HAS_COLOR
 
-typedef unsigned char Color;
 typedef unsigned char ColorRGBA;
 
 #else
 
-class Color
+class ColorRGBA
 {
 
 public:
@@ -31,24 +29,19 @@ public:
   unsigned char r;
   unsigned char g;
   unsigned char b;
+  float a;
 
   // Constructor (default)
-  Color();
+  ColorRGBA();
 
   // Constructor (copy)
-  Color(const Color &);
-
-  // Constructor (copy)
-  Color(const ColorRGBA &);
+  ColorRGBA(const ColorRGBA &);
 
   // Copy operators
-  Color& operator= (const int &);
+  ColorRGBA& operator= (const int &);
 
   // Copy operators
-  Color& operator= (const Color &);
-
-  // Copy operators
-  Color& operator= (const ColorRGBA &);
+  ColorRGBA& operator= (const ColorRGBA &);
 
   // Convert HSV color to RGB color
   void HSVtoRGB(double, double, double);
@@ -58,44 +51,32 @@ public:
 
 };
 
-inline Color::Color()
+inline ColorRGBA::ColorRGBA()
 {
   r = 0;
   g = 0;
   b = 0;
+  a = 1;
 }
 
-inline Color::Color(const Color &c)
+inline ColorRGBA::ColorRGBA(const ColorRGBA &c)
 {
   r = c.r;
   g = c.g;
   b = c.b;
+  a = c.a;
 }
 
-inline Color::Color(const ColorRGBA &c)
+inline ColorRGBA& ColorRGBA::operator=(const ColorRGBA &c)
 {
   r = c.r;
   g = c.g;
   b = c.b;
-}
-
-inline Color& Color::operator=(const Color &c)
-{
-  r = c.r;
-  g = c.g;
-  b = c.b;
+  a = c.a;
   return *this;
 }
 
-inline Color& Color::operator=(const ColorRGBA &c)
-{
-  r = c.r;
-  g = c.g;
-  b = c.b;
-  return *this;
-}
-
-inline Color& Color::operator=(const int &c)
+inline ColorRGBA& ColorRGBA::operator=(const int &c)
 {
   r = c;
   g = c;

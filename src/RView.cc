@@ -9,11 +9,7 @@
  
  =========================================================================*/
 
-#include <mirtk/Image.h>
-#include <mirtk/Transformation.h>
-#include <mirtk/Registration.h>
-//#include <mirtk/PointRegistration.h>
-#include <mirtk/Transformations.h>
+#include <mirtk/RView.h>
 
 #ifdef __APPLE__
 #include <OpenGl/gl.h>
@@ -23,13 +19,18 @@
 #include <GL/glu.h>
 #endif
 
-#include <RView.h>
-
 #ifdef HAS_VTK
 #include <vtkPolyDataReader.h>
 #include <vtkStructuredGridReader.h>
 #include <vtkUnstructuredGridReader.h>
 #endif
+
+#include <mirtk/Image.h>
+#include <mirtk/Transformation.h>
+#include <mirtk/Registration.h>
+//#include <mirtk/PointRegistration.h>
+#include <mirtk/Transformations.h>
+
 
 RView::RView(int x, int y)
 {
