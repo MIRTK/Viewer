@@ -22,6 +22,10 @@
 # @brief Build configuration of MIRTK Viewer GUI.
 ##############################################################################
 
+message("FLTK_LIBRARIES=${FLTK_LIBRARIES}")
+message("FLTK_LIBRARY=${FLTK_LIBRARY}")
+message("FLTK_DIR=${FLTK_DIR}")
+
 mirtk_add_executable(
   view
   SOURCES
@@ -55,8 +59,8 @@ mirtk_add_executable(
     LibPointSet
     LibTransformation
     LibViewer
-    ${OPENGL_LIBRARIES}
+    fltk_gl_STATIC
     ${GLUT_LIBRARIES}
-    ${FLTK_LIBRARIES}
+    ${OPENGL_LIBRARIES}
     ${VTK_LIBRARIES}
 )
