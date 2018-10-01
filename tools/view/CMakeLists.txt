@@ -22,16 +22,6 @@
 # @brief Build configuration of MIRTK Viewer GUI.
 ##############################################################################
 
-if (TARGET fltk_gl_STATIC)
-  set(FLTK_LIBRARY fltk_gl_STATIC)
-elseif (TARGET fltk_gl_SHARED)
-  set(FLTK_LIBRARY fltk_gl_SHARED)
-elseif (TARGET fltk_gl)
-  set(FLTK_LIBRARY fltk_gl)
-else ()
-  message(WARNING "No fltk_gl(_STATIC|_SHARED)? import target is defined, using ${FLTK_LIBRARY}")
-endif ()
-
 mirtk_add_executable(
   view
   SOURCES
@@ -65,7 +55,7 @@ mirtk_add_executable(
     LibPointSet
     LibTransformation
     LibViewer
-    ${FLTK_LIBRARY}
+    ${FLTK_LIBRARIES}
     ${GLUT_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${VTK_LIBRARIES}

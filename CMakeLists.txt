@@ -24,4 +24,8 @@ if (NOT COMMAND mirtk_configure_module)
   find_package(MIRTK REQUIRED COMPONENTS CMake)
 endif ()
 
+set(FLTK_SKIP_FLUID TRUE)
+set(FLTK_SKIP_FORMS TRUE)
+set(FLTK_SKIP_IMAGES TRUE)
+
 mirtk_configure_module()
