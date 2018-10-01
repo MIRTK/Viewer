@@ -36,7 +36,7 @@ protected:
   /// Name of structure
   char *_label;
 
-  /// Transperancy
+  /// Transparency
   double _trans;
 
   /// Visibility flag

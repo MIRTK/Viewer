@@ -24,7 +24,7 @@ Segment::Segment()
   // Colour
   setColor(0, 0, 0);
 
-  // Transperancy
+  // Transparency
   _trans = 0.0;
 }
 
@@ -39,7 +39,7 @@ Segment::Segment(char* label, unsigned char cr, unsigned char cg, unsigned char 
   // Colour
   setColor(cr, cg, cb);
 
-  // Transperancy
+  // Transparency
   _trans = t;
 }
 
