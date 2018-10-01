@@ -255,7 +255,7 @@ void Fl_RViewUI::cb_displaySegmentContours(Fl_Check_Button *o, void *)
 void Fl_RViewUI::cb_selectAll(Fl_Check_Button *, void *)
 {
   //if (o->value() == 1){
-  for (int j=0; j<100; j++)
+  for (int j=0; j < rview->GetSegmentTable()->Size(); j++)
     if ( rview->GetSegmentTable()->IsValid(j) == true) {
       rview->GetSegmentTable()->SetVisibility(j,1);
     }
@@ -269,7 +269,7 @@ void Fl_RViewUI::cb_selectAll(Fl_Check_Button *, void *)
 
 void Fl_RViewUI::cb_deselectAll(Fl_Check_Button *, void *)
 {
-  for (int j=0; j<100; j++) {
+  for (int j=0; j < rview->GetSegmentTable()->Size(); j++) {
     if (rview->GetSegmentTable()->IsValid(j) == true) {
       rview->GetSegmentTable()->SetVisibility(j, 0);
     }
