@@ -951,7 +951,7 @@ void RView::Read(char *name)
   char buffer1[255], *buffer2 = NULL;
 
   // Open file
-  ifstream from(name);
+  std::ifstream from(name);
   if (!from) {
     cerr << "RView::Read: Can't open file " << name << "\n";
     exit(1);
@@ -1367,7 +1367,7 @@ void RView::Read(char *name)
 void RView::Write(char *name)
 {
   // Open file
-  ofstream to(name);
+  std::ofstream to(name);
   if (!to) {
     cerr << "RView::Write: Can't open file " << name << "\n";
     exit(1);
