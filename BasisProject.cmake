@@ -61,7 +61,7 @@ basis_project (
     GLUT
     #<dependency>
   OPTIONAL_DEPENDS
-    VTK-9|8|7|6{vtkCommonCore,vtkCommonDataModel,vtkFiltersCore,vtkFiltersGeometry,vtkIOLegacy}
+    VTK{vtkCommonCore,vtkCommonDataModel,vtkFiltersCore,vtkFiltersGeometry,vtkIOLegacy}
     #<optional-dependency>
   TOOLS_DEPENDS
     FLTK
