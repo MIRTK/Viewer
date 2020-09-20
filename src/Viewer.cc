@@ -1026,11 +1026,7 @@ void Viewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int warp, 
 		plane->SetOrigin(p1);
 		plane->SetNormal(normal);
 		cutter->SetCutFunction(plane);
-#if VTK_MAJOR_VERSION >= 6
-    cutter->SetInputData(points);
-#else
-		cutter->SetInput(points);
-#endif
+		cutter->SetInputData(points);
 
 		// Reslice object
 		cutter->Modified();
