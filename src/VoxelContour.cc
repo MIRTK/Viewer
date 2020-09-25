@@ -10,23 +10,17 @@
  
 =========================================================================*/
 
+#include <mirtk/OpenGl.h>
 #include <mirtk/RView.h>
+
 #include <mirtk/Image.h>
 #include <mirtk/Transformation.h>
 #include <mirtk/Registration.h>
 
-#ifdef __APPLE__
-#include <OpenGl/gl.h>
-#include <OpenGl/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #ifndef WIN32
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+  #include <sys/types.h>
+  #include <sys/time.h>
+  #include <sys/resource.h>
 #endif
 
 #include <stack>

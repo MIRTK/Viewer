@@ -11,21 +11,16 @@
 
 #include <fstream>
 
+#include <mirtk/OpenGl.h>
 #include <mirtk/RView.h>
-
-#ifdef __APPLE__
-#include <OpenGl/gl.h>
-#include <OpenGl/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
 
 #include <mirtk/Image.h>
 #include <mirtk/Transformations.h>
 #include <mirtk/IOConfig.h>
+#include <mirtk/Stream.h>
+
 #if MIRTK_IO_WITH_VTK && defined(HAVE_VTK)
-#include <mirtk/PointSetIO.h>
+  #include <mirtk/PointSetIO.h>
 #endif
 
 

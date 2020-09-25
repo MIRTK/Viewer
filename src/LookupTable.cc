@@ -10,16 +10,11 @@
 
 =========================================================================*/
 
-#ifdef __APPLE__
-#include <OpenGl/gl.h>
-#include <OpenGl/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include <mirtk/Image.h>
+
+#include <mirtk/OpenGl.h>
 #include <mirtk/LookupTable.h>
+
 
 LookupTable::LookupTable(int minData, int maxData)
 {
