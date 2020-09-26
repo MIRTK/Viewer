@@ -58,7 +58,6 @@ basis_project (
   DEPENDS
     MIRTK{Common,PointSet,Numerics,Image,IO,Transformation}
     OpenGL
-    GLUT
     #<dependency>
   OPTIONAL_DEPENDS
     VTK{vtkCommonCore,vtkCommonDataModel,vtkFiltersCore,vtkFiltersGeometry,vtkIOLegacy}
@@ -66,6 +65,9 @@ basis_project (
   TOOLS_DEPENDS
     FLTK
     #<tools-dependency>
+  OPTIONAL_TOOLS_DEPENDS
+    GLUT
+    #<optional-tools-dependency>
   TEST_DEPENDS
     #<test-dependency>
   OPTIONAL_TEST_DEPENDS

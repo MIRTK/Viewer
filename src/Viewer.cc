@@ -1,14 +1,20 @@
-/*=========================================================================
-
- Library   : Image Registration Toolkit (IRTK)
- Module    : $Id$
- Copyright : Imperial College, Department of Computing
- Visual Information Processing (VIP), 2008 onwards
- Date      : $Date$
- Version   : $Revision$
- Changes   : $Author$
-
- =========================================================================*/
+/*
+ * Medical Image Registration ToolKit (MIRTK)
+ *
+ * Copyright (c) Imperial College London
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <mirtk/OpenGl.h>
 #include <mirtk/RView.h>
@@ -650,9 +656,7 @@ void Viewer::DrawSegmentationContour(mirtk::GreyImage *image)
 
 	for (j = 1; j < this->GetHeight() - 1; j++) {
 		for (i = 1; i < this->GetWidth() - 1; i++) {
-			if ((image->Get(i, j, 0) > 0)
-					&& (_rview->_segmentTable->_entry[image->Get(i, j, 0)]._visible
-							== true)) {
+			if ((image->Get(i, j, 0) > 0) && _rview->_segmentTable->_entry[image->Get(i, j, 0)]._visible) {
 				r = _rview->_segmentTable->_entry[image->Get(i, j, 0)]._color.r;
 				g = _rview->_segmentTable->_entry[image->Get(i, j, 0)]._color.g;
 				b = _rview->_segmentTable->_entry[image->Get(i, j, 0)]._color.b;
@@ -1077,9 +1081,9 @@ void Viewer::DrawObject(vtkPointSet *points, mirtk::GreyImage *image, int warp, 
 void Viewer::DrawInfo(DisplayMode m)
 {
 	int x, y;
-	static int first = true;
+	static bool first = true;
 
-	if (first == true) {
+	if (first) {
 		GLuint i, j;
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -1112,13 +1116,13 @@ void Viewer::DrawInfo(DisplayMode m)
 			glRasterPos2i(_screenX1 + 5, _screenY1 + y / 2 - 5);
 			glPushAttrib (GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("L"), GL_UNSIGNED_BYTE, (GLubyte *) "R");
+			glCallLists(static_cast<GLsizei>(strlen("L")), GL_UNSIGNED_BYTE, (GLubyte *) "R");
 			glPopAttrib();
 
 			glRasterPos2i(_screenX1 + x - 15, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("R"), GL_UNSIGNED_BYTE, (GLubyte *) "L");
+			glCallLists(static_cast<GLsizei>(strlen("R")), GL_UNSIGNED_BYTE, (GLubyte *) "L");
 			glPopAttrib();
 
 		}
@@ -1128,13 +1132,13 @@ void Viewer::DrawInfo(DisplayMode m)
 			glRasterPos2i(_screenX1 + 5, _screenY1 + y / 2 - 5);
 			glPushAttrib (GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("L"), GL_UNSIGNED_BYTE, (GLubyte *) "L");
+			glCallLists(static_cast<GLsizei>(strlen("L")), GL_UNSIGNED_BYTE, (GLubyte *) "L");
 			glPopAttrib();
 
 			glRasterPos2i(_screenX1 + x - 15, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("R"), GL_UNSIGNED_BYTE, (GLubyte *) "R");
+			glCallLists(static_cast<GLsizei>(strlen("R")), GL_UNSIGNED_BYTE, (GLubyte *) "R");
 			glPopAttrib();
 
 		}
@@ -1142,13 +1146,13 @@ void Viewer::DrawInfo(DisplayMode m)
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + 5);
 		glPushAttrib (GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("P"), GL_UNSIGNED_BYTE, (GLubyte *) "P");
+		glCallLists(static_cast<GLsizei>(strlen("P")), GL_UNSIGNED_BYTE, (GLubyte *) "P");
 		glPopAttrib();
 
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + y - 15);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("A"), GL_UNSIGNED_BYTE, (GLubyte *) "A");
+		glCallLists(static_cast<GLsizei>(strlen("A")), GL_UNSIGNED_BYTE, (GLubyte *) "A");
 		glPopAttrib();
 		break;
 
@@ -1160,13 +1164,13 @@ void Viewer::DrawInfo(DisplayMode m)
 			glRasterPos2i(_screenX1 + 5, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("R"), GL_UNSIGNED_BYTE, (GLubyte *) "R");
+			glCallLists(static_cast<GLsizei>(strlen("R")), GL_UNSIGNED_BYTE, (GLubyte *) "R");
 			glPopAttrib();
 
 			glRasterPos2i(_screenX1 + x - 15, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("L"), GL_UNSIGNED_BYTE, (GLubyte *) "L");
+			glCallLists(static_cast<GLsizei>(strlen("L")), GL_UNSIGNED_BYTE, (GLubyte *) "L");
 			glPopAttrib();
 
 		}
@@ -1176,13 +1180,13 @@ void Viewer::DrawInfo(DisplayMode m)
 			glRasterPos2i(_screenX1 + 5, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("R"), GL_UNSIGNED_BYTE, (GLubyte *) "L");
+			glCallLists(static_cast<GLsizei>(strlen("R")), GL_UNSIGNED_BYTE, (GLubyte *) "L");
 			glPopAttrib();
 
 			glRasterPos2i(_screenX1 + x - 15, _screenY1 + y / 2 - 5);
 			glPushAttrib(GL_LIST_BIT);
 			glListBase(fontOffset);
-			glCallLists(strlen("L"), GL_UNSIGNED_BYTE, (GLubyte *) "R");
+			glCallLists(static_cast<GLsizei>(strlen("L")), GL_UNSIGNED_BYTE, (GLubyte *) "R");
 			glPopAttrib();
 
 		}
@@ -1190,13 +1194,13 @@ void Viewer::DrawInfo(DisplayMode m)
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + 5);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("I"), GL_UNSIGNED_BYTE, (GLubyte *) "I");
+		glCallLists(static_cast<GLsizei>(strlen("I")), GL_UNSIGNED_BYTE, (GLubyte *) "I");
 		glPopAttrib();
 
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + y - 15);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("S"), GL_UNSIGNED_BYTE, (GLubyte *) "S");
+		glCallLists(static_cast<GLsizei>(strlen("S")), GL_UNSIGNED_BYTE, (GLubyte *) "S");
 		glPopAttrib();
 		break;
 
@@ -1206,25 +1210,25 @@ void Viewer::DrawInfo(DisplayMode m)
 		glRasterPos2i(_screenX1 + 5, _screenY1 + y / 2 - 5);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("P"), GL_UNSIGNED_BYTE, (GLubyte *) "P");
+		glCallLists(static_cast<GLsizei>(strlen("P")), GL_UNSIGNED_BYTE, (GLubyte *) "P");
 		glPopAttrib();
 
 		glRasterPos2i(_screenX1 + x - 15, _screenY1 + y / 2 - 5);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("A"), GL_UNSIGNED_BYTE, (GLubyte *) "A");
+		glCallLists(static_cast<GLsizei>(strlen("A")), GL_UNSIGNED_BYTE, (GLubyte *) "A");
 		glPopAttrib();
 
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + 5);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("I"), GL_UNSIGNED_BYTE, (GLubyte *) "I");
+		glCallLists(static_cast<GLsizei>(strlen("I")), GL_UNSIGNED_BYTE, (GLubyte *) "I");
 		glPopAttrib();
 
 		glRasterPos2i(_screenX1 + x / 2 - 5, _screenY1 + y - 15);
 		glPushAttrib(GL_LIST_BIT);
 		glListBase(fontOffset);
-		glCallLists(strlen("S"), GL_UNSIGNED_BYTE, (GLubyte *) "S");
+		glCallLists(static_cast<GLsizei>(strlen("S")), GL_UNSIGNED_BYTE, (GLubyte *) "S");
 		glPopAttrib();
 		break;
 
