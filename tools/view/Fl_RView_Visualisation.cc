@@ -105,7 +105,7 @@ void Fl_RViewUI::AddSource(char *filename)
 
 void Fl_RViewUI::cb_loadTarget(Fl_Button *, void *)
 {
-  char *filename = fl_file_chooser("Load target image", "*.{gipl,gipl.Z,hdr,hdr.gz,nii,nii.gz}", "");
+  char *filename = fl_file_chooser("Load target image", "*.{gipl,gipl.Z,hdr,hdr.gz,nii,nii.gz,mha,mhd}", "");
   if (filename != NULL) {
     rview->ReadTarget(filename);
     rviewUI->update();
@@ -117,7 +117,7 @@ void Fl_RViewUI::cb_loadTarget(Fl_Button *, void *)
 
 void Fl_RViewUI::cb_loadSource(Fl_Button *, void *)
 {
-  char *filename = fl_file_chooser("Load source image", "*.{gipl,gipl.Z,hdr,hdr.gz,nii,nii.gz}", "");
+  char *filename = fl_file_chooser("Load source image", "*.{gipl,gipl.Z,hdr,hdr.gz,nii,nii.gz,mha,mhd}", "");
   if (filename != NULL) {
     rview->ReadSource(filename);
     rviewUI->update();
@@ -129,7 +129,7 @@ void Fl_RViewUI::cb_loadSource(Fl_Button *, void *)
 
 void Fl_RViewUI::cb_saveTarget(Fl_Button *, void *)
 {
-  char *filename = fl_file_chooser("Save target image", "*.{gipl,hdr,vtk,nii}", "");
+  char *filename = fl_file_chooser("Save target image", "*.{gipl,hdr,vtk,nii,nii.gz,mha,mhd}", "");
   if (filename != NULL) {
     struct stat buffer;
     if (stat(filename, &buffer) == 0) {
@@ -144,7 +144,7 @@ void Fl_RViewUI::cb_saveTarget(Fl_Button *, void *)
 
 void Fl_RViewUI::cb_saveSource(Fl_Button *, void *)
 {
-  char *filename = fl_file_chooser("Save source image", "*.{gipl,hdr,vtk,nii}", "");
+  char *filename = fl_file_chooser("Save source image", "*.{gipl,hdr,vtk,nii,nii.gz,mha,mhd}", "");
   if (filename != NULL) {
     struct stat buffer;
     if (stat(filename, &buffer) == 0) {
