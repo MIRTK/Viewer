@@ -22,7 +22,14 @@
 # @brief Build configuration of MIRTK Viewer tools.
 ##############################################################################
 
-if(GLUT_FOUND)
+if(GLUT_FOUND OR FreeGLUT_FOUND)
+
+  if(TARGET FreeGLUT::freeglut_static)
+    set(GLUT_LIBRARIES FreeGLUT::freeglut_static)
+  elseif(TARGET FreeGLUT::freeglut)
+    set(GLUT_LIBRARIES FreeGLUT::freeglut)
+  endif()
+
   mirtk_add_executable(
     display
     DEPENDS
@@ -36,7 +43,6 @@ if(GLUT_FOUND)
       ${VTK_LIBRARIES}
       ${GLUT_LIBRARIES}
       ${OPENGL_LIBRARIES}
-      ${GLUT_LIBRARIES}
   )
 endif()
 

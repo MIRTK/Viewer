@@ -22,6 +22,12 @@
 #include <mirtk/OpenGl.h>
 #include <mirtk/RView.h>
 
+#ifdef __APPLE__
+  #include <glut.h>
+#else
+  #include <GL/glut.h>
+#endif
+
 RView *rview;
 
 char *offscreen_file;

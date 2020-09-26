@@ -66,6 +66,7 @@ basis_project (
     FLTK
     #<tools-dependency>
   OPTIONAL_TOOLS_DEPENDS
+    FreeGLUT
     GLUT
     #<optional-tools-dependency>
   TEST_DEPENDS
