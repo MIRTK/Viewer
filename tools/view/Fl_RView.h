@@ -43,7 +43,27 @@ public:
   void draw();
 
   /// Default function to handle events
-  int  handle(int);
+  int handle(int);
+
+  int pixel_event_x()
+  {
+    return int(pixels_per_unit() * Fl::event_x() + 0.5);
+  }
+
+  int pixel_event_y()
+  {
+    return int(pixels_per_unit() * Fl::event_y() + 0.5);
+  }
+
+  int pixel_event_dx()
+  {
+    return int(pixels_per_unit() * Fl::event_dx() + 0.5);
+  }
+
+  int pixel_event_dy()
+  {
+    return int(pixels_per_unit() * Fl::event_dy() + 0.5);
+  }
 
 };
 
