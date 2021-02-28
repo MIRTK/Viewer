@@ -29,10 +29,9 @@ Fl_RView::Fl_RView(int x, int y, int w, int h, const char *name) : Fl_Gl_Window(
 {
   v = new RView(w, h);
   // See https://www.fltk.org/doc-1.3/osissues.html#osissues_macos, section "OpenGL and 'retina' displays"
-  #ifndef FLTK_USE_HIGH_RES_GL
-  #  define FLTK_USE_HIGH_RES_GL 1
+  #if FL_API_VERSION >= 10304
+    Fl::use_high_res_GL(1);
   #endif
-  Fl::use_high_res_GL(FLTK_USE_HIGH_RES_GL);
 }
 
 void Fl_RView::draw()

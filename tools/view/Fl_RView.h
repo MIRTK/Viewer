@@ -45,6 +45,23 @@ public:
   /// Default function to handle events
   int handle(int);
 
+  #if FL_API_VERSION < 10304
+  int pixel_w()
+  {
+    return w();
+  }
+
+  int pixel_h()
+  {
+    return h();
+  }
+
+  float pixels_per_unit()
+  {
+    return 1;
+  }
+  #endif
+
   int pixel_event_x()
   {
     return int(pixels_per_unit() * Fl::event_x() + 0.5);

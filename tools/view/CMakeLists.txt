@@ -65,12 +65,3 @@ target_compile_definitions(view
     # 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead.
     _CRT_SECURE_NO_WARNINGS
 )
-
-option(FLTK_USE_HIGH_RES_GL "Whether to compile for Apple device with Retina display; unused when code is not compiled for macOS" ON)
-mark_as_advanced(FLTK_USE_HIGH_RES_GL)
-if (FLTK_USE_HIGH_RES_GL)
-  set(FLTK_USE_HIGH_RES_GL 1)
-else ()
-  set(FLTK_USE_HIGH_RES_GL 0)
-endif ()
-target_compile_definitions(view PRIVATE FLTK_USE_HIGH_RES_GL=${FLTK_USE_HIGH_RES_GL})
